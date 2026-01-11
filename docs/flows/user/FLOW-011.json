@@ -1,0 +1,171 @@
+{
+  "id": "FLOW-011",
+  "name": "Trigger Capacity Time Objection Subflow",
+  "description": "Diagnostic subflow for workload objections to understand burnout versus project resistance patterns.",
+  "feature_id": "FR-003",
+  "story_ids": ["ST-010", "ST-011", "ST-014"],
+  "actor": "user",
+  "trigger": "Prospect raises capacity or time concern at any milestone",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Agent selects 'Capacity/Time' from objection selector",
+      "actor": "user",
+      "inputs": ["objection_type_selection"],
+      "outputs": ["capacity_objection_activated"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "System displays capacity objection diagnostic panel",
+      "actor": "system",
+      "inputs": ["objection_id"],
+      "outputs": ["diagnostic_panel_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Ask reframe question: manual overload vs new project resistance",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["reframe_question_asked"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Capture reframe response",
+      "actor": "user",
+      "inputs": ["reframe_response"],
+      "outputs": ["reframe_captured"],
+      "conditions": [
+        {
+          "condition": "response == manual_overload",
+          "outcome": "explore_current_burden"
+        },
+        {
+          "condition": "response == new_project_resistance",
+          "outcome": "explore_project_fear"
+        }
+      ],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Identify core fear",
+      "actor": "user",
+      "inputs": ["core_fear_identification"],
+      "outputs": ["core_fear_recorded"],
+      "conditions": [],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Ask reality question about current trajectory",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["reality_question_asked"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Capture trajectory response",
+      "actor": "user",
+      "inputs": ["trajectory_response"],
+      "outputs": ["trajectory_captured"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Alignment check on work reduction belief",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["alignment_question_asked"],
+      "conditions": [],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Capture alignment response",
+      "actor": "user",
+      "inputs": ["alignment_response"],
+      "outputs": ["alignment_captured"],
+      "conditions": [],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Agent adds diagnostic notes",
+      "actor": "user",
+      "inputs": ["objection_notes"],
+      "outputs": ["notes_saved"],
+      "conditions": [],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "Select forced outcome",
+      "actor": "user",
+      "inputs": ["objection_outcome"],
+      "outputs": ["outcome_recorded"],
+      "conditions": [
+        {
+          "condition": "outcome == resolved",
+          "outcome": "return_to_milestone"
+        },
+        {
+          "condition": "outcome == deferred",
+          "outcome": "flag_for_follow_up"
+        },
+        {
+          "condition": "outcome == disqualified",
+          "outcome": "route_to_disqualification"
+        }
+      ],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "System records ObjectionResponse and routes accordingly",
+      "actor": "system",
+      "inputs": ["call_session_id", "objection_id", "milestone_id", "outcome", "notes"],
+      "outputs": ["objection_response_saved", "routing_determined"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "Reframe question distinguishes overload from resistance",
+    "Core fear identified",
+    "Current trajectory reality explored",
+    "Work reduction alignment checked",
+    "Forced outcome selected",
+    "ObjectionResponse recorded"
+  ],
+  "error_handling": [
+    {
+      "error": "Agent minimizes workload concerns",
+      "response": "Guardrails ensure diagnostic approach, not dismissal"
+    },
+    {
+      "error": "No outcome selected",
+      "response": "Cannot close objection without forced outcome"
+    }
+  ]
+}

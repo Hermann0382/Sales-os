@@ -1,0 +1,232 @@
+{
+  "id": "SFLOW-005",
+  "name": "Call Recording Pipeline",
+  "description": "System flow that handles call recording via Zoom integration, from link detection to storage with timeline markers.",
+  "components": ["frontend", "api", "zoom_integration", "storage", "database"],
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Agent pastes Zoom meeting link in pre-call checklist",
+      "component": "frontend",
+      "inputs": ["zoom_link"],
+      "outputs": ["link_pasted"],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "Frontend validates Zoom link format",
+      "component": "frontend",
+      "inputs": ["zoom_link"],
+      "outputs": ["link_validated"],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "API receives recording activation request",
+      "component": "api",
+      "inputs": ["call_session_id", "zoom_link"],
+      "outputs": ["recording_request_received"],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Zoom integration extracts meeting ID from link",
+      "component": "zoom_integration",
+      "inputs": ["zoom_link"],
+      "outputs": ["meeting_id"],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Zoom integration initiates bot join (silent recorder)",
+      "component": "zoom_integration",
+      "inputs": ["meeting_id", "bot_config"],
+      "outputs": ["bot_join_initiated"],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Recording bot joins meeting within 5 seconds",
+      "component": "zoom_integration",
+      "inputs": ["meeting_id"],
+      "outputs": ["bot_joined", "recording_started"],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "API updates call session with recording status",
+      "component": "api",
+      "inputs": ["call_session_id", "recording_started"],
+      "outputs": ["session_recording_active"],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Frontend displays recording indicator",
+      "component": "frontend",
+      "inputs": ["recording_status"],
+      "outputs": ["recording_indicator_shown"],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Zoom integration captures audio with speaker detection",
+      "component": "zoom_integration",
+      "inputs": ["audio_stream"],
+      "outputs": ["audio_data", "speaker_labels"],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "API receives milestone/objection/slide change events",
+      "component": "api",
+      "inputs": ["call_events"],
+      "outputs": ["timeline_markers"],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "Timeline markers attached to recording timestamps",
+      "component": "api",
+      "inputs": ["timeline_markers", "recording_timestamps"],
+      "outputs": ["markers_attached"],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "Call ends, agent completes outcome classification",
+      "component": "frontend",
+      "inputs": ["call_end_signal"],
+      "outputs": ["recording_stop_requested"],
+      "next_steps": ["STEP-013"]
+    },
+    {
+      "id": "STEP-013",
+      "sequence": 13,
+      "action": "Zoom integration stops recording",
+      "component": "zoom_integration",
+      "inputs": ["stop_signal"],
+      "outputs": ["recording_stopped", "final_audio_file"],
+      "next_steps": ["STEP-014"]
+    },
+    {
+      "id": "STEP-014",
+      "sequence": 14,
+      "action": "Recording bot leaves meeting",
+      "component": "zoom_integration",
+      "inputs": [],
+      "outputs": ["bot_left"],
+      "next_steps": ["STEP-015"]
+    },
+    {
+      "id": "STEP-015",
+      "sequence": 15,
+      "action": "Storage receives audio file upload",
+      "component": "storage",
+      "inputs": ["audio_file", "call_session_id"],
+      "outputs": ["storage_reference"],
+      "next_steps": ["STEP-016"]
+    },
+    {
+      "id": "STEP-016",
+      "sequence": 16,
+      "action": "Storage applies encryption (AES-256)",
+      "component": "storage",
+      "inputs": ["audio_file"],
+      "outputs": ["encrypted_file"],
+      "next_steps": ["STEP-017"]
+    },
+    {
+      "id": "STEP-017",
+      "sequence": 17,
+      "action": "Database creates recording record with metadata",
+      "component": "database",
+      "inputs": ["call_session_id", "storage_reference", "timeline_markers", "duration", "speaker_data"],
+      "outputs": ["recording_id"],
+      "next_steps": ["STEP-018"]
+    },
+    {
+      "id": "STEP-018",
+      "sequence": 18,
+      "action": "Database links recording to slide instances",
+      "component": "database",
+      "inputs": ["recording_id", "slide_instance_ids", "timestamps"],
+      "outputs": ["slide_recording_links"],
+      "next_steps": ["STEP-019"]
+    },
+    {
+      "id": "STEP-019",
+      "sequence": 19,
+      "action": "API triggers AI analysis pipeline (SFLOW-003)",
+      "component": "api",
+      "inputs": ["call_session_id", "recording_id"],
+      "outputs": ["analysis_triggered"],
+      "next_steps": []
+    }
+  ],
+  "data_flow": [
+    {
+      "from": "frontend",
+      "to": "api",
+      "data": "Zoom link and session ID"
+    },
+    {
+      "from": "api",
+      "to": "zoom_integration",
+      "data": "Meeting join request"
+    },
+    {
+      "from": "zoom_integration",
+      "to": "storage",
+      "data": "Audio file with speaker labels"
+    },
+    {
+      "from": "api",
+      "to": "database",
+      "data": "Timeline markers"
+    },
+    {
+      "from": "storage",
+      "to": "database",
+      "data": "Recording reference"
+    }
+  ],
+  "error_handling": [
+    {
+      "error": "Invalid Zoom link",
+      "response": "Display validation error, request correct link"
+    },
+    {
+      "error": "Bot join failed",
+      "response": "Retry up to 3 times, alert agent if persistent"
+    },
+    {
+      "error": "Recording start delay exceeds 5 seconds",
+      "response": "Log performance issue, continue with delayed start"
+    },
+    {
+      "error": "Recording interrupted",
+      "response": "Attempt recovery, save partial recording if unrecoverable"
+    },
+    {
+      "error": "Storage upload failed",
+      "response": "Retry with exponential backoff, alert if persistent"
+    },
+    {
+      "error": "Meeting ended before agent",
+      "response": "Detect meeting end, trigger normal recording stop flow"
+    }
+  ]
+}

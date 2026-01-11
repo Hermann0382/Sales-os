@@ -1,0 +1,180 @@
+{
+  "id": "FLOW-013",
+  "name": "Trigger Partner Team Objection Subflow",
+  "description": "Diagnostic subflow for authority objections to understand decision dynamics and equip prospect for internal conversations.",
+  "feature_id": "FR-003",
+  "story_ids": ["ST-010", "ST-011", "ST-016"],
+  "actor": "user",
+  "trigger": "Prospect mentions needing to consult partner or team at any milestone",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Agent selects 'Partner/Team' from objection selector",
+      "actor": "user",
+      "inputs": ["objection_type_selection"],
+      "outputs": ["partner_objection_activated"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "System displays partner objection diagnostic panel",
+      "actor": "system",
+      "inputs": ["objection_id"],
+      "outputs": ["diagnostic_panel_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Step 1: Authority clarification - can make decision vs need permission",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["authority_question_asked"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Capture authority response",
+      "actor": "user",
+      "inputs": ["authority_response"],
+      "outputs": ["authority_captured"],
+      "conditions": [
+        {
+          "condition": "can_decide_alone",
+          "outcome": "explore_why_consulting"
+        },
+        {
+          "condition": "needs_permission",
+          "outcome": "explore_decision_dynamics"
+        }
+      ],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Step 2: Pre-solve anticipated partner concerns",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["presolve_question_asked"],
+      "conditions": [],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Capture anticipated concerns",
+      "actor": "user",
+      "inputs": ["anticipated_concerns"],
+      "outputs": ["concerns_captured"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Step 3: Equip with explanation summary",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["summary_provided"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "System generates explanation summary for prospect to use",
+      "actor": "system",
+      "inputs": ["call_data", "value_proposition"],
+      "outputs": ["explanation_summary_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Check for conditional close if aligned after conversation",
+      "actor": "user",
+      "inputs": ["alignment_check"],
+      "outputs": ["conditional_close_possible"],
+      "conditions": [
+        {
+          "condition": "prospect_aligned",
+          "outcome": "offer_conditional_close"
+        },
+        {
+          "condition": "prospect_uncertain",
+          "outcome": "schedule_follow_up"
+        }
+      ],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Agent adds diagnostic notes",
+      "actor": "user",
+      "inputs": ["objection_notes"],
+      "outputs": ["notes_saved"],
+      "conditions": [],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "Select forced outcome",
+      "actor": "user",
+      "inputs": ["objection_outcome"],
+      "outputs": ["outcome_recorded"],
+      "conditions": [
+        {
+          "condition": "outcome == resolved",
+          "outcome": "return_to_milestone"
+        },
+        {
+          "condition": "outcome == deferred",
+          "outcome": "flag_for_follow_up"
+        },
+        {
+          "condition": "outcome == disqualified",
+          "outcome": "route_to_disqualification"
+        }
+      ],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "System records ObjectionResponse and routes accordingly",
+      "actor": "system",
+      "inputs": ["call_session_id", "objection_id", "milestone_id", "outcome", "notes"],
+      "outputs": ["objection_response_saved", "routing_determined"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "Authority clarified (can decide vs needs permission)",
+    "Partner concerns pre-solved",
+    "Explanation summary provided for internal conversation",
+    "Conditional close offered if aligned",
+    "Forced outcome selected",
+    "ObjectionResponse recorded"
+  ],
+  "error_handling": [
+    {
+      "error": "Agent bypasses partner involvement",
+      "response": "Guardrails ensure respect for decision dynamics"
+    },
+    {
+      "error": "No outcome selected",
+      "response": "Cannot close objection without forced outcome"
+    }
+  ]
+}

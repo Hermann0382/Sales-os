@@ -1,0 +1,171 @@
+{
+  "id": "SFLOW-001",
+  "name": "Pre-Call Checklist Enforcement",
+  "description": "System flow that enforces mandatory pre-call preparation before allowing a call to start, including qualification verification.",
+  "components": ["api", "database", "frontend"],
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "User initiates new call session",
+      "component": "frontend",
+      "inputs": ["prospect_id", "agent_id"],
+      "outputs": ["session_request"],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "API receives session creation request",
+      "component": "api",
+      "inputs": ["session_request"],
+      "outputs": ["request_validated"],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Database retrieves prospect qualification data",
+      "component": "database",
+      "inputs": ["prospect_id"],
+      "outputs": ["prospect_data", "qualification_form_data"],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "API generates checklist items based on prospect data",
+      "component": "api",
+      "inputs": ["prospect_data"],
+      "outputs": ["checklist_config"],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Frontend renders pre-call checklist UI",
+      "component": "frontend",
+      "inputs": ["checklist_config", "prospect_data"],
+      "outputs": ["checklist_ui_displayed"],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "User completes checklist items",
+      "component": "frontend",
+      "inputs": ["user_checklist_responses"],
+      "outputs": ["checklist_state"],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Frontend validates client count (500+ gate)",
+      "component": "frontend",
+      "inputs": ["client_count_value"],
+      "outputs": ["qualification_result"],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "API validates all checklist items complete",
+      "component": "api",
+      "inputs": ["checklist_state"],
+      "outputs": ["validation_result"],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "System sets coaching_eligible flag based on qualification",
+      "component": "api",
+      "inputs": ["client_count", "qualification_responses"],
+      "outputs": ["coaching_eligible_flag"],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Database creates CallSession with pre-call data",
+      "component": "database",
+      "inputs": ["prospect_id", "agent_id", "checklist_data", "coaching_eligible_flag"],
+      "outputs": ["call_session_id", "call_session_status_active"],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "API returns session ready response",
+      "component": "api",
+      "inputs": ["call_session_id"],
+      "outputs": ["session_ready_response"],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "Frontend enables call start and loads M1",
+      "component": "frontend",
+      "inputs": ["session_ready_response"],
+      "outputs": ["call_interface_loaded"],
+      "next_steps": []
+    }
+  ],
+  "data_flow": [
+    {
+      "from": "frontend",
+      "to": "api",
+      "data": "session_request with prospect_id"
+    },
+    {
+      "from": "api",
+      "to": "database",
+      "data": "prospect qualification query"
+    },
+    {
+      "from": "database",
+      "to": "api",
+      "data": "prospect_data with qualification_form"
+    },
+    {
+      "from": "api",
+      "to": "frontend",
+      "data": "checklist_config"
+    },
+    {
+      "from": "frontend",
+      "to": "api",
+      "data": "completed checklist_state"
+    },
+    {
+      "from": "api",
+      "to": "database",
+      "data": "CallSession creation request"
+    },
+    {
+      "from": "database",
+      "to": "api",
+      "data": "call_session_id"
+    }
+  ],
+  "error_handling": [
+    {
+      "error": "Prospect not found",
+      "response": "Return 404, display prospect not found message"
+    },
+    {
+      "error": "Checklist validation failed",
+      "response": "Return validation errors, highlight incomplete items"
+    },
+    {
+      "error": "Database connection error",
+      "response": "Return 503, display retry message"
+    },
+    {
+      "error": "Client count below 500",
+      "response": "Set coaching_eligible=false, allow advisory call only"
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "id": "FLOW-010",
+  "name": "Trigger Timing Objection Subflow",
+  "description": "Diagnostic subflow for timing objections to understand real constraints versus avoidance behavior.",
+  "feature_id": "FR-003",
+  "story_ids": ["ST-010", "ST-011", "ST-013"],
+  "actor": "user",
+  "trigger": "Prospect raises timing-related concern at any milestone",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Agent selects 'Timing' from objection selector",
+      "actor": "user",
+      "inputs": ["objection_type_selection"],
+      "outputs": ["timing_objection_activated"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "System displays timing objection diagnostic panel",
+      "actor": "system",
+      "inputs": ["objection_id"],
+      "outputs": ["diagnostic_panel_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Ask Step 1: 'What would need to change?'",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["question_asked_checkbox"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Capture prospect response",
+      "actor": "user",
+      "inputs": ["change_condition_response"],
+      "outputs": ["condition_captured"],
+      "conditions": [],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Step 2: Identify timing type",
+      "actor": "user",
+      "inputs": ["timing_type_classification"],
+      "outputs": ["type_recorded"],
+      "conditions": [
+        {
+          "condition": "type == cash",
+          "outcome": "record_cash_constraint"
+        },
+        {
+          "condition": "type == capacity",
+          "outcome": "record_capacity_constraint"
+        },
+        {
+          "condition": "type == emotional",
+          "outcome": "record_emotional_constraint"
+        },
+        {
+          "condition": "type == avoidance",
+          "outcome": "record_avoidance_pattern"
+        }
+      ],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Step 3: Ask future projection question",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["future_question_asked"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Capture future projection response",
+      "actor": "user",
+      "inputs": ["future_projection_response"],
+      "outputs": ["projection_captured"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Step 4: Delay cost acknowledgment question",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["delay_cost_question_asked"],
+      "conditions": [],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Capture delay cost acknowledgment",
+      "actor": "user",
+      "inputs": ["delay_cost_response"],
+      "outputs": ["delay_cost_captured"],
+      "conditions": [],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Agent adds diagnostic notes",
+      "actor": "user",
+      "inputs": ["objection_notes"],
+      "outputs": ["notes_saved"],
+      "conditions": [],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "Select forced outcome",
+      "actor": "user",
+      "inputs": ["objection_outcome"],
+      "outputs": ["outcome_recorded"],
+      "conditions": [
+        {
+          "condition": "outcome == resolved",
+          "outcome": "return_to_milestone"
+        },
+        {
+          "condition": "outcome == deferred",
+          "outcome": "flag_for_follow_up"
+        },
+        {
+          "condition": "outcome == disqualified",
+          "outcome": "route_to_disqualification"
+        }
+      ],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "System records ObjectionResponse and routes accordingly",
+      "actor": "system",
+      "inputs": ["call_session_id", "objection_id", "milestone_id", "outcome", "notes"],
+      "outputs": ["objection_response_saved", "routing_determined"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "'What would need to change?' asked",
+    "Timing type classified (cash/capacity/emotional/avoidance)",
+    "Future projection explored",
+    "Delay cost acknowledged",
+    "Forced outcome selected",
+    "ObjectionResponse recorded"
+  ],
+  "error_handling": [
+    {
+      "error": "Agent creates urgency pressure",
+      "response": "Guardrails block urgency tactics, only questions available"
+    },
+    {
+      "error": "No outcome selected",
+      "response": "Cannot close objection without forced outcome"
+    }
+  ]
+}

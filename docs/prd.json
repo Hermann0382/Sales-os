@@ -1,0 +1,907 @@
+{
+  "artifact_type": "prd",
+  "status": "complete",
+  "validation": "passed",
+  "approval_required": true,
+  "approvers": ["Cynthia", "Hermann", "Usama"],
+  "next_phase": "flow_design",
+  "data": {
+    "project_name": "CallOS",
+    "project_subtitle": "Sales Call Orchestration & Objection Flow App",
+    "owner_email": "hermann@richtungswechsel.com",
+    "created_at": "2026-01-08T13:00:00Z",
+    "version": "1.0.0",
+    "executive_summary": {
+      "problem": "Sales calls currently rely on memory, experience, improvisation, and individual closer skill variance. This leads to inconsistency, arguing objections, emotional closes, poor qualification, and weak post-call data.",
+      "solution": "A standardized, integrity-based sales call operating system that guides execution, records reality, and learns over time without relying on persuasion or improvisation.",
+      "target_market": "High-ticket coaching business targeting financial advisors/brokers in Germany with 500+ existing clients",
+      "business_model": "EUR 495 paid implementation calls that can lead to EUR 20k-28k coaching program"
+    },
+    "features": [
+      {
+        "id": "FR-001",
+        "title": "Call Flow Engine",
+        "description": "Milestone-based call structure with enforced sequential progression. Each milestone contains objectives, required questions, confirmations, notes, and objection triggers.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-001",
+            "title": "Navigate through call milestones",
+            "description": "As a sales agent, I want to follow a guided milestone-based call flow so that I maintain consistency across all sales calls.",
+            "acceptance_criteria": [
+              "System displays current milestone with clear objective",
+              "Agent can check off required items within each milestone",
+              "Milestones are sequential and cannot be skipped in strict mode",
+              "Override option available in flexible mode with reason logging"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-002",
+            "title": "Toggle strict vs flexible mode",
+            "description": "As an admin, I want to toggle between strict and flexible milestone enforcement so that the system adapts to different situations.",
+            "acceptance_criteria": [
+              "Admin can set default mode per product/team",
+              "Flexible mode logs all milestone overrides with reason",
+              "Override events are auditable by managers"
+            ],
+            "priority": "medium"
+          }
+        ]
+      },
+      {
+        "id": "FR-002",
+        "title": "Seven Core Milestones",
+        "description": "Pre-defined milestone structure for the implementation-to-coaching sales call: M1 Context & Frame (5 min), M2 Current State Mapping (15-20 min), M3 Outcome Vision, M4 System Reality Check, M5 Solution Mapping, M6 Offer Presentation, M7 Decision Point.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-003",
+            "title": "M1 Context & Frame execution",
+            "description": "As a sales agent, I want to establish shared understanding of call scope so that the prospect understands this is a diagnostic, not a pitch.",
+            "acceptance_criteria": [
+              "Fields: Reason for call (text), Confirmed expectation (checkbox)",
+              "Script guidance for stating 3 possible outcomes",
+              "Time indicator: 5 minutes",
+              "Prospect relaxation signal tracking"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-004",
+            "title": "M2 Current State Mapping execution",
+            "description": "As a sales agent, I want to map the prospect's operational reality so that I expose fragility without judgment.",
+            "acceptance_criteria": [
+              "Fields: Client count (number), Revenue volatility (1-5), Main pain (multi-select: Storno/chaos/instability)",
+              "Required coverage: client handling, revenue stability, operations, psychological load",
+              "System summary capability for agent to verbalize back",
+              "Time indicator: 15-20 minutes"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-005",
+            "title": "M3 Outcome Vision execution",
+            "description": "As a sales agent, I want to capture the prospect's desired future state so that I understand what 'working' looks like for them.",
+            "acceptance_criteria": [
+              "Fields: Desired outcome (text), Cost of inaction (text)",
+              "12-month vision capture",
+              "No hype or future fantasy language guidance"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-006",
+            "title": "M4 System Reality Check execution",
+            "description": "As a sales agent, I want to reveal the hidden cost of manual implementation so that the prospect understands the 'second job' effect.",
+            "acceptance_criteria": [
+              "Confirmations: 'Understands implementation effort', 'Acknowledges manual workload risk'",
+              "Coverage: time required, management overhead, error probability, burnout risk",
+              "Key framing guidance available"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-007",
+            "title": "M5 Solution Mapping execution",
+            "description": "As a sales agent, I want to present the LeadTunnel system so that the prospect sees leverage vs manual execution.",
+            "acceptance_criteria": [
+              "Confirmations: 'Sees system leverage', 'Understands scope'",
+              "CRM, pipelines, automations coverage",
+              "One system vs tool chaos messaging"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-008",
+            "title": "M6 Offer Presentation execution",
+            "description": "As a sales agent, I want to present the coaching infrastructure investment so that pricing is framed structurally, not emotionally.",
+            "acceptance_criteria": [
+              "Fields: Price shown (auto), Payment plan selected",
+              "12-month infrastructure install framing",
+              "ROI re-anchoring capability",
+              "Rule: Say price once, stop talking"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-009",
+            "title": "M7 Decision Point execution",
+            "description": "As a sales agent, I want to request an explicit decision so that every call ends with a clean outcome.",
+            "acceptance_criteria": [
+              "Forced choice: Proceed, Pause, Decline",
+              "Silence guidance (do not fill silence)",
+              "Only clarification questions allowed"
+            ],
+            "priority": "high"
+          }
+        ]
+      },
+      {
+        "id": "FR-003",
+        "title": "Objection System",
+        "description": "Diagnostic objection handling system with 6 objection types. Each objection opens a subflow with clarifying questions (1-3 max) and mandatory outcome classification. Objections are signals to classify, not resistance to overcome.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-010",
+            "title": "Trigger objection subflow",
+            "description": "As a sales agent, I want to trigger an objection subflow when a prospect raises a concern so that I can diagnose the signal without arguing.",
+            "acceptance_criteria": [
+              "Objection selector appears at any milestone",
+              "6 objection types: Price, Timing, Capacity/Time, Need to think, Partner/Team, Skepticism",
+              "Each type loads specific diagnostic questions",
+              "No persuasion copy, only clarification prompts"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-011",
+            "title": "Complete objection with outcome",
+            "description": "As a sales agent, I want to classify the objection outcome so that the system tracks resolution status.",
+            "acceptance_criteria": [
+              "Forced outcome selection: Resolved, Deferred, Disqualified",
+              "Cannot proceed without selecting outcome",
+              "Unresolved objections persist into follow-up calls"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-012",
+            "title": "Price objection subflow",
+            "description": "As a sales agent, I want a structured diagnostic for price objections so that I identify value mismatch vs cashflow vs risk perception.",
+            "acceptance_criteria": [
+              "Step 1: 'Compared to what?' (neutral, wait for answer)",
+              "Step 2: Classify comparison (software/coaching/income/fear)",
+              "Step 3: Structural check (6-month payback question)",
+              "Outcomes route to proceed/pause/disqualify"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-013",
+            "title": "Timing objection subflow",
+            "description": "As a sales agent, I want a structured diagnostic for timing objections so that I understand real constraints vs avoidance.",
+            "acceptance_criteria": [
+              "Step 1: 'What would need to change?'",
+              "Step 2: Identify type (cash/capacity/emotional/avoidance)",
+              "Step 3: Future projection question",
+              "Step 4: Delay cost acknowledgment"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-014",
+            "title": "Capacity/Time objection subflow",
+            "description": "As a sales agent, I want a structured diagnostic for workload objections so that I understand burnout vs project resistance.",
+            "acceptance_criteria": [
+              "Reframe question: manual overload vs new project resistance",
+              "Core fear identification",
+              "Reality question about current trajectory",
+              "Alignment check on work reduction belief"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-015",
+            "title": "Need to think objection subflow",
+            "description": "As a sales agent, I want a structured diagnostic for thinking objections so that I isolate the specific variable.",
+            "acceptance_criteria": [
+              "Step 1: 'What specifically do you want to think through?'",
+              "Step 2: Isolate variable (price/risk/trust/partner/self-doubt)",
+              "Step 3: Containment question",
+              "Route to relevant subflow if variable identified"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-016",
+            "title": "Partner/Team objection subflow",
+            "description": "As a sales agent, I want a structured diagnostic for authority objections so that I understand decision dynamics.",
+            "acceptance_criteria": [
+              "Step 1: Authority clarification (can make vs need permission)",
+              "Step 2: Pre-solve anticipated concerns",
+              "Step 3: Equip with explanation summary",
+              "Conditional close if aligned after conversation"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-017",
+            "title": "Skepticism objection subflow",
+            "description": "As a sales agent, I want a structured diagnostic for skepticism objections so that I understand past experience patterns.",
+            "acceptance_criteria": [
+              "Step 1: Validate experience (what didn't work)",
+              "Step 2: Pattern recognition (strategy vs execution)",
+              "Step 3: Structural difference articulation",
+              "Proceed if distinction understood, disqualify if tactic-focused"
+            ],
+            "priority": "high"
+          }
+        ]
+      },
+      {
+        "id": "FR-004",
+        "title": "Pre-Call Checklist",
+        "description": "Mandatory preparation checklist that must be completed before joining the call, ensuring qualification review and readiness.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-018",
+            "title": "Complete pre-call preparation",
+            "description": "As a sales agent, I want to verify prospect qualification before the call so that I don't pitch unqualified prospects.",
+            "acceptance_criteria": [
+              "Checklist items: qualification form reviewed, client count confirmed (>=500), business type confirmed, revenue range noted, main pain identified, tool stack noted, ROI tool ready, time block clear",
+              "Hard gate: If 500 clients not confirmed, coaching pitch not allowed",
+              "All items must be checked before call can start"
+            ],
+            "priority": "high"
+          }
+        ]
+      },
+      {
+        "id": "FR-005",
+        "title": "Qualification Gates",
+        "description": "Hard qualification requirements that determine whether coaching pitch is allowed. Primary gate: minimum 500 existing clients.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-019",
+            "title": "Enforce qualification gate",
+            "description": "As a sales system, I want to prevent coaching pitches to unqualified prospects so that we protect conversion quality.",
+            "acceptance_criteria": [
+              ">=500 clients gate enforced before M6",
+              "Willingness to change systems confirmation",
+              "Time capacity confirmation",
+              "Not looking for leads confirmation",
+              "If not qualified: advisory call only, no selling"
+            ],
+            "priority": "high"
+          }
+        ]
+      },
+      {
+        "id": "FR-006",
+        "title": "Call Outcome Classification",
+        "description": "Forced end-of-call outcome selection with mandatory disqualification reasons when applicable.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-020",
+            "title": "Classify call outcome",
+            "description": "As a sales agent, I want to classify the call outcome so that pipeline actions are triggered correctly.",
+            "acceptance_criteria": [
+              "Forced outcome types: Coaching client, Follow-up scheduled, Implementation only, Disqualified",
+              "If disqualified: mandatory reason (<500 clients, Cashflow mismatch, Misaligned expectations, Capacity constraint, Authority issue)",
+              "Qualification flags: >=500 clients, Financial capacity, Strategic alignment",
+              "Cannot complete call without outcome selection"
+            ],
+            "priority": "high"
+          }
+        ]
+      },
+      {
+        "id": "FR-007",
+        "title": "Follow-Up Call Support",
+        "description": "Linked follow-up calls that resume context from previous calls, synced with GoHighLevel calendar.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-021",
+            "title": "Schedule follow-up call",
+            "description": "As a sales agent, I want to schedule a follow-up call so that I can continue the conversation at the right time.",
+            "acceptance_criteria": [
+              "Schedule Follow-Up button from any outcome",
+              "Syncs with GoHighLevel calendar for the lead",
+              "Appointment notes and summary saved"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-022",
+            "title": "Resume follow-up context",
+            "description": "As a sales agent, I want to see previous call context when starting a follow-up so that I pick up where we left off.",
+            "acceptance_criteria": [
+              "Previous call summary displayed",
+              "Last completed milestone shown",
+              "Unresolved objections listed",
+              "Open decision variables highlighted",
+              "Qualification flags status shown",
+              "Can resume at milestone or jump to decision"
+            ],
+            "priority": "high"
+          }
+        ]
+      },
+      {
+        "id": "FR-008",
+        "title": "Dual Interface System",
+        "description": "Separate Sales Rep Control Panel and Client Presentation View. The presentation opens in a new browser tab for Zoom tab sharing.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-023",
+            "title": "Use sales rep control panel",
+            "description": "As a sales agent, I want a private control panel so that I manage the call without exposing mechanics to the client.",
+            "acceptance_criteria": [
+              "Full checklist visible",
+              "Notes and confirmations editable",
+              "Objection triggers accessible",
+              "Recording controls available",
+              "Slide navigation buttons present",
+              "AI insights (post-call) viewable",
+              "Never visible to client"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-024",
+            "title": "Use client presentation view",
+            "description": "As a sales agent, I want a separate presentation tab so that I share only slides with the client via Zoom.",
+            "acceptance_criteria": [
+              "Opens in new browser tab on 'Start Presentation Mode'",
+              "Shows slides only, no controls/notes/objections",
+              "Controlled by rep panel (slave view)",
+              "Synced live with rep actions via WebSocket",
+              "Client-safe URL, no auth-sensitive UI"
+            ],
+            "priority": "high"
+          }
+        ]
+      },
+      {
+        "id": "FR-009",
+        "title": "Canonical Slide Deck System",
+        "description": "Versioned slide deck created once by admin and reused across calls. Only parameterized slots change per call, not the psychological flow.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-025",
+            "title": "Create and version slide deck",
+            "description": "As an admin, I want to create a canonical slide deck so that all calls follow the same psychological structure.",
+            "acceptance_criteria": [
+              "One deck per product, versioned (v1, v2, v3)",
+              "Bound to milestones, fixed order",
+              "Slides contain parameter slots only",
+              "Admin approval required for new versions",
+              "Old versions retained for analysis"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-026",
+            "title": "Render personalized slides",
+            "description": "As a sales agent, I want slides to show prospect-specific data so that the presentation feels relevant.",
+            "acceptance_criteria": [
+              "Parameter slots filled from call inputs (client count, pain points, etc.)",
+              "Narrative stays fixed",
+              "Only approved parameters change",
+              "Deterministic rendering"
+            ],
+            "priority": "high"
+          }
+        ]
+      },
+      {
+        "id": "FR-010",
+        "title": "Slide Template vs Instance Model",
+        "description": "Separate system-level templates from call-level instances for learning and analysis.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-027",
+            "title": "Track slide instances",
+            "description": "As a system, I want to record each slide presentation so that I can analyze effectiveness over time.",
+            "acceptance_criteria": [
+              "SlideInstance linked to: client ID, call ID, agent ID",
+              "Rendered content stored",
+              "Timestamp start/end recorded",
+              "Recording markers attached",
+              "Agent notes captured",
+              "Outcome tag assignable (positive/neutral/negative)"
+            ],
+            "priority": "medium"
+          }
+        ]
+      },
+      {
+        "id": "FR-011",
+        "title": "Call Recording (Fathom-Style)",
+        "description": "Recording system that joins Zoom silently when link is pasted, capturing audio, transcript, and timeline markers.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-028",
+            "title": "Record call via Zoom link",
+            "description": "As a sales agent, I want the system to record my call so that I have a transcript for analysis.",
+            "acceptance_criteria": [
+              "Paste Zoom link to activate",
+              "System joins as silent recorder",
+              "Audio + speaker detection captured",
+              "Transcript generated",
+              "Timeline markers for milestones, objections, slide changes",
+              "Recording linked to call session and slide instances"
+            ],
+            "priority": "high"
+          }
+        ]
+      },
+      {
+        "id": "FR-012",
+        "title": "AI Post-Call Analysis",
+        "description": "AI-powered call analysis that runs after the call ends, generating summaries, classifications, and recommendations. AI does not influence live decisions.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-029",
+            "title": "Generate call analysis",
+            "description": "As a manager, I want AI to analyze completed calls so that I understand patterns and performance.",
+            "acceptance_criteria": [
+              "Call summary generated (factual, neutral)",
+              "Objection classification (categorized)",
+              "Decision readiness score",
+              "Risk flags (misalignment, overpromise, pressure)",
+              "Agent execution feedback",
+              "Slide effectiveness signals",
+              "All outputs traceable to call evidence"
+            ],
+            "priority": "high"
+          },
+          {
+            "id": "ST-030",
+            "title": "Generate follow-up email",
+            "description": "As a sales agent, I want AI to draft a follow-up email so that I save time on post-call tasks.",
+            "acceptance_criteria": [
+              "Email based on call facts only",
+              "No persuasion, urgency, or new offers",
+              "Recap of agreed facts",
+              "Confirmed next steps",
+              "Editable before sending",
+              "Language matches call language (DE/EN)"
+            ],
+            "priority": "medium"
+          }
+        ]
+      },
+      {
+        "id": "FR-013",
+        "title": "Role-Based Access Control",
+        "description": "Multi-tier access system with Sales Agent, Manager, and Admin roles, each with specific permissions.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-031",
+            "title": "Manage user roles",
+            "description": "As an admin, I want to assign roles to users so that they have appropriate access levels.",
+            "acceptance_criteria": [
+              "Roles: Sales Agent, Manager, Admin",
+              "Sales Agent: create/run calls, notes, objections",
+              "Manager: review calls, analytics, AI output, ROI tool link",
+              "Admin: configure flows, milestones, objections, prompts"
+            ],
+            "priority": "high"
+          }
+        ]
+      },
+      {
+        "id": "FR-014",
+        "title": "Manager Dashboard",
+        "description": "Analytics dashboard for managers to review call performance, patterns, and agent metrics.",
+        "priority": "medium",
+        "user_stories": [
+          {
+            "id": "ST-032",
+            "title": "Review call analytics",
+            "description": "As a manager, I want to see call metrics so that I can optimize the sales process.",
+            "acceptance_criteria": [
+              "Calls per agent",
+              "Objection frequency by type",
+              "Close rate by qualification",
+              "Time spent per milestone",
+              "AI risk flags summary",
+              "Slide effectiveness scores",
+              "ROI tool integration for projected vs actual comparison"
+            ],
+            "priority": "medium"
+          }
+        ]
+      },
+      {
+        "id": "FR-015",
+        "title": "Admin Configuration Panel",
+        "description": "Admin interface for configuring milestones, slides, objections, prompts, and system settings.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-033",
+            "title": "Configure system components",
+            "description": "As an admin, I want to edit all system components so that the business controls the sales logic.",
+            "acceptance_criteria": [
+              "Edit milestones (title, objective, questions, confirmations)",
+              "Edit slide templates (content, parameter slots)",
+              "Edit objection flows (questions, outcomes)",
+              "Edit AI prompts (all layers, versioned)",
+              "Version control with rollback capability",
+              "Activate/deactivate components",
+              "Preview changes before publishing"
+            ],
+            "priority": "high"
+          }
+        ]
+      },
+      {
+        "id": "FR-016",
+        "title": "AI Prompt Registry",
+        "description": "Admin-configurable prompt system with 5 layers: Global, Milestone, Objection, Slide Analysis, Call Synthesis. All prompts are variable-driven, not hard-coded.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-034",
+            "title": "Manage AI prompts",
+            "description": "As an admin, I want to edit AI prompts so that AI behavior is governable without code changes.",
+            "acceptance_criteria": [
+              "Prompt scopes: global, milestone, objection, slide, analysis",
+              "Versioned prompts with status (active/deprecated/draft)",
+              "Language-specific prompts (DE/EN)",
+              "Variable placeholders for runtime injection",
+              "Logged execution for traceability",
+              "Rollback capability"
+            ],
+            "priority": "high"
+          }
+        ]
+      },
+      {
+        "id": "FR-017",
+        "title": "Bilingual Support",
+        "description": "Full German and English language support at content level for white-label readiness.",
+        "priority": "medium",
+        "user_stories": [
+          {
+            "id": "ST-035",
+            "title": "Use bilingual content",
+            "description": "As a sales agent, I want to run calls in German or English so that I serve the appropriate market.",
+            "acceptance_criteria": [
+              "Language toggle per user/call",
+              "All milestones, objections, prompts stored with DE/EN variants",
+              "Language stored per call session",
+              "No runtime translation unless enabled"
+            ],
+            "priority": "medium"
+          }
+        ]
+      },
+      {
+        "id": "FR-018",
+        "title": "Guardrails System",
+        "description": "Anti-arguing controls that prevent persuasion, rebuttals, discounts, and emotional manipulation.",
+        "priority": "high",
+        "user_stories": [
+          {
+            "id": "ST-036",
+            "title": "Enforce guardrails",
+            "description": "As a system, I want to prevent sales manipulation so that the brand maintains integrity.",
+            "acceptance_criteria": [
+              "No free-text persuasion scripts available",
+              "No rebuttal sections in objection flows",
+              "No discount fields or price editing",
+              "Objection questions are read-only",
+              "AI refuses to generate sales scripts, handle objections live, or bypass qualification"
+            ],
+            "priority": "high"
+          }
+        ]
+      },
+      {
+        "id": "FR-019",
+        "title": "Learning & Iteration Loop",
+        "description": "System that learns from every call and converges toward best-known deck/flow versions without killing adaptability.",
+        "priority": "medium",
+        "user_stories": [
+          {
+            "id": "ST-037",
+            "title": "Track effectiveness scores",
+            "description": "As an admin, I want to see slide and milestone effectiveness so that I can iterate deliberately.",
+            "acceptance_criteria": [
+              "Slide effectiveness scoring (close-rate correlation, objection frequency)",
+              "Milestone pass/fail rates",
+              "Agent variance analysis",
+              "Statistical confidence before iteration",
+              "Admin-approved version upgrades only"
+            ],
+            "priority": "medium"
+          }
+        ]
+      },
+      {
+        "id": "FR-020",
+        "title": "White-Label Readiness",
+        "description": "Architecture designed for future white-label deployment with tenant-based config, custom branding, and multi-product support.",
+        "priority": "low",
+        "user_stories": [
+          {
+            "id": "ST-038",
+            "title": "Support white-label deployment",
+            "description": "As a business, I want the system to be white-label ready so that I can license it to other coaching businesses.",
+            "acceptance_criteria": [
+              "Tenant-based configuration",
+              "Custom milestone sets per tenant",
+              "Custom objection libraries per tenant",
+              "Branding abstracted for customization",
+              "Multi-product support within tenant"
+            ],
+            "priority": "low"
+          }
+        ]
+      }
+    ],
+    "technical_requirements": {
+      "performance": {
+        "page_load_time": "< 2 seconds",
+        "slide_sync_latency": "< 500ms via WebSocket",
+        "recording_start_delay": "< 5 seconds after link detection",
+        "ai_analysis_completion": "< 2 minutes post-call"
+      },
+      "security": {
+        "authentication": "Role-based access control with JWT",
+        "data_encryption": "TLS 1.3 in transit, AES-256 at rest",
+        "recording_storage": "Secure cloud storage with access logging",
+        "audit_trail": "Full audit log for all administrative changes"
+      },
+      "scalability": {
+        "concurrent_users": "Support 50+ simultaneous calls",
+        "storage": "Scalable recording storage (estimated 2GB/call)",
+        "database": "Relational, audit-safe with soft deletes"
+      },
+      "compatibility": {
+        "browsers": "Chrome, Firefox, Safari, Edge (latest 2 versions)",
+        "integrations": ["GoHighLevel CRM", "Zoom Recording API"],
+        "languages": ["German (DE)", "English (EN)"]
+      }
+    },
+    "data_model": {
+      "entities": [
+        {
+          "name": "User",
+          "description": "Sales agent, manager, or admin user",
+          "key_fields": ["id", "email", "role", "language_preference"]
+        },
+        {
+          "name": "Prospect",
+          "description": "Potential coaching client",
+          "key_fields": ["id", "name", "client_count", "main_pain", "ghl_contact_id"]
+        },
+        {
+          "name": "CallSession",
+          "description": "Individual call instance",
+          "key_fields": ["id", "prospect_id", "agent_id", "call_type", "status", "outcome", "recording_reference"]
+        },
+        {
+          "name": "CallThread",
+          "description": "Links primary call with follow-ups",
+          "key_fields": ["id", "prospect_id", "primary_call_id", "follow_up_call_ids"]
+        },
+        {
+          "name": "Milestone",
+          "description": "Call phase definition",
+          "key_fields": ["id", "name", "objective", "required_questions", "order"]
+        },
+        {
+          "name": "MilestoneResponse",
+          "description": "Agent responses within a milestone",
+          "key_fields": ["id", "call_session_id", "milestone_id", "responses", "status", "timestamp"]
+        },
+        {
+          "name": "Objection",
+          "description": "Objection type definition",
+          "key_fields": ["id", "type", "diagnostic_questions", "allowed_outcomes"]
+        },
+        {
+          "name": "ObjectionResponse",
+          "description": "Objection instance during call",
+          "key_fields": ["id", "call_session_id", "objection_id", "milestone_id", "outcome", "notes"]
+        },
+        {
+          "name": "SlideDeck",
+          "description": "Versioned slide deck for a product",
+          "key_fields": ["id", "product_id", "version", "status", "milestone_order", "slide_template_ids"]
+        },
+        {
+          "name": "SlideTemplate",
+          "description": "Individual slide definition",
+          "key_fields": ["id", "milestone_id", "title_static", "core_message_static", "parameter_slots", "visualization_template"]
+        },
+        {
+          "name": "SlideInstance",
+          "description": "Slide presentation during call",
+          "key_fields": ["id", "template_id", "call_session_id", "client_id", "rendered_content", "timing_data", "outcome_tag"]
+        },
+        {
+          "name": "PromptConfig",
+          "description": "AI prompt configuration",
+          "key_fields": ["id", "scope", "milestone_id", "language", "prompt_text", "variables", "version", "status"]
+        },
+        {
+          "name": "AIAnalysis",
+          "description": "AI-generated call analysis",
+          "key_fields": ["id", "call_session_id", "summary", "objection_classification", "risk_flags", "recommendations"]
+        },
+        {
+          "name": "Outcome",
+          "description": "Call outcome classification",
+          "key_fields": ["id", "call_session_id", "type", "disqualification_reason", "qualification_flags"]
+        }
+      ]
+    },
+    "integrations": [
+      {
+        "name": "GoHighLevel",
+        "type": "CRM",
+        "priority": "Phase 2",
+        "capabilities": ["Contact sync", "Pipeline stage update", "Calendar sync for follow-ups"]
+      },
+      {
+        "name": "Zoom",
+        "type": "Video/Recording",
+        "priority": "Phase 1",
+        "capabilities": ["Recording via bot join", "Speaker detection", "Transcript generation"]
+      },
+      {
+        "name": "Nano Banana Pro",
+        "type": "Visualization",
+        "priority": "Phase 2",
+        "capabilities": ["Flow diagrams", "Comparison tables", "Simple infographics", "Before/after schematics"]
+      }
+    ],
+    "non_goals": [
+      "No live AI co-pilot during calls",
+      "No auto-closing or AI persuasion",
+      "No best response suggestions during calls",
+      "No lead management (CRM handles this)",
+      "No marketing automation",
+      "No conversion rate improvement gimmicks"
+    ],
+    "success_metrics": [
+      {
+        "metric": "Call Variance Reduction",
+        "target": "< 15% variance in milestone completion time across agents",
+        "measurement": "Standard deviation of milestone durations"
+      },
+      {
+        "metric": "Qualification Accuracy",
+        "target": "> 95% of closed deals meet 500+ client threshold",
+        "measurement": "Post-close verification against qualification criteria"
+      },
+      {
+        "metric": "Coaching Retention",
+        "target": "> 80% 90-day retention on coaching clients",
+        "measurement": "Retention rate correlated with qualification flags"
+      },
+      {
+        "metric": "Closer Ramp Time",
+        "target": "< 2 weeks to first solo call for new closers",
+        "measurement": "Time from onboarding to independent call execution"
+      },
+      {
+        "metric": "Objection Pattern Visibility",
+        "target": "100% objection classification coverage",
+        "measurement": "Percentage of objections with outcome classification"
+      }
+    ],
+    "assumptions": [
+      "Sales agents have stable internet for Zoom calls",
+      "Prospects are pre-qualified through EUR 495 payment gate",
+      "Financial advisors/brokers understand German business context",
+      "GoHighLevel is the primary CRM for lead management",
+      "Recording consent is obtained before call starts"
+    ],
+    "constraints": [
+      "AI must not influence live call decisions",
+      "Slides cannot be regenerated per call (only parameters change)",
+      "Qualification gate of 500+ clients is non-negotiable",
+      "No discounting or price negotiation features",
+      "German and English only in Phase 1"
+    ],
+    "dependencies": [
+      {
+        "name": "Zoom API Access",
+        "type": "External",
+        "description": "Required for call recording functionality"
+      },
+      {
+        "name": "GoHighLevel API",
+        "type": "External",
+        "description": "Required for CRM sync and calendar integration"
+      },
+      {
+        "name": "LLM API (Claude/GPT)",
+        "type": "External",
+        "description": "Required for AI post-call analysis and summarization"
+      }
+    ],
+    "design_preferences": {
+      "preset": "corporate",
+      "preset_rationale": "Enterprise B2B SaaS platform for coaching business - requires professional, trustworthy appearance that conveys reliability and structure. The sales process itself is about systematic thinking and infrastructure, not hype.",
+      "custom_colors": null,
+      "style_notes": [
+        "Clean and professional interface",
+        "Aviation checklist aesthetic for the control panel",
+        "Minimal, utility-focused design",
+        "Clear visual hierarchy for milestones",
+        "Presentation slides should be neutral and analytical, not marketing-oriented",
+        "No persuasion language in any UI copy"
+      ],
+      "target_audience": "Sales closers, founders, and implementation consultants in the German financial advisory coaching space",
+      "brand_guidelines_provided": false,
+      "dark_mode_required": false,
+      "accessibility_requirements": ["WCAG 2.1 AA compliance for control panel"]
+    },
+    "build_phases": {
+      "sprint_1": {
+        "focus": "Core Call Flow",
+        "deliverables": [
+          "Data models implementation",
+          "Call flow engine with milestones",
+          "Milestones UI with checklist",
+          "Notes and checkmarks functionality"
+        ]
+      },
+      "sprint_2": {
+        "focus": "Objection System",
+        "deliverables": [
+          "Objection subflows with 6 types",
+          "Outcome enforcement",
+          "Follow-up call linking",
+          "Qualification gates"
+        ]
+      },
+      "sprint_3": {
+        "focus": "Recording & AI",
+        "deliverables": [
+          "Call recording integration",
+          "AI summary and analysis",
+          "Manager dashboard",
+          "Role-based access control"
+        ]
+      },
+      "sprint_4": {
+        "focus": "Presentation Mode",
+        "deliverables": [
+          "Dual-view sync (control panel + presentation)",
+          "Presentation mode with new tab",
+          "Slide rendering engine",
+          "WebSocket synchronization"
+        ]
+      },
+      "sprint_5": {
+        "focus": "Advanced Features",
+        "deliverables": [
+          "Slide visualization engine",
+          "Admin configuration panel",
+          "AI prompt registry",
+          "Analytics and iteration tracking"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "id": "SFLOW-006",
+  "name": "GoHighLevel CRM Sync",
+  "description": "System flow that synchronizes call data with GoHighLevel CRM including contact updates, pipeline stages, and calendar appointments.",
+  "components": ["api", "database", "ghl_integration", "queue"],
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Call session completed with outcome",
+      "component": "api",
+      "inputs": ["call_session_id", "outcome_type", "prospect_id"],
+      "outputs": ["sync_trigger"],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "API queues CRM sync job",
+      "component": "queue",
+      "inputs": ["sync_type", "call_session_id", "prospect_id"],
+      "outputs": ["sync_job_id"],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Worker picks up sync job",
+      "component": "queue",
+      "inputs": ["sync_job_id"],
+      "outputs": ["job_processing"],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Database retrieves prospect GHL contact ID",
+      "component": "database",
+      "inputs": ["prospect_id"],
+      "outputs": ["ghl_contact_id"],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Database retrieves call outcome and qualification data",
+      "component": "database",
+      "inputs": ["call_session_id"],
+      "outputs": ["outcome_data", "qualification_flags", "notes"],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "GHL integration maps outcome to pipeline stage",
+      "component": "ghl_integration",
+      "inputs": ["outcome_type"],
+      "outputs": ["pipeline_stage_id"],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "GHL integration updates contact pipeline stage",
+      "component": "ghl_integration",
+      "inputs": ["ghl_contact_id", "pipeline_stage_id"],
+      "outputs": ["pipeline_update_result"],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "GHL integration syncs contact custom fields",
+      "component": "ghl_integration",
+      "inputs": ["ghl_contact_id", "qualification_flags", "call_data"],
+      "outputs": ["contact_update_result"],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Check if follow-up scheduled",
+      "component": "api",
+      "inputs": ["outcome_type"],
+      "outputs": ["follow_up_check"],
+      "next_steps": ["STEP-010", "STEP-013"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "If follow-up: Retrieve follow-up appointment details",
+      "component": "database",
+      "inputs": ["call_session_id"],
+      "outputs": ["follow_up_datetime", "appointment_notes"],
+      "conditions": [{"condition": "outcome == follow_up_scheduled", "outcome": "create_appointment"}],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "GHL integration creates calendar appointment",
+      "component": "ghl_integration",
+      "inputs": ["ghl_contact_id", "follow_up_datetime", "appointment_notes"],
+      "outputs": ["ghl_appointment_id"],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "Database stores GHL appointment reference",
+      "component": "database",
+      "inputs": ["call_session_id", "ghl_appointment_id"],
+      "outputs": ["appointment_linked"],
+      "next_steps": ["STEP-013"]
+    },
+    {
+      "id": "STEP-013",
+      "sequence": 13,
+      "action": "GHL integration adds call activity note",
+      "component": "ghl_integration",
+      "inputs": ["ghl_contact_id", "call_summary", "outcome_type"],
+      "outputs": ["activity_note_created"],
+      "next_steps": ["STEP-014"]
+    },
+    {
+      "id": "STEP-014",
+      "sequence": 14,
+      "action": "Database logs sync completion",
+      "component": "database",
+      "inputs": ["call_session_id", "sync_results"],
+      "outputs": ["sync_logged"],
+      "next_steps": ["STEP-015"]
+    },
+    {
+      "id": "STEP-015",
+      "sequence": 15,
+      "action": "Queue marks job complete",
+      "component": "queue",
+      "inputs": ["sync_job_id"],
+      "outputs": ["job_completed"],
+      "next_steps": []
+    }
+  ],
+  "data_flow": [
+    {
+      "from": "api",
+      "to": "queue",
+      "data": "Sync job with call session reference"
+    },
+    {
+      "from": "database",
+      "to": "ghl_integration",
+      "data": "Contact ID and call data"
+    },
+    {
+      "from": "ghl_integration",
+      "to": "ghl_api",
+      "data": "Pipeline stage update request"
+    },
+    {
+      "from": "ghl_integration",
+      "to": "ghl_api",
+      "data": "Contact custom fields update"
+    },
+    {
+      "from": "ghl_integration",
+      "to": "ghl_api",
+      "data": "Calendar appointment creation"
+    },
+    {
+      "from": "ghl_integration",
+      "to": "database",
+      "data": "Sync result confirmation"
+    }
+  ],
+  "error_handling": [
+    {
+      "error": "GHL contact not found",
+      "response": "Create new contact in GHL, link to prospect"
+    },
+    {
+      "error": "GHL API rate limit",
+      "response": "Retry with exponential backoff"
+    },
+    {
+      "error": "Pipeline stage mapping failed",
+      "response": "Use default stage, log for admin review"
+    },
+    {
+      "error": "Calendar sync failed",
+      "response": "Create internal follow-up reminder, retry GHL sync"
+    },
+    {
+      "error": "GHL authentication expired",
+      "response": "Refresh OAuth token, retry request"
+    },
+    {
+      "error": "Sync job timeout",
+      "response": "Mark partial completion, queue remaining tasks"
+    }
+  ]
+}

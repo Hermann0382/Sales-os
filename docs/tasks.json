@@ -1,0 +1,2138 @@
+{
+  "artifact_type": "tasks",
+  "status": "complete",
+  "validation": "passed",
+  "approval_required": true,
+  "approvers": ["Cynthia", "Hermann", "Usama"],
+  "next_phase": "adr_documentation",
+  "data": {
+    "project_name": "CallOS",
+    "version": "1.0.0",
+    "created_at": "2026-01-08T16:00:00Z",
+    "methodology": "agile",
+    "sprint_duration": "2 weeks",
+    "team_capacity": 40,
+    "total_story_points": 285,
+    "estimated_duration_weeks": 12,
+    "epics": [
+      {
+        "id": "EPIC-001",
+        "title": "Core Call Flow Engine",
+        "description": "Foundation system for milestone-based call execution with session management, data persistence, and UI framework",
+        "sprint": "SPRINT-001",
+        "priority": "high",
+        "feature_ids": ["FR-001", "FR-002", "FR-004"],
+        "story_ids": ["ST-001", "ST-002", "ST-003", "ST-004", "ST-005", "ST-006", "ST-007", "ST-008", "ST-009", "ST-018", "ST-019"],
+        "estimated_story_points": 34,
+        "estimated_sprints": 1,
+        "success_criteria": [
+          "All 7 milestones execute sequentially with required fields",
+          "Pre-call checklist enforces qualification gate (>=500 clients)",
+          "Notes capture and milestone responses persist correctly",
+          "Strict vs flexible mode toggle works with override logging",
+          "Call session data structure supports all required fields"
+        ]
+      },
+      {
+        "id": "EPIC-002",
+        "title": "Objection Handling System",
+        "description": "Structured diagnostic objection flows for 6 objection types with outcome classification and deferred tracking",
+        "sprint": "SPRINT-002",
+        "priority": "high",
+        "feature_ids": ["FR-003"],
+        "story_ids": ["ST-010", "ST-011", "ST-012", "ST-013", "ST-014", "ST-015", "ST-016", "ST-017"],
+        "estimated_story_points": 40,
+        "estimated_sprints": 1,
+        "success_criteria": [
+          "All 6 objection types load correct diagnostic questions",
+          "Objection responses save with milestone context",
+          "Outcomes (Resolved/Deferred/Disqualified) enforced and tracked",
+          "Deferred objections surface in follow-up calls",
+          "No persuasion/rebuttal content available (guardrails enforced)"
+        ]
+      },
+      {
+        "id": "EPIC-003",
+        "title": "Recording & AI Analysis",
+        "description": "Zoom recording integration, transcript generation, and AI-powered post-call analysis with manager dashboard",
+        "sprint": "SPRINT-003",
+        "priority": "high",
+        "feature_ids": ["FR-011", "FR-012", "FR-014"],
+        "story_ids": ["ST-028", "ST-029", "ST-030", "ST-032"],
+        "estimated_story_points": 52,
+        "estimated_sprints": 1.5,
+        "success_criteria": [
+          "Zoom recording joins silently on link paste within 5 seconds",
+          "Transcript with speaker detection generated and searchable",
+          "AI analysis completes within 2 minutes of call end",
+          "Risk flags (overpromise, pressure, misalignment) detected",
+          "Manager dashboard shows team metrics, objection patterns, and agent variance"
+        ]
+      },
+      {
+        "id": "EPIC-004",
+        "title": "Dual Interface & Presentation Mode",
+        "description": "Control panel for agent with client presentation view synced via WebSocket, plus canonical slide deck system",
+        "sprint": "SPRINT-004",
+        "priority": "high",
+        "feature_ids": ["FR-008", "FR-009", "FR-010"],
+        "story_ids": ["ST-023", "ST-024", "ST-025", "ST-026", "ST-027"],
+        "estimated_story_points": 44,
+        "estimated_sprints": 1.5,
+        "success_criteria": [
+          "Control panel and presentation view sync via WebSocket (<500ms latency)",
+          "Presentation opens in separate tab with read-only slide view",
+          "Slide templates render with parameterized prospect data",
+          "Slide instances track timing, agent notes, and outcome tags",
+          "Version control for slide decks with rollback capability"
+        ]
+      },
+      {
+        "id": "EPIC-005",
+        "title": "Follow-Up & CRM Integration",
+        "description": "Follow-up call support with context resume, GoHighLevel calendar sync, and implementation-only routing",
+        "sprint": "SPRINT-001",
+        "priority": "high",
+        "feature_ids": ["FR-007"],
+        "story_ids": ["ST-021", "ST-022"],
+        "estimated_story_points": 18,
+        "estimated_sprints": 0.5,
+        "success_criteria": [
+          "Follow-up calls display previous call summary and unresolved objections",
+          "Resume point selection (continue vs jump to decision)",
+          "GoHighLevel calendar integration for follow-up scheduling",
+          "Call thread links primary and follow-up sessions",
+          "Implementation-only route available for disqualified prospects"
+        ]
+      },
+      {
+        "id": "EPIC-006",
+        "title": "Admin Configuration & AI Prompt Management",
+        "description": "Admin panel for milestone tuning, objection configuration, slide deck management, and 5-layer AI prompt registry",
+        "sprint": "SPRINT-005",
+        "priority": "high",
+        "feature_ids": ["FR-015", "FR-016"],
+        "story_ids": ["ST-033", "ST-034"],
+        "estimated_story_points": 36,
+        "estimated_sprints": 1,
+        "success_criteria": [
+          "Admin can edit milestones, objections, slide templates with preview",
+          "AI prompts configurable across 5 scopes (global, milestone, objection, slide, synthesis)",
+          "Prompt versioning with status tracking (draft/active/deprecated)",
+          "Variable system for runtime injection (prospect_name, client_count, etc.)",
+          "Test mode for validating configuration before rollout"
+        ]
+      },
+      {
+        "id": "EPIC-007",
+        "title": "Role-Based Access Control & Security",
+        "description": "Multi-tier user roles (Agent/Manager/Admin) with permission enforcement and comprehensive audit logging",
+        "sprint": "SPRINT-001",
+        "priority": "high",
+        "feature_ids": ["FR-013"],
+        "story_ids": ["ST-031"],
+        "estimated_story_points": 16,
+        "estimated_sprints": 0.5,
+        "success_criteria": [
+          "Three roles with distinct permissions: Agent (create/run calls), Manager (review/analytics), Admin (configure)",
+          "JWT authentication with session management",
+          "Row-level security on call data (agents see own, managers see team)",
+          "Audit log for all admin changes with timestamps",
+          "Multi-tenant organization isolation"
+        ]
+      },
+      {
+        "id": "EPIC-008",
+        "title": "Call Outcome Classification & Qualification",
+        "description": "Forced outcome selection with disqualification reasons, qualification flags, and decision tracking",
+        "sprint": "SPRINT-002",
+        "priority": "high",
+        "feature_ids": ["FR-006"],
+        "story_ids": ["ST-020"],
+        "estimated_story_points": 12,
+        "estimated_sprints": 0.5,
+        "success_criteria": [
+          "Forced outcome selection: Coaching Client / Follow-up Scheduled / Implementation Only / Disqualified",
+          "Mandatory disqualification reason if applicable",
+          "Qualification flags capture: 500+ clients, financial capacity, strategic alignment",
+          "Cannot complete call without outcome selection",
+          "Outcome routing triggers appropriate pipeline actions"
+        ]
+      },
+      {
+        "id": "EPIC-009",
+        "title": "Bilingual Support & White-Label Readiness",
+        "description": "Full German/English language support and tenant-based architecture for future white-label deployment",
+        "sprint": "SPRINT-005",
+        "priority": "medium",
+        "feature_ids": ["FR-017", "FR-020"],
+        "story_ids": ["ST-035", "ST-038"],
+        "estimated_story_points": 20,
+        "estimated_sprints": 0.5,
+        "success_criteria": [
+          "Language toggle per user/call for DE/EN",
+          "All milestones, objections, prompts stored with language variants",
+          "Tenant-based config with custom milestone sets",
+          "Custom objection libraries per tenant",
+          "Branding abstracted for customization"
+        ]
+      },
+      {
+        "id": "EPIC-010",
+        "title": "Guardrails & Learning System",
+        "description": "Anti-manipulation controls, effectiveness scoring, and deliberate iteration loop",
+        "sprint": "SPRINT-005",
+        "priority": "medium",
+        "feature_ids": ["FR-018", "FR-019"],
+        "story_ids": ["ST-036", "ST-037"],
+        "estimated_story_points": 12,
+        "estimated_sprints": 0.5,
+        "success_criteria": [
+          "No free-text persuasion scripts available to agents",
+          "No rebuttal or discount fields in objection flows",
+          "Objection questions read-only and neutral",
+          "Slide/milestone effectiveness scoring correlates with outcomes",
+          "Admin-approved version upgrades based on statistical confidence"
+        ]
+      }
+    ],
+    "tasks": [
+      {
+        "id": "TASK-001",
+        "title": "Set up project infrastructure and monorepo",
+        "description": "Initialize git repository, configure build pipeline, set up development environment, Docker containerization",
+        "type": "backend",
+        "epic_id": "EPIC-001",
+        "feature_id": "FR-001",
+        "story_ids": [],
+        "entity_ids": ["ENT-001", "ENT-002"],
+        "flow_ids": [],
+        "journey_ids": [],
+        "priority": "high",
+        "story_points": 5,
+        "estimated_hours": 8,
+        "assignee": "backend_developer",
+        "dependencies": [],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Git repo initialized with proper branch strategy",
+          "Docker Compose set up for local development",
+          "CI/CD pipeline configured (linting, tests, build)",
+          "Development environment documented",
+          "Package dependencies locked and reproducible"
+        ],
+        "definition_of_done": [
+          "Code committed to main branch",
+          "CI pipeline passing",
+          "README with setup instructions",
+          "Team can clone and run locally within 5 minutes"
+        ],
+        "technical_notes": "Use Node.js for backend, React for frontend. PostgreSQL for database. Recommend monorepo structure with apps/ and packages/.",
+        "risks": ["Team familiarity with monorepo tooling"],
+        "tags": ["infrastructure", "devops"],
+        "context_plan": {
+          "beginning_context": [],
+          "end_state_files": [".github/workflows/ci.yml", "docker-compose.yml", "package.json", "README.md"],
+          "read_only_files": ["docs/prd.json", "docs/erd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": [],
+          "success_criteria": ["CI passes", "Docker builds successfully", "Team can run dev environment"],
+          "test_command": "docker-compose up --build"
+        },
+        "estimated_time": "8 hours",
+        "scope_boundaries": ["DevOps team owns deployment to production"]
+      },
+      {
+        "id": "TASK-002",
+        "title": "Create database schema and migrations",
+        "description": "Implement 15 database entities from ERD with proper relationships, indexes, constraints, and initial seed data",
+        "type": "backend",
+        "epic_id": "EPIC-001",
+        "feature_id": "FR-001",
+        "story_ids": [],
+        "entity_ids": ["ENT-001", "ENT-002", "ENT-003", "ENT-004", "ENT-005", "ENT-006", "ENT-007", "ENT-008", "ENT-009", "ENT-010", "ENT-011", "ENT-012", "ENT-013", "ENT-014", "ENT-015"],
+        "flow_ids": ["FLOW-001"],
+        "journey_ids": ["JRN-001"],
+        "priority": "high",
+        "story_points": 8,
+        "estimated_hours": 16,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-001"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "All 15 entities created with correct attributes and types",
+          "All 27 relationships defined with proper foreign keys",
+          "Unique and check constraints applied",
+          "Indexes created on high-query columns",
+          "Migration system working (forward and rollback)",
+          "Seed data for milestones and objections loaded",
+          "Multi-tenancy isolation enforced at database level"
+        ],
+        "definition_of_done": [
+          "Schema documentation generated",
+          "Migrations tested on clean database",
+          "Rollback tested successfully",
+          "Seed data loads without errors",
+          "Foreign key constraints prevent orphaned records"
+        ],
+        "technical_notes": "Use Knex.js for migrations. Implement soft deletes pattern. Create audit triggers for compliance logging.",
+        "risks": ["Migration complexity with relationships", "Data type decisions impacting downstream queries"],
+        "tags": ["database", "schema", "migration"],
+        "context_plan": {
+          "beginning_context": ["docs/erd.json"],
+          "end_state_files": ["db/migrations/001_initial_schema.js", "db/seeds/milestones_objections.js", "db/schema.sql"],
+          "read_only_files": ["docs/erd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/db/migrations.test.js", "tests/db/schema.test.js"],
+          "success_criteria": ["Migrations run cleanly", "Relationships enforced", "Seed data loads", "Rollback restores schema"],
+          "test_command": "npm run db:test"
+        },
+        "estimated_time": "16 hours",
+        "scope_boundaries": ["Initial schema only; schema evolution handled in later sprints"]
+      },
+      {
+        "id": "TASK-003",
+        "title": "Build User authentication and authorization system",
+        "description": "Implement JWT-based authentication, role-based access control, session management, and audit logging",
+        "type": "fullstack",
+        "epic_id": "EPIC-007",
+        "feature_id": "FR-013",
+        "story_ids": ["ST-031"],
+        "entity_ids": ["ENT-001", "ENT-002"],
+        "flow_ids": ["FLOW-023"],
+        "journey_ids": [],
+        "priority": "high",
+        "story_points": 8,
+        "estimated_hours": 16,
+        "assignee": "fullstack_developer",
+        "dependencies": ["TASK-002"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "JWT token generation and validation working",
+          "Three roles (Agent, Manager, Admin) with distinct permissions",
+          "Row-level security on call data enforced",
+          "Login/logout flows implemented",
+          "Session timeout after 2 hours of inactivity",
+          "Audit log records all admin actions with timestamps",
+          "Password hashing using bcrypt with salt rounds",
+          "Rate limiting on login attempts (5 max per 15 min)"
+        ],
+        "definition_of_done": [
+          "Authentication tests passing (login, token, logout)",
+          "Authorization tests verifying role-based access",
+          "Audit logs for sample admin actions recorded",
+          "Security review completed",
+          "Documentation on JWT strategy and rotation"
+        ],
+        "technical_notes": "Use Passport.js for authentication middleware. Store tokens in secure httpOnly cookies. Implement token refresh mechanism.",
+        "risks": ["JWT secret key management", "Token expiration edge cases", "Multi-device login scenarios"],
+        "tags": ["security", "authentication", "authorization"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json", "docs/erd.json"],
+          "end_state_files": ["src/auth/jwt.ts", "src/auth/rbac.ts", "src/middleware/auth.ts", "src/audit/logger.ts"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/auth/jwt.test.ts", "tests/auth/rbac.test.ts", "tests/auth/integration.test.ts"],
+          "success_criteria": ["Auth flow works end-to-end", "RBAC enforced correctly", "Audit logs comprehensive"],
+          "test_command": "npm run test -- auth"
+        },
+        "estimated_time": "16 hours",
+        "scope_boundaries": ["SSO integration in Phase 2"]
+      },
+      {
+        "id": "TASK-004",
+        "title": "Implement Call Session model and service layer",
+        "description": "Build CallSession entity management, state machine, and core business logic for call lifecycle",
+        "type": "backend",
+        "epic_id": "EPIC-001",
+        "feature_id": "FR-001",
+        "story_ids": ["ST-001"],
+        "entity_ids": ["ENT-005", "ENT-006"],
+        "flow_ids": ["FLOW-001"],
+        "journey_ids": ["JRN-001"],
+        "priority": "high",
+        "story_points": 5,
+        "estimated_hours": 12,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-002", "TASK-003"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "CallSession created with all required fields (prospect, agent, call_thread, status, mode, language)",
+          "Call status state machine enforces valid transitions (scheduled -> in_progress -> completed/cancelled)",
+          "CallThread groups primary and follow-up calls correctly",
+          "Session persists all milestone responses with timestamps",
+          "Cannot start call until pre-call checklist complete",
+          "Qualification gate enforced (blocks coaching pitch if < 500 clients)"
+        ],
+        "definition_of_done": [
+          "Service methods CRUD tested",
+          "State transitions validated",
+          "Pre-call gate enforcement tested",
+          "CallThread linking works correctly",
+          "API endpoints responding correctly"
+        ],
+        "technical_notes": "Implement as TypeScript class with clear state transitions. Use dependency injection for testability.",
+        "risks": ["State machine complexity with flexible mode overrides"],
+        "tags": ["backend", "state-machine", "business-logic"],
+        "context_plan": {
+          "beginning_context": ["docs/erd.json"],
+          "end_state_files": ["src/services/CallSessionService.ts", "src/models/CallSession.ts"],
+          "read_only_files": ["docs/erd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "unit",
+          "test_files": ["tests/services/CallSessionService.test.ts"],
+          "success_criteria": ["State transitions validated", "Pre-call gate enforced", "Data persistence works"],
+          "test_command": "npm run test -- CallSessionService"
+        },
+        "estimated_time": "12 hours",
+        "scope_boundaries": ["Zoom integration separate"]
+      },
+      {
+        "id": "TASK-005",
+        "title": "Create pre-call checklist API endpoints",
+        "description": "Build REST API for checklist retrieval, item validation, and gate enforcement before call starts",
+        "type": "backend",
+        "epic_id": "EPIC-001",
+        "feature_id": "FR-004",
+        "story_ids": ["ST-018", "ST-019"],
+        "entity_ids": ["ENT-003", "ENT-006"],
+        "flow_ids": ["FLOW-001"],
+        "journey_ids": ["JRN-001"],
+        "priority": "high",
+        "story_points": 3,
+        "estimated_hours": 8,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-004"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "GET /calls/:id/checklist returns 8-item checklist with completion status",
+          "POST /calls/:id/validate-checklist validates all items checked",
+          "Qualification gate: returns 403 if client_count < 500",
+          "Flexibility mode: logs override reasons when applicable",
+          "Cannot start call without checklist completion",
+          "Response includes helpful messages and field requirements"
+        ],
+        "definition_of_done": [
+          "Endpoints return correct status codes",
+          "Validation logic tested comprehensively",
+          "Gate enforcement prevents unqualified pitches",
+          "Override logging captures reasons",
+          "API documentation generated"
+        ],
+        "technical_notes": "REST endpoints with validation middleware. Return 400 for missing fields, 403 for qualification failures.",
+        "risks": ["Edge cases in qualification logic"],
+        "tags": ["backend", "api", "validation"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["src/api/routes/checklist.ts", "src/validators/checklistValidator.ts"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/api/checklist.test.ts"],
+          "success_criteria": ["All endpoints work", "Validation correct", "Gate prevents unqualified"],
+          "test_command": "npm run test -- checklist"
+        },
+        "estimated_time": "8 hours",
+        "scope_boundaries": ["UI implementation separate"]
+      },
+      {
+        "id": "TASK-006",
+        "title": "Build Milestone data model and service",
+        "description": "Implement milestone retrieval, sequencing, and field management for 7-milestone call structure",
+        "type": "backend",
+        "epic_id": "EPIC-001",
+        "feature_id": "FR-002",
+        "story_ids": ["ST-003", "ST-004", "ST-005", "ST-006", "ST-007", "ST-008", "ST-009"],
+        "entity_ids": ["ENT-004"],
+        "flow_ids": ["FLOW-002", "FLOW-003", "FLOW-004", "FLOW-005", "FLOW-006", "FLOW-007", "FLOW-008"],
+        "journey_ids": ["JRN-001"],
+        "priority": "high",
+        "story_points": 5,
+        "estimated_hours": 12,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-002"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Load all 7 milestones in correct order with objectives and questions",
+          "Milestone fields include: title, objective, required_questions, confirmations, estimated_duration_minutes",
+          "Enforce sequential milestone progression in strict mode",
+          "Allow milestone override in flexible mode with reason logging",
+          "Return estimated duration for UX time estimates",
+          "Support per-organization milestone customization (white-label ready)"
+        ],
+        "definition_of_done": [
+          "Service methods tested",
+          "Sequential progression validated",
+          "Override mechanism works",
+          "Retrieval queries optimized",
+          "Documentation on milestone structure"
+        ],
+        "technical_notes": "Milestone data stored in database, not hardcoded. Use order_index for sequencing.",
+        "risks": ["Milestone skipping in flexible mode"],
+        "tags": ["backend", "business-logic"],
+        "context_plan": {
+          "beginning_context": ["docs/erd.json"],
+          "end_state_files": ["src/services/MilestoneService.ts", "src/models/Milestone.ts"],
+          "read_only_files": ["docs/erd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "unit",
+          "test_files": ["tests/services/MilestoneService.test.ts"],
+          "success_criteria": ["All milestones load correctly", "Sequencing enforced", "Override logged"],
+          "test_command": "npm run test -- MilestoneService"
+        },
+        "estimated_time": "12 hours",
+        "scope_boundaries": ["Milestone editing (admin) separate task"]
+      },
+      {
+        "id": "TASK-007",
+        "title": "Build MilestoneResponse tracking service",
+        "description": "Implement response capture, field checkoff tracking, and notes persistence for milestone execution",
+        "type": "backend",
+        "epic_id": "EPIC-001",
+        "feature_id": "FR-001",
+        "story_ids": ["ST-001", "ST-002"],
+        "entity_ids": ["ENT-007"],
+        "flow_ids": ["FLOW-002", "FLOW-003", "FLOW-004", "FLOW-005", "FLOW-006", "FLOW-007", "FLOW-008"],
+        "journey_ids": ["JRN-001"],
+        "priority": "high",
+        "story_points": 5,
+        "estimated_hours": 10,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-002", "TASK-006"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Create MilestoneResponse on milestone start with status 'in_progress'",
+          "Update required_items_checked as agent marks items",
+          "Save agent notes with timestamps",
+          "Mark milestone complete (status 'completed') only when all required items checked in strict mode",
+          "Log override reason when skipping milestone in flexible mode",
+          "Track started_at and completed_at timestamps",
+          "Prevent duplicate responses for same milestone in same call"
+        ],
+        "definition_of_done": [
+          "CRUD operations tested",
+          "Status transitions validated",
+          "Note saving works correctly",
+          "Timestamps recorded accurately",
+          "Duplication prevention works"
+        ],
+        "technical_notes": "Use atomic updates for concurrent note saves. Timestamps in UTC.",
+        "risks": ["Race conditions on concurrent note saves"],
+        "tags": ["backend", "business-logic"],
+        "context_plan": {
+          "beginning_context": ["docs/erd.json"],
+          "end_state_files": ["src/services/MilestoneResponseService.ts"],
+          "read_only_files": ["docs/erd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "unit",
+          "test_files": ["tests/services/MilestoneResponseService.test.ts"],
+          "success_criteria": ["Response tracking works", "Notes saved", "Status transitions correct"],
+          "test_command": "npm run test -- MilestoneResponseService"
+        },
+        "estimated_time": "10 hours",
+        "scope_boundaries": ["Concurrency handling for large teams in Phase 2"]
+      },
+      {
+        "id": "TASK-008",
+        "title": "Create control panel UI component (React)",
+        "description": "Build agent-facing control panel with milestone display, checklist, notes, objection triggers, and slides navigator",
+        "type": "frontend",
+        "epic_id": "EPIC-001",
+        "feature_id": "FR-001",
+        "story_ids": ["ST-001", "ST-023"],
+        "entity_ids": ["ENT-004", "ENT-007"],
+        "flow_ids": ["FLOW-001", "FLOW-024"],
+        "journey_ids": ["JRN-001"],
+        "priority": "high",
+        "story_points": 8,
+        "estimated_hours": 20,
+        "assignee": "frontend_developer",
+        "dependencies": ["TASK-004", "TASK-005", "TASK-006"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Control panel displays current milestone with objective and timer",
+          "Required items checklist visible with check/uncheck capability",
+          "Notes textarea with autosave and character limit",
+          "Milestone progress indicator (e.g., 2/7 complete)",
+          "Objection trigger button always accessible",
+          "Slide navigator buttons (prev/next) linked to presentation view",
+          "Confirmation checkboxes (when required by milestone)",
+          "No client-sensitive information visible if screen shared",
+          "Mobile-responsive layout for tablets"
+        ],
+        "definition_of_done": [
+          "Component renders without errors",
+          "All interactive elements functional",
+          "Styling matches corporate design system",
+          "Accessibility: keyboard navigation, ARIA labels",
+          "Responsive design tested on mobile/tablet",
+          "Performance: renders in < 100ms"
+        ],
+        "technical_notes": "Use React hooks for state. TailwindCSS for styling. Real-time updates via WebSocket.",
+        "risks": ["Complex state management with many moving parts"],
+        "tags": ["frontend", "ui", "react"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["src/components/ControlPanel.tsx", "src/hooks/useMilestone.ts"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/components/ControlPanel.test.tsx"],
+          "success_criteria": ["Component renders", "Interactions work", "Data updates reflect", "No console errors"],
+          "test_command": "npm run test -- ControlPanel"
+        },
+        "estimated_time": "20 hours",
+        "scope_boundaries": ["Zoom integration separate", "WebSocket sync in later task"]
+      },
+      {
+        "id": "TASK-009",
+        "title": "Build objection handling backend service",
+        "description": "Implement 6 objection types, diagnostic questions routing, outcome enforcement, and deferred tracking",
+        "type": "backend",
+        "epic_id": "EPIC-002",
+        "feature_id": "FR-003",
+        "story_ids": ["ST-010", "ST-011", "ST-012", "ST-013", "ST-014", "ST-015", "ST-016", "ST-017"],
+        "entity_ids": ["ENT-008", "ENT-009"],
+        "flow_ids": ["FLOW-009", "FLOW-010", "FLOW-011", "FLOW-012", "FLOW-013", "FLOW-014"],
+        "journey_ids": ["JRN-002"],
+        "priority": "high",
+        "story_points": 8,
+        "estimated_hours": 18,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-002"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "All 6 objection types (Price, Timing, Capacity, Think, Partner, Skepticism) defined with questions",
+          "Diagnostic questions loaded correctly for selected type",
+          "Questions are read-only, no persuasion/rebuttal content available",
+          "ObjectionResponse records objection with milestone context",
+          "Forced outcome selection: Resolved, Deferred, or Disqualified",
+          "Deferred objections flagged for follow-up calls",
+          "Cannot close objection without outcome selection",
+          "Diagnostic answers stored for analysis"
+        ],
+        "definition_of_done": [
+          "All 6 objection flows working",
+          "Outcome enforcement prevents incomplete objections",
+          "Deferred objections surface in follow-ups",
+          "API endpoints tested comprehensively",
+          "Documentation on objection structure"
+        ],
+        "technical_notes": "Store objection questions in database, not hardcoded. Validate outcome types against allowed list.",
+        "risks": ["Question phrasing quality (neutrality vs leading)"],
+        "tags": ["backend", "business-logic"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json", "docs/erd.json"],
+          "end_state_files": ["src/services/ObjectionService.ts", "src/models/Objection.ts", "src/models/ObjectionResponse.ts"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "unit",
+          "test_files": ["tests/services/ObjectionService.test.ts"],
+          "success_criteria": ["All 6 types work", "Outcomes enforced", "No persuasion content available"],
+          "test_command": "npm run test -- ObjectionService"
+        },
+        "estimated_time": "18 hours",
+        "scope_boundaries": ["Question phrasing validation in later task"]
+      },
+      {
+        "id": "TASK-010",
+        "title": "Create objection handling UI subflow components",
+        "description": "Build React components for 6 objection types with diagnostic question progression and outcome selection",
+        "type": "frontend",
+        "epic_id": "EPIC-002",
+        "feature_id": "FR-003",
+        "story_ids": ["ST-010", "ST-011", "ST-012"],
+        "entity_ids": ["ENT-008", "ENT-009"],
+        "flow_ids": ["FLOW-009", "FLOW-010", "FLOW-011", "FLOW-012", "FLOW-013", "FLOW-014"],
+        "journey_ids": ["JRN-002"],
+        "priority": "high",
+        "story_points": 8,
+        "estimated_hours": 18,
+        "assignee": "frontend_developer",
+        "dependencies": ["TASK-008", "TASK-009"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Objection selector shows 6 types with clear descriptions",
+          "Selected type loads diagnostic questions one per screen or all visible",
+          "Question text is read-only, displayed clearly",
+          "Agent can type responses/notes for each question",
+          "Outcome selection panel shows: Resolved, Deferred, Disqualified",
+          "Cannot close panel without selecting outcome",
+          "Selected outcome triggers appropriate routing",
+          "Navigation between questions clear (next, prev, skip if allowed)",
+          "Mobile-friendly question layouts"
+        ],
+        "definition_of_done": [
+          "All 6 objection flows render correctly",
+          "Outcome selection enforced",
+          "Responses captured in state",
+          "Navigation works intuitively",
+          "Accessibility compliance checked",
+          "No persuasion content in UI"
+        ],
+        "technical_notes": "Modal or side panel design. Consider progressive disclosure for complex questions.",
+        "risks": ["UX complexity - too many fields per screen", "Question phrasing clarity"],
+        "tags": ["frontend", "ui", "react"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["src/components/ObjectionSubflow.tsx", "src/components/ObjectionTypeSelector.tsx"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/components/ObjectionSubflow.test.tsx"],
+          "success_criteria": ["All 6 types render", "Outcomes enforced", "Data captures correctly"],
+          "test_command": "npm run test -- ObjectionSubflow"
+        },
+        "estimated_time": "18 hours",
+        "scope_boundaries": ["AI-powered question suggestions in Phase 2"]
+      },
+      {
+        "id": "TASK-011",
+        "title": "Implement Zoom recording integration",
+        "description": "Connect to Zoom API for bot recording, transcript generation, and timeline marker insertion",
+        "type": "backend",
+        "epic_id": "EPIC-003",
+        "feature_id": "FR-011",
+        "story_ids": ["ST-028"],
+        "entity_ids": ["ENT-006"],
+        "flow_ids": ["FLOW-019"],
+        "journey_ids": ["JRN-001"],
+        "priority": "high",
+        "story_points": 13,
+        "estimated_hours": 24,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-002", "TASK-004"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Bot joins Zoom meeting silently within 5 seconds of link paste",
+          "Audio recorded with speaker detection enabled",
+          "Transcript generated via Zoom API (or third-party service)",
+          "Timeline markers inserted for milestone transitions, objections, slides",
+          "Recording linked to CallSession with reference ID",
+          "Recording stored in secure S3 bucket with access logging",
+          "Conversation with prospect about recording consent enforced",
+          "Recording available for download/streaming within 2 minutes of call end"
+        ],
+        "definition_of_done": [
+          "Bot join/leave tested with real Zoom meetings",
+          "Transcript accuracy validated (sample calls)",
+          "Timeline markers appear at correct timestamps",
+          "Storage and retrieval working",
+          "Security review completed",
+          "Error handling for failed recordings"
+        ],
+        "technical_notes": "Use Zoom SDK for bot. Consider Deepgram or AssemblyAI for transcription if Zoom API insufficient. Implement webhook for recording ready notification.",
+        "risks": ["Zoom API rate limits", "Transcription accuracy", "Recording latency"],
+        "tags": ["backend", "integration", "zoom"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["src/services/ZoomRecordingService.ts", "src/integrations/zoom/bot.ts"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/integrations/zoom.test.ts"],
+          "success_criteria": ["Bot joins meeting", "Recording captured", "Transcript generated", "Retrieval works"],
+          "test_command": "npm run test -- zoom"
+        },
+        "estimated_time": "24 hours",
+        "scope_boundaries": ["Zoom API key management handled by DevOps"]
+      },
+      {
+        "id": "TASK-012",
+        "title": "Build AI post-call analysis service",
+        "description": "Implement Claude API integration for call summary, objection classification, risk flags, and follow-up email generation",
+        "type": "backend",
+        "epic_id": "EPIC-003",
+        "feature_id": "FR-012",
+        "story_ids": ["ST-029", "ST-030"],
+        "entity_ids": ["ENT-014"],
+        "flow_ids": ["FLOW-019"],
+        "journey_ids": ["JRN-001"],
+        "priority": "high",
+        "story_points": 13,
+        "estimated_hours": 24,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-002", "TASK-004", "TASK-011"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Claude API called asynchronously after call completion",
+          "Analysis completes within 2 minutes of call end",
+          "Summary generated: factual recap, no interpretation",
+          "Objection classification: type, frequency, resolution attempts",
+          "Decision readiness score: 0-100 scale based on call signals",
+          "Risk flags: overpromise detection, pressure tactics, misalignment",
+          "Agent execution feedback: structured vs emotional, question quality, silence management",
+          "Slide effectiveness signals: prospect engagement, objection triggers",
+          "Follow-up email draft: recap + next steps, no persuasion language",
+          "All outputs traceable to call evidence (transcript references)"
+        ],
+        "definition_of_done": [
+          "Claude API integration working",
+          "Analysis completes within SLA",
+          "Output quality validated (samples reviewed)",
+          "Storage and retrieval working",
+          "Error handling for failed analyses",
+          "Privacy: no transcript storage in LLM logs"
+        ],
+        "technical_notes": "Use queue (Bull.js) for async processing. Implement batch analysis for scale. Cache LLM responses for repeated analysis.",
+        "risks": ["LLM hallucination in analysis", "Analysis latency exceeding SLA", "Cost scaling with call volume"],
+        "tags": ["backend", "ai", "llm"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["src/services/AIAnalysisService.ts", "src/prompts/callAnalysis.ts"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/services/AIAnalysisService.test.ts"],
+          "success_criteria": ["Analysis completes within 2 min", "Output quality good", "Traceability works"],
+          "test_command": "npm run test -- AIAnalysisService"
+        },
+        "estimated_time": "24 hours",
+        "scope_boundaries": ["Prompt tuning iterative process in later sprints"]
+      },
+      {
+        "id": "TASK-013",
+        "title": "Create manager dashboard backend (analytics API)",
+        "description": "Build API endpoints for team metrics, agent performance, objection patterns, and risk flag aggregation",
+        "type": "backend",
+        "epic_id": "EPIC-003",
+        "feature_id": "FR-014",
+        "story_ids": ["ST-032"],
+        "entity_ids": ["ENT-006", "ENT-014"],
+        "flow_ids": ["FLOW-018"],
+        "journey_ids": ["JRN-004"],
+        "priority": "high",
+        "story_points": 8,
+        "estimated_hours": 16,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-002", "TASK-012"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "GET /analytics/team returns: calls per agent, objection frequency by type, close rate by qualification",
+          "GET /analytics/agent/:id returns: call volume, close rate vs avg, objection patterns, milestone variance",
+          "GET /analytics/risk-flags returns: high-risk calls with flags, trend over time",
+          "GET /analytics/effectiveness returns: slide effectiveness scores, milestone completion rates",
+          "All queries filter by date range, agent, prospect quality",
+          "Response includes: counts, percentages, trends, benchmarks",
+          "Performance: queries execute < 500ms",
+          "Caching: aggregate data refreshes every 1 hour"
+        ],
+        "definition_of_done": [
+          "Endpoints return correct data",
+          "Performance targets met",
+          "Caching working correctly",
+          "Aggregation queries tested",
+          "Documentation on metrics definitions"
+        ],
+        "technical_notes": "Use database views or materialized views for aggregation. Implement caching strategy (Redis).",
+        "risks": ["Large dataset aggregation performance"],
+        "tags": ["backend", "analytics", "api"],
+        "context_plan": {
+          "beginning_context": ["docs/erd.json"],
+          "end_state_files": ["src/api/routes/analytics.ts", "src/services/AnalyticsService.ts"],
+          "read_only_files": ["docs/erd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/api/analytics.test.ts"],
+          "success_criteria": ["Endpoints return correct aggregations", "Performance < 500ms", "Caching works"],
+          "test_command": "npm run test -- analytics"
+        },
+        "estimated_time": "16 hours",
+        "scope_boundaries": ["Advanced statistical analysis in Phase 2"]
+      },
+      {
+        "id": "TASK-014",
+        "title": "Build manager dashboard UI (React)",
+        "description": "Create interactive dashboard with team metrics charts, agent drill-down, call review, and risk flags",
+        "type": "frontend",
+        "epic_id": "EPIC-003",
+        "feature_id": "FR-014",
+        "story_ids": ["ST-032"],
+        "entity_ids": ["ENT-014"],
+        "flow_ids": ["FLOW-018"],
+        "journey_ids": ["JRN-004"],
+        "priority": "high",
+        "story_points": 10,
+        "estimated_hours": 20,
+        "assignee": "frontend_developer",
+        "dependencies": ["TASK-013"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Dashboard loads default view: last 7 days, all agents, key metrics",
+          "Charts display: calls per agent (bar), objection frequency (pie), close rate trend (line), variance (scatter)",
+          "Agent drill-down: click agent to filter all data, see individual metrics",
+          "Time range picker: allow custom date range selection",
+          "Call recording access: search and select calls to review, play recording with transcript",
+          "Risk flag list: sortable, filterable by flag type and date",
+          "Export: download data as CSV",
+          "Mobile layout: responsive design for tablet",
+          "Real-time: dashboard updates every 5 minutes"
+        ],
+        "definition_of_done": [
+          "Dashboard renders with real data",
+          "All charts display correctly",
+          "Interactions work intuitively",
+          "Performance: dashboard loads < 2 seconds",
+          "Accessibility: keyboard navigation, screen reader support",
+          "Styling matches design system",
+          "Mobile responsive tested"
+        ],
+        "technical_notes": "Use Chart.js or Recharts for visualizations. Implement real-time updates via WebSocket. Lazy load call recordings.",
+        "risks": ["Dashboard performance with large datasets", "Complex filter interactions"],
+        "tags": ["frontend", "ui", "analytics"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["src/components/Dashboard.tsx", "src/components/MetricsChart.tsx"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/components/Dashboard.test.tsx"],
+          "success_criteria": ["Dashboard renders", "Data displays", "Interactions work", "Performance good"],
+          "test_command": "npm run test -- Dashboard"
+        },
+        "estimated_time": "20 hours",
+        "scope_boundaries": ["Advanced analytics (A/B testing, statistical significance) in Phase 2"]
+      },
+      {
+        "id": "TASK-015",
+        "title": "Implement WebSocket synchronization for dual interface",
+        "description": "Set up WebSocket server and bidirectional sync between control panel and presentation view with <500ms latency",
+        "type": "backend",
+        "epic_id": "EPIC-004",
+        "feature_id": "FR-008",
+        "story_ids": ["ST-023", "ST-024"],
+        "entity_ids": [],
+        "flow_ids": ["FLOW-024"],
+        "journey_ids": ["JRN-001"],
+        "priority": "high",
+        "story_points": 8,
+        "estimated_hours": 16,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-004"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "WebSocket server running and accepting connections from agent and presentation views",
+          "Control panel actions (slide change, note update, objective display) synced to presentation within 500ms",
+          "Presentation view updates reflect control panel state in real-time",
+          "Connection resilience: automatic reconnect on disconnect, queued messages on reconnect",
+          "Security: WebSocket authenticated, scoped to call_session",
+          "Latency monitoring: track and log sync delays",
+          "Scaling: support 50+ concurrent calls on single server"
+        ],
+        "definition_of_done": [
+          "WebSocket connection established and maintained",
+          "Latency measured and consistent < 500ms",
+          "Reconnection tested (kill connection, verify recovery)",
+          "Security review: only authorized users see sync",
+          "Load test: 50 concurrent connections stable",
+          "No message loss during reconnection"
+        ],
+        "technical_notes": "Use ws or Socket.io library. Implement message queue for offline resilience. Monitor with timing instrumentation.",
+        "risks": ["Latency spikes under load", "Connection drop handling"],
+        "tags": ["backend", "websocket", "realtime"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["src/websocket/server.ts", "src/websocket/handlers.ts"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/websocket/sync.test.ts"],
+          "success_criteria": ["Sync < 500ms", "Reconnection works", "No message loss", "Load test passes"],
+          "test_command": "npm run test -- websocket"
+        },
+        "estimated_time": "16 hours",
+        "scope_boundaries": ["Mobile WebSocket in Phase 2"]
+      },
+      {
+        "id": "TASK-016",
+        "title": "Build presentation view component",
+        "description": "Create client-safe presentation tab with slides only, no controls or notes, synced with control panel",
+        "type": "frontend",
+        "epic_id": "EPIC-004",
+        "feature_id": "FR-008",
+        "story_ids": ["ST-024"],
+        "entity_ids": ["ENT-010"],
+        "flow_ids": ["FLOW-024"],
+        "journey_ids": ["JRN-001"],
+        "priority": "high",
+        "story_points": 5,
+        "estimated_hours": 12,
+        "assignee": "frontend_developer",
+        "dependencies": ["TASK-015"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Presentation view opens in new tab/window when agent clicks 'Start Presentation'",
+          "Shows current slide only, no controls or navigation visible",
+          "Slide updates synced in real-time from control panel (< 500ms)",
+          "No authentication UI visible (clean, client-safe)",
+          "Can be shared via Zoom screen share without exposing mechanics",
+          "Responsive to different screen sizes (16:9 widescreen focus)",
+          "No console errors or debug info visible",
+          "Slide background and typography optimized for projection"
+        ],
+        "definition_of_done": [
+          "Tab opens on demand",
+          "Syncs with control panel correctly",
+          "Styling is clean and professional",
+          "No sensitive data visible",
+          "Tested on projector/external display",
+          "Mobile presentation mode (if applicable)"
+        ],
+        "technical_notes": "Use same WebSocket connection as control panel. Minimal JS to reduce latency. CSS for high-contrast projection.",
+        "risks": ["Sync latency noticeable on screen share"],
+        "tags": ["frontend", "ui", "presentation"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["src/components/PresentationView.tsx"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/components/PresentationView.test.tsx"],
+          "success_criteria": ["View renders", "Syncs with control panel", "No sensitive data visible"],
+          "test_command": "npm run test -- PresentationView"
+        },
+        "estimated_time": "12 hours",
+        "scope_boundaries": ["Multi-monitor support in Phase 2"]
+      },
+      {
+        "id": "TASK-017",
+        "title": "Implement slide template model and rendering",
+        "description": "Build slide template storage, parameter slot management, and rendering engine for personalized slides",
+        "type": "backend",
+        "epic_id": "EPIC-004",
+        "feature_id": "FR-009",
+        "story_ids": ["ST-025", "ST-026"],
+        "entity_ids": ["ENT-010"],
+        "flow_ids": [],
+        "journey_ids": [],
+        "priority": "high",
+        "story_points": 8,
+        "estimated_hours": 16,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-002", "TASK-006"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "SlideTemplate stores: title_static, core_message_static, parameter_slots (JSON), visualization_template",
+          "Parameter slots identified by {variable_name} syntax",
+          "Render endpoint: GET /slides/:template_id/render accepts prospect data and returns rendered HTML/JSON",
+          "Rendering validates: all required parameters present, type checking, null handling",
+          "Slides bound to milestones (optional), displayed in call order",
+          "Admin can create/edit templates (separate task)",
+          "Deterministic rendering: same data always produces same output",
+          "Support HTML/CSS rendering or JSON output for flexible frontend"
+        ],
+        "definition_of_done": [
+          "Templates store correctly",
+          "Parameters identified and extracted",
+          "Rendering produces correct output",
+          "Type validation prevents errors",
+          "Binding to milestones works",
+          "Query performance optimized"
+        ],
+        "technical_notes": "Use Handlebars or Nunjucks for templating. Validate parameters against schema. Cache rendered output.",
+        "risks": ["Parameter availability in all calls"],
+        "tags": ["backend", "templating"],
+        "context_plan": {
+          "beginning_context": ["docs/erd.json", "docs/prd.json"],
+          "end_state_files": ["src/services/SlideRenderingService.ts", "src/models/SlideTemplate.ts"],
+          "read_only_files": ["docs/erd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "unit",
+          "test_files": ["tests/services/SlideRenderingService.test.ts"],
+          "success_criteria": ["Templates render correctly", "Parameters validated", "Type checking works"],
+          "test_command": "npm run test -- SlideRenderingService"
+        },
+        "estimated_time": "16 hours",
+        "scope_boundaries": ["Visual template editor in Phase 2"]
+      },
+      {
+        "id": "TASK-018",
+        "title": "Create slide instance tracking service",
+        "description": "Record each slide presentation with timing, agent notes, and outcome tags for analysis",
+        "type": "backend",
+        "epic_id": "EPIC-004",
+        "feature_id": "FR-010",
+        "story_ids": ["ST-027"],
+        "entity_ids": ["ENT-012"],
+        "flow_ids": [],
+        "journey_ids": [],
+        "priority": "medium",
+        "story_points": 3,
+        "estimated_hours": 8,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-002", "TASK-017"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "SlideInstance created when slide displayed in call",
+          "Tracks: slide_template_id, call_session_id, prospect_id, rendered_content, timing_data",
+          "Agent can tag slide outcome: positive, neutral, negative",
+          "Agent can add notes on slide effectiveness",
+          "Timestamps: started_at, ended_at (duration trackable)",
+          "Query by call or prospect for analysis",
+          "Support for effectiveness scoring correlation"
+        ],
+        "definition_of_done": [
+          "Instances created on slide display",
+          "Timing tracked accurately",
+          "Agent notes saved",
+          "Outcome tags recorded",
+          "Queries optimized"
+        ],
+        "technical_notes": "Create instance on slide render event. Timestamp in UTC. Index on call_session_id and prospect_id.",
+        "risks": ["Timing accuracy for duration calculation"],
+        "tags": ["backend", "tracking"],
+        "context_plan": {
+          "beginning_context": ["docs/erd.json"],
+          "end_state_files": ["src/services/SlideInstanceService.ts"],
+          "read_only_files": ["docs/erd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "unit",
+          "test_files": ["tests/services/SlideInstanceService.test.ts"],
+          "success_criteria": ["Instances created", "Timing accurate", "Notes saved"],
+          "test_command": "npm run test -- SlideInstanceService"
+        },
+        "estimated_time": "8 hours",
+        "scope_boundaries": ["Effectiveness scoring in later task"]
+      },
+      {
+        "id": "TASK-019",
+        "title": "Build call outcome classification service",
+        "description": "Implement forced outcome selection with disqualification reasons and qualification flag tracking",
+        "type": "backend",
+        "epic_id": "EPIC-008",
+        "feature_id": "FR-006",
+        "story_ids": ["ST-020"],
+        "entity_ids": ["ENT-015"],
+        "flow_ids": ["FLOW-015"],
+        "journey_ids": ["JRN-001"],
+        "priority": "high",
+        "story_points": 3,
+        "estimated_hours": 8,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-002", "TASK-004"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "CallOutcome entity stores: outcome_type, disqualification_reason, qualification_flags",
+          "Forced outcome types: Coaching_Client, Follow_up_Scheduled, Implementation_Only, Disqualified",
+          "If disqualified: mandatory reason (Under_500_Clients, Cashflow_Mismatch, Misaligned_Expectations, Capacity_Constraint, Authority_Issue)",
+          "Qualification flags: json array of flags from pre-call and call data",
+          "Cannot complete call without outcome selection",
+          "Outcome triggers routing: coaching -> pipeline, follow-up -> calendar, implementation -> different flow"
+        ],
+        "definition_of_done": [
+          "Outcome creation enforces all requirements",
+          "Disqualification reasons validated",
+          "Routing logic works",
+          "Qualification flags captured",
+          "API endpoints tested"
+        ],
+        "technical_notes": "Use database constraints to enforce required fields. Implement validation in service layer.",
+        "risks": ["Disqualification reason selection accuracy"],
+        "tags": ["backend", "business-logic"],
+        "context_plan": {
+          "beginning_context": ["docs/erd.json"],
+          "end_state_files": ["src/services/CallOutcomeService.ts", "src/models/CallOutcome.ts"],
+          "read_only_files": ["docs/erd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "unit",
+          "test_files": ["tests/services/CallOutcomeService.test.ts"],
+          "success_criteria": ["Outcomes saved correctly", "Reasons required for disqualified", "Routing triggered"],
+          "test_command": "npm run test -- CallOutcomeService"
+        },
+        "estimated_time": "8 hours",
+        "scope_boundaries": ["GoHighLevel routing in Phase 2"]
+      },
+      {
+        "id": "TASK-020",
+        "title": "Implement follow-up call support backend",
+        "description": "Build call thread linking, context resume, and unresolved objection tracking for follow-ups",
+        "type": "backend",
+        "epic_id": "EPIC-005",
+        "feature_id": "FR-007",
+        "story_ids": ["ST-021", "ST-022"],
+        "entity_ids": ["ENT-005"],
+        "flow_ids": ["FLOW-016", "FLOW-017"],
+        "journey_ids": ["JRN-003"],
+        "priority": "high",
+        "story_points": 5,
+        "estimated_hours": 12,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-002", "TASK-004"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "CallThread groups primary call with follow-up sessions",
+          "GET /call-threads/:prospect_id returns full conversation history",
+          "GET /calls/:id/context returns: previous summary, last completed milestone, unresolved objections, qualification flags",
+          "Unresolved objections surfaced with: type, content, previous outcome",
+          "Agent can choose resume point: continue from milestone vs jump to decision",
+          "Follow-up call inherits language preference from primary call",
+          "Support multi-call threads (3+ calls in sequence)"
+        ],
+        "definition_of_done": [
+          "Thread linking works",
+          "Context retrieval complete and accurate",
+          "Unresolved objections correctly identified",
+          "Resume point selection functional",
+          "Multi-call threads tested"
+        ],
+        "technical_notes": "CallThread connects primary call to follow-ups via foreign key. Use view or service for context aggregation.",
+        "risks": ["Incomplete context from previous calls"],
+        "tags": ["backend", "business-logic"],
+        "context_plan": {
+          "beginning_context": ["docs/erd.json"],
+          "end_state_files": ["src/services/FollowUpService.ts", "src/models/CallThread.ts"],
+          "read_only_files": ["docs/erd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/services/FollowUpService.test.ts"],
+          "success_criteria": ["Thread linking works", "Context complete", "Unresolved objections surface"],
+          "test_command": "npm run test -- FollowUpService"
+        },
+        "estimated_time": "12 hours",
+        "scope_boundaries": ["GoHighLevel calendar sync in Phase 2"]
+      },
+      {
+        "id": "TASK-021",
+        "title": "Build follow-up call UI flow",
+        "description": "Create UI for selecting follow-up call, displaying context, unresolved objections, and resume point selection",
+        "type": "frontend",
+        "epic_id": "EPIC-005",
+        "feature_id": "FR-007",
+        "story_ids": ["ST-021", "ST-022"],
+        "entity_ids": ["ENT-005"],
+        "flow_ids": ["FLOW-016", "FLOW-017"],
+        "journey_ids": ["JRN-003"],
+        "priority": "high",
+        "story_points": 5,
+        "estimated_hours": 12,
+        "assignee": "frontend_developer",
+        "dependencies": ["TASK-020", "TASK-008"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Follow-up call selector: shows scheduled follow-ups from calendar",
+          "Context display: previous call summary, last milestone, objections, qualification flags",
+          "Unresolved objections list: type, status, previous interaction",
+          "Resume point selector: buttons for 'Continue from M#' vs 'Jump to Decision'",
+          "Confirmation before call starts",
+          "Mobile-friendly layout",
+          "Clear visual hierarchy showing context vs current action"
+        ],
+        "definition_of_done": [
+          "Flow renders without errors",
+          "Context displays correctly",
+          "Resume point selection works",
+          "Navigation to call execution smooth",
+          "Mobile responsive",
+          "Accessibility checked"
+        ],
+        "technical_notes": "Use same control panel structure. Add context sidebar. Progressive disclosure for long context.",
+        "risks": ["Too much context information on screen"],
+        "tags": ["frontend", "ui", "react"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["src/components/FollowUpCallSetup.tsx"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/components/FollowUpCallSetup.test.tsx"],
+          "success_criteria": ["Context displays", "Resume point selectable", "Navigation works"],
+          "test_command": "npm run test -- FollowUpCallSetup"
+        },
+        "estimated_time": "12 hours",
+        "scope_boundaries": ["Calendar integration (GoHighLevel) separate"]
+      },
+      {
+        "id": "TASK-022",
+        "title": "Create PromptConfig model and management service",
+        "description": "Build 5-layer AI prompt registry with versioning, variables, and language support",
+        "type": "backend",
+        "epic_id": "EPIC-006",
+        "feature_id": "FR-016",
+        "story_ids": ["ST-034"],
+        "entity_ids": ["ENT-013"],
+        "flow_ids": ["FLOW-022"],
+        "journey_ids": ["JRN-005"],
+        "priority": "high",
+        "story_points": 5,
+        "estimated_hours": 12,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-002"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "PromptConfig stores: scope, milestone_id, objection_id, language, prompt_text, variables, version, status",
+          "5 scopes: global (all calls), milestone-specific, objection-specific, slide_analysis, call_synthesis",
+          "Versioning: status (draft/active/deprecated), ability to compare versions",
+          "Variables: identified by {variable_name}, validated against call context",
+          "Language: DE and EN variants for each prompt",
+          "Retrieval: get active prompt for scope, inject variables at runtime",
+          "Audit trail: log all prompt changes with timestamp and author"
+        ],
+        "definition_of_done": [
+          "CRUD operations working",
+          "Versioning tracked",
+          "Variable injection tested",
+          "Language support working",
+          "Audit trail recorded",
+          "API endpoints documented"
+        ],
+        "technical_notes": "Store prompts as templates with variable placeholders. Use safe variable substitution (no injection).",
+        "risks": ["Prompt variable availability", "Version conflicts"],
+        "tags": ["backend", "prompts", "ai"],
+        "context_plan": {
+          "beginning_context": ["docs/erd.json"],
+          "end_state_files": ["src/services/PromptConfigService.ts", "src/models/PromptConfig.ts"],
+          "read_only_files": ["docs/erd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "unit",
+          "test_files": ["tests/services/PromptConfigService.test.ts"],
+          "success_criteria": ["CRUD works", "Variables injected correctly", "Versioning tracked"],
+          "test_command": "npm run test -- PromptConfigService"
+        },
+        "estimated_time": "12 hours",
+        "scope_boundaries": ["Prompt engineering UI in next task"]
+      },
+      {
+        "id": "TASK-023",
+        "title": "Build admin configuration panel (milestones, objections, prompts)",
+        "description": "Create comprehensive admin interface for editing milestones, objections, slide templates, and AI prompts",
+        "type": "frontend",
+        "epic_id": "EPIC-006",
+        "feature_id": "FR-015",
+        "story_ids": ["ST-033"],
+        "entity_ids": ["ENT-004", "ENT-008", "ENT-013"],
+        "flow_ids": ["FLOW-020", "FLOW-021", "FLOW-022"],
+        "journey_ids": ["JRN-005"],
+        "priority": "high",
+        "story_points": 13,
+        "estimated_hours": 26,
+        "assignee": "frontend_developer",
+        "dependencies": ["TASK-022"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Milestone editor: create/edit/delete milestones with title, objective, questions, confirmations, duration",
+          "Milestone preview: show how milestone appears to agents",
+          "Objection editor: edit 6 objection types with diagnostic questions, allowed outcomes",
+          "Question validation: check for neutrality, no leading language (AI helper)",
+          "Prompt editor: view/edit 5-layer prompts, variables highlighted, language variants",
+          "Prompt tester: run test with sample call data, preview output",
+          "Versioning UI: show history, compare versions, rollback to previous",
+          "Change summary before publish: shows what changed",
+          "Test mode: changes visible to test users only",
+          "Audit trail: log of all edits with timestamps"
+        ],
+        "definition_of_done": [
+          "All editors functional",
+          "Preview working",
+          "Validation helpful (not restrictive)",
+          "Testing before publish works",
+          "Versioning UI clear",
+          "Audit trail accessible",
+          "Styling consistent with app"
+        ],
+        "technical_notes": "Use forms with complex validation. Real-time preview. Implement undo/redo for edits.",
+        "risks": ["Complex form state management", "Accidental publish of incomplete changes"],
+        "tags": ["frontend", "ui", "admin"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["src/components/AdminPanel.tsx", "src/components/MilestoneEditor.tsx", "src/components/PromptEditor.tsx"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/components/AdminPanel.test.tsx"],
+          "success_criteria": ["Editors render", "Preview works", "Validation helpful", "Publish safe"],
+          "test_command": "npm run test -- AdminPanel"
+        },
+        "estimated_time": "26 hours",
+        "scope_boundaries": ["Visual template builder in Phase 2"]
+      },
+      {
+        "id": "TASK-024",
+        "title": "Implement call outcome UI component",
+        "description": "Build modal for forced outcome selection with disqualification reason picker and qualification flag review",
+        "type": "frontend",
+        "epic_id": "EPIC-008",
+        "feature_id": "FR-006",
+        "story_ids": ["ST-020"],
+        "entity_ids": ["ENT-015"],
+        "flow_ids": ["FLOW-015"],
+        "journey_ids": ["JRN-001"],
+        "priority": "high",
+        "story_points": 5,
+        "estimated_hours": 12,
+        "assignee": "frontend_developer",
+        "dependencies": ["TASK-019", "TASK-008"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Modal displays 4 outcome options clearly: Coaching Client, Follow-up Scheduled, Implementation Only, Disqualified",
+          "If Disqualified selected: dropdown for reason (Under_500_Clients, Cashflow_Mismatch, Misaligned_Expectations, Capacity_Constraint, Authority_Issue)",
+          "Qualification flags shown: list of flags from pre-call and call data",
+          "Cannot close modal without selecting outcome (if disqualified, reason required)",
+          "Submit triggers routing: next steps or completion",
+          "Confirmation message on outcome lock-in",
+          "Mobile-friendly layout"
+        ],
+        "definition_of_done": [
+          "Modal renders",
+          "All outcomes selectable",
+          "Disqualification reason required if applicable",
+          "Submission works",
+          "Routing triggered",
+          "No way to skip outcome selection",
+          "Accessibility checked"
+        ],
+        "technical_notes": "Modal with full-screen backdrop. Prevent outside clicks. Use clear button hierarchy.",
+        "risks": ["Agent frustration with forced selection", "Accidental selection"],
+        "tags": ["frontend", "ui", "react"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["src/components/CallOutcomeModal.tsx"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/components/CallOutcomeModal.test.tsx"],
+          "success_criteria": ["Modal renders", "All options selectable", "Reason required for disqualified"],
+          "test_command": "npm run test -- CallOutcomeModal"
+        },
+        "estimated_time": "12 hours",
+        "scope_boundaries": ["Pipeline routing (GoHighLevel) separate"]
+      },
+      {
+        "id": "TASK-025",
+        "title": "Add bilingual support (DE/EN) to all components",
+        "description": "Implement language toggle, translation files, and locale support across entire application",
+        "type": "fullstack",
+        "epic_id": "EPIC-009",
+        "feature_id": "FR-017",
+        "story_ids": ["ST-035"],
+        "entity_ids": [],
+        "flow_ids": [],
+        "journey_ids": [],
+        "priority": "medium",
+        "story_points": 8,
+        "estimated_hours": 16,
+        "assignee": "fullstack_developer",
+        "dependencies": ["TASK-008", "TASK-023"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Language toggle (EN/DE) available in UI header",
+          "Selected language persists in user preferences",
+          "All UI strings translated to DE and EN",
+          "Milestone content available in both languages (from database)",
+          "Objection questions translated to both languages",
+          "AI prompts have language-specific variants",
+          "Calls support language selection at start",
+          "No hardcoded strings in code (all externalized)",
+          "RTL support (not required for DE/EN but structure ready)"
+        ],
+        "definition_of_done": [
+          "i18n library integrated (e.g., i18next)",
+          "All strings externalized",
+          "DE translations complete",
+          "Language preference saved",
+          "Toggle works without page reload",
+          "No hardcoded strings in codebase"
+        ],
+        "technical_notes": "Use i18next or similar library. Namespace by feature. Support future language additions.",
+        "risks": ["Translation quality", "Incomplete coverage"],
+        "tags": ["frontend", "i18n", "localization"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["public/locales/en/translation.json", "public/locales/de/translation.json", "src/i18n/config.ts"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/i18n/translations.test.ts"],
+          "success_criteria": ["Strings externalized", "Both languages render", "Toggle works"],
+          "test_command": "npm run test -- i18n"
+        },
+        "estimated_time": "16 hours",
+        "scope_boundaries": ["Machine translation vs professional translation - use professional for launch"]
+      },
+      {
+        "id": "TASK-026",
+        "title": "Implement guardrails system (no persuasion/discounts/rebuttals)",
+        "description": "Add runtime checks to prevent agents from accessing persuasion scripts, rebuttal fields, discount options, and AI live suggestions",
+        "type": "backend",
+        "epic_id": "EPIC-010",
+        "feature_id": "FR-018",
+        "story_ids": ["ST-036"],
+        "entity_ids": [],
+        "flow_ids": [],
+        "journey_ids": [],
+        "priority": "high",
+        "story_points": 5,
+        "estimated_hours": 10,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-009"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "API prevents creation of free-text persuasion scripts",
+          "No rebuttal section in objection response endpoints",
+          "No discount fields in price/offer endpoints",
+          "Objection questions are read-only (no edit capability during calls)",
+          "AI refuses to generate sales scripts when prompted in analysis",
+          "AI refuses to suggest objection handles live (post-call only)",
+          "AI refuses to bypass qualification gate",
+          "Guardrails logged for audit trail",
+          "Clear error messages when guardrails trigger"
+        ],
+        "definition_of_done": [
+          "All guardrails implemented",
+          "Tested with adversarial requests",
+          "Logging captures violations",
+          "Error messages helpful to users",
+          "Documentation on guardrails"
+        ],
+        "technical_notes": "Validate at API and service layer. Use immutable objection question references.",
+        "risks": ["Overly restrictive guardrails limiting legitimate use"],
+        "tags": ["backend", "security", "guardrails"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["src/middleware/guardrails.ts"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "unit",
+          "test_files": ["tests/guardrails/guardrails.test.ts"],
+          "success_criteria": ["All guardrails enforce", "Logging works", "Error messages clear"],
+          "test_command": "npm run test -- guardrails"
+        },
+        "estimated_time": "10 hours",
+        "scope_boundaries": ["Guardrails review with coaches for refinement"]
+      },
+      {
+        "id": "TASK-027",
+        "title": "Build effectiveness scoring system",
+        "description": "Implement slide and milestone effectiveness scoring with correlation to outcomes",
+        "type": "backend",
+        "epic_id": "EPIC-010",
+        "feature_id": "FR-019",
+        "story_ids": ["ST-037"],
+        "entity_ids": ["ENT-012"],
+        "flow_ids": [],
+        "journey_ids": [],
+        "priority": "medium",
+        "story_points": 8,
+        "estimated_hours": 16,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-018", "TASK-012"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Slide effectiveness scoring: correlate slide presentation to call outcomes (coaching client, close rate)",
+          "Milestone effectiveness: track completion rates, time spent, outcome success",
+          "Agent variance analysis: show performance spread across team",
+          "Statistical confidence: only recommend changes with >95% confidence",
+          "Scorecard queries: effectiveness by slide, milestone, agent",
+          "Trending: show effectiveness changes over time",
+          "Contextualization: account for prospect quality, call difficulty"
+        ],
+        "definition_of_done": [
+          "Scoring algorithm tested",
+          "Correlations accurate",
+          "Statistical significance checked",
+          "Trending shows correctly",
+          "Contextualization logic sound"
+        ],
+        "technical_notes": "Use statistical analysis (chi-square test for categorical). Cache scoring computations (run nightly).",
+        "risks": ["Statistical rigor", "False signals from small sample sizes"],
+        "tags": ["backend", "analytics", "statistics"],
+        "context_plan": {
+          "beginning_context": ["docs/erd.json"],
+          "end_state_files": ["src/services/EffectivenessService.ts"],
+          "read_only_files": ["docs/erd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "unit",
+          "test_files": ["tests/services/EffectivenessService.test.ts"],
+          "success_criteria": ["Scoring accurate", "Correlations computed", "Statistical checks valid"],
+          "test_command": "npm run test -- EffectivenessService"
+        },
+        "estimated_time": "16 hours",
+        "scope_boundaries": ["Advanced ML recommendations in Phase 2"]
+      },
+      {
+        "id": "TASK-028",
+        "title": "Create initial seed data and fixtures",
+        "description": "Populate database with 7 default milestones, 6 objection types, default AI prompts, and sample slide deck",
+        "type": "backend",
+        "epic_id": "EPIC-001",
+        "feature_id": "FR-002",
+        "story_ids": [],
+        "entity_ids": ["ENT-004", "ENT-008", "ENT-013", "ENT-010"],
+        "flow_ids": [],
+        "journey_ids": [],
+        "priority": "high",
+        "story_points": 5,
+        "estimated_hours": 10,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-002"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "7 milestones seeded with objectives and questions",
+          "6 objection types seeded with diagnostic questions",
+          "Default AI prompts for 5 scopes (global, milestone, objection, slide, synthesis)",
+          "Sample slide deck created with parameter slots",
+          "German and English variants for all text content",
+          "Default organization created for initial user",
+          "Seed data idempotent (safe to run multiple times)",
+          "Seed data documented with comments"
+        ],
+        "definition_of_done": [
+          "Seed script runs cleanly",
+          "All data appears in database",
+          "German and English variants present",
+          "No duplicate data on re-run",
+          "Data quality spot-checked"
+        ],
+        "technical_notes": "Use database seed files. Make idempotent using upsert pattern. Version seed data.",
+        "risks": ["Incomplete milestone/objection definitions"],
+        "tags": ["database", "fixtures", "seeds"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json", "docs/erd.json"],
+          "end_state_files": ["db/seeds/default_milestones.js", "db/seeds/default_objections.js"],
+          "read_only_files": ["docs/prd.json", "docs/erd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/db/seeds.test.js"],
+          "success_criteria": ["Seed runs", "Data complete", "No duplicates on re-run"],
+          "test_command": "npm run db:seed"
+        },
+        "estimated_time": "10 hours",
+        "scope_boundaries": ["Localization of seed data in Phase 2"]
+      },
+      {
+        "id": "TASK-029",
+        "title": "End-to-end testing and integration verification",
+        "description": "Write comprehensive E2E tests covering full call flow from pre-call through outcome classification",
+        "type": "testing",
+        "epic_id": "EPIC-001",
+        "feature_id": "FR-001",
+        "story_ids": ["ST-018", "ST-001"],
+        "entity_ids": [],
+        "flow_ids": ["FLOW-001", "FLOW-002", "FLOW-015"],
+        "journey_ids": ["JRN-001"],
+        "priority": "high",
+        "story_points": 8,
+        "estimated_hours": 16,
+        "assignee": "qa_engineer",
+        "dependencies": ["TASK-008", "TASK-024"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "E2E test: new call creation through all 7 milestones",
+          "E2E test: objection handling and outcome classification",
+          "E2E test: follow-up call with context resume",
+          "API integration tests for all endpoints",
+          "Database transaction integrity verified",
+          "WebSocket synchronization tested",
+          "Error scenarios tested (missing data, invalid states)",
+          "Performance benchmarks established (call session creation < 500ms)"
+        ],
+        "definition_of_done": [
+          "E2E tests pass consistently",
+          "API tests comprehensive",
+          "Database integrity verified",
+          "Performance targets met",
+          "Test coverage > 80%",
+          "Flaky tests identified and fixed"
+        ],
+        "technical_notes": "Use Cypress or Playwright for E2E. Test with headless browser. Parallel test execution.",
+        "risks": ["Flaky tests due to timing", "Test maintenance burden"],
+        "tags": ["testing", "qa", "e2e"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["tests/e2e/call-flow.test.ts"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/e2e/call-flow.test.ts", "tests/api/integration.test.ts"],
+          "success_criteria": ["E2E tests pass", "API coverage > 80%", "No flaky tests"],
+          "test_command": "npm run test:e2e"
+        },
+        "estimated_time": "16 hours",
+        "scope_boundaries": ["Performance testing at scale in Phase 2"]
+      },
+      {
+        "id": "TASK-030",
+        "title": "Documentation and deployment runbook",
+        "description": "Create comprehensive documentation, deployment guide, and runbooks for production operation",
+        "type": "documentation",
+        "epic_id": "EPIC-001",
+        "feature_id": "FR-001",
+        "story_ids": [],
+        "entity_ids": [],
+        "flow_ids": [],
+        "journey_ids": [],
+        "priority": "high",
+        "story_points": 5,
+        "estimated_hours": 12,
+        "assignee": "tech_writer",
+        "dependencies": ["TASK-029"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "README with project overview and quick start",
+          "Architecture documentation (system design, components, data flow)",
+          "API documentation (OpenAPI/Swagger generated)",
+          "Database schema documentation",
+          "Deployment guide (development, staging, production)",
+          "Environment variables and configuration",
+          "Troubleshooting guide for common issues",
+          "Incident response runbook",
+          "Team onboarding guide",
+          "FAQ and glossary"
+        ],
+        "definition_of_done": [
+          "All docs sections complete",
+          "Code examples working",
+          "Screenshots up-to-date",
+          "Links verified",
+          "Typos checked",
+          "Team reviewed for clarity"
+        ],
+        "technical_notes": "Use Markdown for docs. Host on GitHub Wiki or Confluence. Use OpenAPI for API docs.",
+        "risks": ["Docs become outdated quickly"],
+        "tags": ["documentation"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["README.md", "docs/ARCHITECTURE.md", "docs/DEPLOYMENT.md"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "manual",
+          "test_files": [],
+          "success_criteria": ["Docs complete", "Examples work", "Team can follow"],
+          "test_command": "manual review"
+        },
+        "estimated_time": "12 hours",
+        "scope_boundaries": ["Video tutorials in Phase 2"]
+      },
+      {
+        "id": "TASK-031",
+        "title": "GoHighLevel CRM integration (Phase 2)",
+        "description": "Integrate with GoHighLevel API for contact sync, pipeline updates, calendar sync for follow-ups",
+        "type": "backend",
+        "epic_id": "EPIC-005",
+        "feature_id": "FR-007",
+        "story_ids": [],
+        "entity_ids": [],
+        "flow_ids": [],
+        "journey_ids": [],
+        "priority": "high",
+        "story_points": 13,
+        "estimated_hours": 24,
+        "assignee": "backend_developer",
+        "dependencies": [],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Sync prospects from GHL contacts",
+          "Update contact record with call outcome",
+          "Create or update pipeline opportunity based on outcome",
+          "Sync follow-up appointments to GHL calendar",
+          "Bidirectional sync: GHL changes reflect in CallOS",
+          "Error handling for API failures with retry logic",
+          "Audit trail for all GHL interactions"
+        ],
+        "definition_of_done": [
+          "GHL API integration tested",
+          "Sync working both directions",
+          "Error handling robust",
+          "Rate limiting respected",
+          "Documentation complete"
+        ],
+        "technical_notes": "Use GHL API v2. Implement webhook for real-time updates. Handle rate limits with backoff.",
+        "risks": ["GHL API changes", "Rate limiting"],
+        "tags": ["backend", "integration", "crm"],
+        "context_plan": {
+          "beginning_context": ["docs/prd.json"],
+          "end_state_files": ["src/integrations/ghl/client.ts", "src/services/GHLSyncService.ts"],
+          "read_only_files": ["docs/prd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/integrations/ghl.test.ts"],
+          "success_criteria": ["Sync works", "Errors handled", "Rate limits respected"],
+          "test_command": "npm run test -- ghl"
+        },
+        "estimated_time": "24 hours",
+        "scope_boundaries": ["Phase 2 after core launch"]
+      },
+      {
+        "id": "TASK-032",
+        "title": "Performance optimization and caching strategy",
+        "description": "Implement caching layers, database query optimization, and performance monitoring",
+        "type": "backend",
+        "epic_id": "EPIC-001",
+        "feature_id": "FR-001",
+        "story_ids": [],
+        "entity_ids": [],
+        "flow_ids": [],
+        "journey_ids": [],
+        "priority": "medium",
+        "story_points": 8,
+        "estimated_hours": 16,
+        "assignee": "backend_developer",
+        "dependencies": ["TASK-029"],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Redis caching for frequently accessed data (milestones, objections, prompts)",
+          "Database query optimization with indexes and query plans reviewed",
+          "Lazy loading for large datasets (pagination)",
+          "API response compression (gzip)",
+          "CDN for static assets",
+          "Performance monitoring with APM (e.g., DataDog, New Relic)",
+          "Alerting for slow queries (>1000ms)",
+          "Load testing results documented"
+        ],
+        "definition_of_done": [
+          "Caching layer implemented",
+          "Query times optimized",
+          "Performance benchmarks met",
+          "Monitoring in place",
+          "Load test passed"
+        ],
+        "technical_notes": "Use Redis for session and data cache. Implement cache invalidation strategy. Monitor query performance.",
+        "risks": ["Cache invalidation complexity", "Stale data issues"],
+        "tags": ["backend", "performance", "optimization"],
+        "context_plan": {
+          "beginning_context": ["docs/erd.json"],
+          "end_state_files": ["src/cache/redis-client.ts", "src/middleware/caching.ts"],
+          "read_only_files": ["docs/erd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "performance",
+          "test_files": ["tests/performance/load.test.ts"],
+          "success_criteria": ["P95 < 500ms", "Cache hit rate > 80%", "No stale data"],
+          "test_command": "npm run test:performance"
+        },
+        "estimated_time": "16 hours",
+        "scope_boundaries": ["Advanced optimization in Phase 2"]
+      },
+      {
+        "id": "TASK-033",
+        "title": "White-label configuration system (Phase 2)",
+        "description": "Build tenant-based configuration allowing multiple organizations with custom branding and settings",
+        "type": "backend",
+        "epic_id": "EPIC-009",
+        "feature_id": "FR-020",
+        "story_ids": ["ST-038"],
+        "entity_ids": ["ENT-001"],
+        "flow_ids": [],
+        "journey_ids": [],
+        "priority": "medium",
+        "story_points": 13,
+        "estimated_hours": 24,
+        "assignee": "backend_developer",
+        "dependencies": [],
+        "blocked_by": [],
+        "acceptance_criteria": [
+          "Organization model stores: name, branding (logo, colors), custom milestone sets",
+          "Custom objection libraries per tenant",
+          "Multi-product support within tenant",
+          "Branding variables in UI (logo, colors, accent)",
+          "Subdomain or custom domain support",
+          "Tenant isolation at database level (row security)",
+          "Admin panel for managing tenants"
+        ],
+        "definition_of_done": [
+          "Tenant isolation verified",
+          "Custom branding applied",
+          "Multi-product support working",
+          "Documentation complete"
+        ],
+        "technical_notes": "Use organization_id in all queries for isolation. Implement tenant context middleware.",
+        "risks": ["Data leakage between tenants", "Complexity of multi-tenant logic"],
+        "tags": ["backend", "multi-tenant", "white-label"],
+        "context_plan": {
+          "beginning_context": ["docs/erd.json"],
+          "end_state_files": ["src/middleware/tenant.ts"],
+          "read_only_files": ["docs/erd.json"]
+        },
+        "testing_strategy": {
+          "strategy_type": "integration",
+          "test_files": ["tests/multi-tenant/isolation.test.ts"],
+          "success_criteria": ["Tenant isolation verified", "Custom branding works", "No data leakage"],
+          "test_command": "npm run test -- multi-tenant"
+        },
+        "estimated_time": "24 hours",
+        "scope_boundaries": ["Phase 2 after initial launch"]
+      }
+    ],
+    "sprints": [
+      {
+        "id": "SPRINT-001",
+        "name": "Sprint 1: Core Call Flow",
+        "duration": "2 weeks",
+        "start_date": "2026-01-20",
+        "end_date": "2026-02-02",
+        "capacity": 40,
+        "goal": "Establish milestone-based call execution foundation with session management, pre-call checklist, and basic UI",
+        "task_ids": ["TASK-001", "TASK-002", "TASK-003", "TASK-004", "TASK-005", "TASK-006", "TASK-007", "TASK-008", "TASK-028"],
+        "story_points": 54,
+        "epics": ["EPIC-001", "EPIC-005", "EPIC-007"],
+        "deliverables": [
+          "Database schema with 15 entities implemented",
+          "Call session management service working",
+          "Pre-call checklist enforcing qualification gate",
+          "7 milestone definitions seeded with questions",
+          "Control panel UI displaying milestones and notes",
+          "User authentication and authorization working",
+          "Development environment with CI/CD running"
+        ]
+      },
+      {
+        "id": "SPRINT-002",
+        "name": "Sprint 2: Objection System",
+        "duration": "2 weeks",
+        "start_date": "2026-02-03",
+        "end_date": "2026-02-16",
+        "capacity": 40,
+        "goal": "Implement 6 objection types with diagnostic flows and outcome classification",
+        "task_ids": ["TASK-009", "TASK-010", "TASK-019"],
+        "story_points": 40,
+        "epics": ["EPIC-002", "EPIC-008"],
+        "deliverables": [
+          "6 objection types with diagnostic questions defined",
+          "Objection subflow UI component for all types",
+          "Forced outcome selection (Resolved/Deferred/Disqualified)",
+          "Outcome routing working correctly",
+          "Deferred objections tracked for follow-ups"
+        ]
+      },
+      {
+        "id": "SPRINT-003",
+        "name": "Sprint 3: Recording & AI Analysis",
+        "duration": "2 weeks",
+        "start_date": "2026-02-17",
+        "end_date": "2026-03-02",
+        "capacity": 40,
+        "goal": "Implement Zoom recording and AI post-call analysis with manager dashboard",
+        "task_ids": ["TASK-011", "TASK-012", "TASK-013", "TASK-014"],
+        "story_points": 52,
+        "epics": ["EPIC-003"],
+        "deliverables": [
+          "Zoom bot recording working with transcript generation",
+          "AI post-call analysis generating summaries and insights",
+          "Manager dashboard showing team metrics",
+          "Risk flag detection and display",
+          "Analytics API returning aggregate data",
+          "Call review UI with recording player"
+        ]
+      },
+      {
+        "id": "SPRINT-004",
+        "name": "Sprint 4: Presentation Mode & Slides",
+        "duration": "2 weeks",
+        "start_date": "2026-03-03",
+        "end_date": "2026-03-16",
+        "capacity": 40,
+        "goal": "Implement dual interface with WebSocket sync and slide template system",
+        "task_ids": ["TASK-015", "TASK-016", "TASK-017", "TASK-018"],
+        "story_points": 44,
+        "epics": ["EPIC-004"],
+        "deliverables": [
+          "WebSocket server syncing control panel to presentation view",
+          "Presentation view opens in separate tab",
+          "Slide templates rendering with parameters",
+          "Slide instance tracking with timing and notes",
+          "Real-time sync < 500ms latency",
+          "Reconnection handling for robustness"
+        ]
+      },
+      {
+        "id": "SPRINT-005",
+        "name": "Sprint 5: Admin & Advanced Features",
+        "duration": "2 weeks",
+        "start_date": "2026-03-17",
+        "end_date": "2026-03-30",
+        "capacity": 40,
+        "goal": "Build admin configuration panel, AI prompt registry, effectiveness scoring, and bilingual support",
+        "task_ids": ["TASK-020", "TASK-021", "TASK-022", "TASK-023", "TASK-025", "TASK-026", "TASK-027", "TASK-029", "TASK-030"],
+        "story_points": 61,
+        "epics": ["EPIC-005", "EPIC-006", "EPIC-009", "EPIC-010"],
+        "deliverables": [
+          "Admin configuration panel for milestones, objections, prompts",
+          "AI prompt registry with 5-layer scoping and versioning",
+          "Bilingual support (DE/EN) across all components",
+          "Guardrails system preventing persuasion/discounts",
+          "Effectiveness scoring for slides and milestones",
+          "Follow-up call UI with context resume",
+          "E2E tests covering full call flow",
+          "Comprehensive documentation and deployment guide"
+        ]
+      }
+    ],
+    "dependencies": [
+      {
+        "from_task": "TASK-001",
+        "to_task": "TASK-002",
+        "type": "finish_to_start",
+        "description": "Infrastructure must be set up before database schema"
+      },
+      {
+        "from_task": "TASK-002",
+        "to_task": "TASK-003",
+        "type": "finish_to_start",
+        "description": "Database schema required for auth system"
+      },
+      {
+        "from_task": "TASK-004",
+        "to_task": "TASK-005",
+        "type": "finish_to_start",
+        "description": "Call session service required for checklist endpoints"
+      },
+      {
+        "from_task": "TASK-006",
+        "to_task": "TASK-007",
+        "type": "finish_to_start",
+        "description": "Milestone model required for milestone response tracking"
+      },
+      {
+        "from_task": "TASK-007",
+        "to_task": "TASK-008",
+        "type": "finish_to_start",
+        "description": "Backend services required for control panel data"
+      },
+      {
+        "from_task": "TASK-011",
+        "to_task": "TASK-012",
+        "type": "finish_to_start",
+        "description": "Recording service required for AI analysis input"
+      },
+      {
+        "from_task": "TASK-015",
+        "to_task": "TASK-016",
+        "type": "finish_to_start",
+        "description": "WebSocket server required for presentation sync"
+      },
+      {
+        "from_task": "TASK-017",
+        "to_task": "TASK-018",
+        "type": "finish_to_start",
+        "description": "Slide template service required for instance tracking"
+      }
+    ],
+    "risk_register": [
+      {
+        "id": "RISK-001",
+        "title": "Zoom API Rate Limiting",
+        "description": "Recording bot may hit rate limits if multiple agents join meetings simultaneously",
+        "probability": "medium",
+        "impact": "high",
+        "mitigation": "Implement queue-based bot joining with exponential backoff",
+        "owner": "backend_developer"
+      },
+      {
+        "id": "RISK-002",
+        "title": "LLM Hallucination in AI Analysis",
+        "description": "Claude API may generate inaccurate analysis or risk flags that don't match call content",
+        "probability": "medium",
+        "impact": "high",
+        "mitigation": "Implement human review for high-risk flags; require evidence linking",
+        "owner": "backend_developer"
+      },
+      {
+        "id": "RISK-003",
+        "title": "WebSocket Latency > 500ms",
+        "description": "Under heavy load, WebSocket sync may exceed 500ms SLA target",
+        "probability": "low",
+        "impact": "high",
+        "mitigation": "Implement message batching and compression; use CDN for geographic distribution",
+        "owner": "backend_developer"
+      },
+      {
+        "id": "RISK-004",
+        "title": "Prompt Prompt Engineering Difficulty",
+        "description": "Crafting effective AI prompts for analysis may take longer than estimated",
+        "probability": "medium",
+        "impact": "medium",
+        "mitigation": "Start with published prompt frameworks; plan iterative refinement",
+        "owner": "backend_developer"
+      },
+      {
+        "id": "RISK-005",
+        "title": "Guardrails Too Restrictive",
+        "description": "Guardrails may block legitimate agent actions, causing frustration",
+        "probability": "medium",
+        "impact": "medium",
+        "mitigation": "User testing during alpha; gather feedback and refine guardrails",
+        "owner": "product_manager"
+      },
+      {
+        "id": "RISK-006",
+        "title": "Admin Configuration Complexity",
+        "description": "Admin panel may be too complex for non-technical users",
+        "probability": "medium",
+        "impact": "medium",
+        "mitigation": "Extensive UI/UX testing; provide templates and presets",
+        "owner": "frontend_developer"
+      }
+    ],
+    "success_metrics": [
+      {
+        "metric": "Call Variance Reduction",
+        "target": "< 15% variance in milestone completion time",
+        "measurement": "Standard deviation of milestone durations across team",
+        "sprint_target": "SPRINT-001"
+      },
+      {
+        "metric": "Qualification Accuracy",
+        "target": "> 95% of closed deals meet 500+ client threshold",
+        "measurement": "Post-close verification against qualification criteria",
+        "sprint_target": "SPRINT-002"
+      },
+      {
+        "metric": "Objection Classification Coverage",
+        "target": "100% of objections classified with outcome",
+        "measurement": "Percentage of objections with recorded outcome",
+        "sprint_target": "SPRINT-002"
+      },
+      {
+        "metric": "Recording Availability SLA",
+        "target": "100% of calls recorded and available within 2 minutes",
+        "measurement": "Percentage of calls with transcript available within SLA",
+        "sprint_target": "SPRINT-003"
+      },
+      {
+        "metric": "WebSocket Sync Latency",
+        "target": "< 500ms P95 latency",
+        "measurement": "Milliseconds for slide sync between control panel and presentation",
+        "sprint_target": "SPRINT-004"
+      },
+      {
+        "metric": "Admin Configuration Time",
+        "target": "New admin can set up milestone in < 10 minutes",
+        "measurement": "Time to create/publish new milestone",
+        "sprint_target": "SPRINT-005"
+      }
+    ]
+  }
+}

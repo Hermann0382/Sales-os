@@ -1,0 +1,95 @@
+# CallOS - Cursor Rules
+
+## Project Type
+Next.js 14 + TypeScript + Prisma + Tailwind CSS
+
+## Architecture
+- Modular monolith with domain-driven design
+- Next.js App Router for routing
+- Zustand for state management
+- Clerk for authentication
+- PostgreSQL via Prisma ORM
+
+## Code Style
+
+### TypeScript
+- Strict mode enabled
+- No `any` types - use proper typing
+- Named exports only (no `export default` except pages)
+- Path aliases: `@/components`, `@/lib`, `@/hooks`, `@/stores`
+
+### File Naming
+- Components: kebab-case (`glass-card.tsx`)
+- Types: PascalCase (`CallSession`)
+- Functions: camelCase (`getCallById`)
+
+### React
+- Server components by default
+- Only use 'use client' when necessary (state, effects, events)
+- Use `React.forwardRef` for forwarded refs
+- Destructure props in function signature
+
+### Imports Order
+1. React and external libraries
+2. Internal components (@/)
+3. Types
+4. Utils
+
+## Patterns
+
+### API Routes
+```typescript
+import { auth } from '@clerk/nextjs/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+
+export async function GET(request: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  // Always filter by organizationId
+}
+```
+
+### Components
+```tsx
+'use client';
+
+import * as React from 'react';
+import { cn } from '@/lib/utils';
+
+export interface Props {}
+
+export function Component({ prop }: Props) {
+  return <div className={cn('base-classes')}>{/* content */}</div>;
+}
+```
+
+### Zustand Store
+```typescript
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
+
+interface State {}
+
+export const useStore = create<State>()(
+  devtools(persist((set) => ({}), { name: 'store-name' }))
+);
+```
+
+## Security Rules
+- Always filter queries by organizationId
+- Validate user role for protected operations
+- Never expose raw database errors
+- Use Clerk auth() for authentication
+
+## UI Components
+- Use components from `@/components/ui`
+- GlassCard for elevated surfaces
+- Badge for status indicators
+- Button variants: default, secondary, outline, ghost, destructive, success
+
+## Colors (Tailwind)
+- Primary: teal-500 (#14b8a6)
+- Success: emerald-500 (#10b981)
+- Warning: amber-500 (#f59e0b)
+- Destructive: red-500 (#ef4444)

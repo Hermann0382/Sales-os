@@ -1,0 +1,180 @@
+{
+  "id": "FLOW-017",
+  "name": "Conduct Follow-Up Call",
+  "description": "Sales agent conducts a follow-up call with full context from previous sessions, resuming at the appropriate milestone.",
+  "feature_id": "FR-007",
+  "story_ids": ["ST-021", "ST-022"],
+  "actor": "user",
+  "trigger": "Scheduled follow-up appears in calendar or agent selects follow-up from prospect record",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Agent selects follow-up call from calendar or prospect record",
+      "actor": "user",
+      "inputs": ["scheduled_call_id", "prospect_id"],
+      "outputs": ["follow_up_context_loaded"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "System displays previous call summary",
+      "actor": "system",
+      "inputs": ["call_thread_id", "primary_call_id"],
+      "outputs": ["previous_summary_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "System shows last completed milestone",
+      "actor": "system",
+      "inputs": ["previous_call_milestones"],
+      "outputs": ["last_milestone_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "System lists unresolved objections from previous call",
+      "actor": "system",
+      "inputs": ["previous_objection_responses"],
+      "outputs": ["unresolved_objections_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "System highlights open decision variables",
+      "actor": "system",
+      "inputs": ["previous_call_data"],
+      "outputs": ["decision_variables_highlighted"],
+      "conditions": [],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "System shows qualification flags status",
+      "actor": "system",
+      "inputs": ["prospect_qualification_data"],
+      "outputs": ["qualification_status_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Agent reviews context and prepares",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["context_reviewed"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Agent chooses resume point: continue at milestone OR jump to decision",
+      "actor": "user",
+      "inputs": ["resume_option"],
+      "outputs": ["resume_point_selected"],
+      "conditions": [
+        {
+          "condition": "resume_at_milestone",
+          "outcome": "load_milestone_panel"
+        },
+        {
+          "condition": "jump_to_decision",
+          "outcome": "load_m7_panel"
+        }
+      ],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Complete abbreviated pre-call checklist for follow-up",
+      "actor": "user",
+      "inputs": ["follow_up_checklist_items"],
+      "outputs": ["checklist_completed"],
+      "conditions": [],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Paste Zoom link to activate recording",
+      "actor": "user",
+      "inputs": ["zoom_link"],
+      "outputs": ["recording_initialized"],
+      "conditions": [],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "System creates new CallSession linked to CallThread",
+      "actor": "system",
+      "inputs": ["prospect_id", "agent_id", "call_thread_id", "primary_call_id"],
+      "outputs": ["follow_up_session_created"],
+      "conditions": [],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "Execute call from resume point (uses standard milestone flows)",
+      "actor": "user",
+      "inputs": ["resume_milestone_id"],
+      "outputs": ["call_in_progress"],
+      "conditions": [],
+      "next_steps": ["STEP-013"]
+    },
+    {
+      "id": "STEP-013",
+      "sequence": 13,
+      "action": "Address unresolved objections if they resurface",
+      "actor": "user",
+      "inputs": ["objection_updates"],
+      "outputs": ["objections_updated"],
+      "conditions": [],
+      "next_steps": ["STEP-014"]
+    },
+    {
+      "id": "STEP-014",
+      "sequence": 14,
+      "action": "Complete call with outcome classification (FLOW-015)",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["outcome_classified"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "Previous call summary visible before starting",
+    "Last milestone clearly indicated",
+    "Unresolved objections listed and accessible",
+    "Decision variables highlighted",
+    "Qualification flags status shown",
+    "Resume at milestone OR jump to decision option available",
+    "New CallSession linked to existing CallThread",
+    "Seamless continuation of sales process"
+  ],
+  "error_handling": [
+    {
+      "error": "Previous call data unavailable",
+      "response": "Alert agent, allow proceeding with limited context"
+    },
+    {
+      "error": "CallThread not found",
+      "response": "Create new thread with this as primary call"
+    }
+  ]
+}

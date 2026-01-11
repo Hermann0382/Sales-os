@@ -1,0 +1,177 @@
+{
+  "id": "FLOW-024",
+  "name": "Use Dual Interface System",
+  "description": "Sales agent uses the dual interface with Rep Control Panel and separate Client Presentation View for Zoom sharing.",
+  "feature_id": "FR-008",
+  "story_ids": ["ST-023", "ST-024"],
+  "actor": "user",
+  "trigger": "Agent starts a call session and needs to present slides to client",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Agent is in active call session on Rep Control Panel",
+      "actor": "user",
+      "inputs": ["call_session_id"],
+      "outputs": ["control_panel_active"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "Agent clicks 'Start Presentation Mode' button",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["presentation_mode_requested"],
+      "conditions": [],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "System opens Client Presentation View in new browser tab",
+      "actor": "system",
+      "inputs": ["call_session_id", "slide_deck_id"],
+      "outputs": ["presentation_tab_opened"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "System establishes WebSocket connection between views",
+      "actor": "system",
+      "inputs": ["session_token"],
+      "outputs": ["websocket_connected"],
+      "conditions": [],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Agent shares Presentation Tab in Zoom",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["screen_shared"],
+      "conditions": [],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Client sees slides only (no controls, notes, or objections)",
+      "actor": "system",
+      "inputs": [],
+      "outputs": ["client_view_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Agent uses slide navigation buttons on Control Panel",
+      "actor": "user",
+      "inputs": ["navigation_action"],
+      "outputs": ["slide_navigation_triggered"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "System syncs slide change to Presentation View via WebSocket",
+      "actor": "system",
+      "inputs": ["slide_index", "slide_data"],
+      "outputs": ["slide_synced"],
+      "conditions": [],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Control Panel displays full checklist and notes (hidden from client)",
+      "actor": "system",
+      "inputs": [],
+      "outputs": ["private_ui_maintained"],
+      "conditions": [],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Agent triggers objection (not visible on Presentation View)",
+      "actor": "user",
+      "inputs": ["objection_trigger"],
+      "outputs": ["objection_panel_opened"],
+      "conditions": [],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "Agent uses recording controls on Control Panel",
+      "actor": "user",
+      "inputs": ["recording_action"],
+      "outputs": ["recording_controlled"],
+      "conditions": [],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "System renders personalized slide content from parameters",
+      "actor": "system",
+      "inputs": ["slide_template", "call_parameters"],
+      "outputs": ["personalized_slide_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-013"]
+    },
+    {
+      "id": "STEP-013",
+      "sequence": 13,
+      "action": "Agent ends presentation mode",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["presentation_mode_ended"],
+      "conditions": [],
+      "next_steps": ["STEP-014"]
+    },
+    {
+      "id": "STEP-014",
+      "sequence": 14,
+      "action": "Presentation tab closes or shows end screen",
+      "actor": "system",
+      "inputs": [],
+      "outputs": ["presentation_closed"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "Presentation View opens in separate browser tab",
+    "Client sees only slides, no controls/notes/objections",
+    "Slave view controlled by Rep Panel",
+    "WebSocket sync under 500ms latency",
+    "Full checklist visible on Control Panel only",
+    "Notes and confirmations editable on Control Panel",
+    "Objection triggers accessible but hidden from client",
+    "Recording controls on Control Panel",
+    "Client-safe URL with no auth-sensitive UI",
+    "Slide navigation synced live"
+  ],
+  "error_handling": [
+    {
+      "error": "WebSocket disconnection",
+      "response": "Attempt automatic reconnection, show connection status"
+    },
+    {
+      "error": "Presentation tab closed accidentally",
+      "response": "Allow reopening from Control Panel"
+    },
+    {
+      "error": "Sync latency exceeds 500ms",
+      "response": "Log performance issue, continue with best effort"
+    }
+  ]
+}

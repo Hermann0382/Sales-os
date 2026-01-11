@@ -1,0 +1,1915 @@
+{
+  "artifact_type": "erd",
+  "status": "complete",
+  "validation": "passed",
+  "approval_required": true,
+  "approvers": ["Cynthia", "Hassan", "Usama"],
+  "next_phase": "journey_mapping",
+  "data": {
+    "project_name": "CallOS",
+    "version": "1.0.0",
+    "created_at": "2026-01-08T13:00:00Z",
+    "database_type": "postgres",
+    "entities": [
+      {
+        "id": "ENT-001",
+        "name": "Organization",
+        "description": "Tenant organization for white-label support",
+        "table_name": "organizations",
+        "attributes": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "name",
+            "type": "STRING",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "NOW()",
+            "constraints": []
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_organizations_name",
+            "columns": ["name"],
+            "unique": false
+          }
+        ]
+      },
+      {
+        "id": "ENT-002",
+        "name": "User",
+        "description": "Sales agent, manager, or admin user",
+        "table_name": "users",
+        "attributes": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "organization_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "email",
+            "type": "STRING",
+            "primary_key": false,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": ["EMAIL"]
+          },
+          {
+            "name": "role",
+            "type": "ENUM",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "agent",
+            "constraints": ["agent|manager|admin"]
+          },
+          {
+            "name": "language_preference",
+            "type": "ENUM",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "EN",
+            "constraints": ["EN|DE"]
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "NOW()",
+            "constraints": []
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_users_email",
+            "columns": ["email"],
+            "unique": true
+          },
+          {
+            "name": "idx_users_organization_id",
+            "columns": ["organization_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_users_role",
+            "columns": ["role"],
+            "unique": false
+          }
+        ]
+      },
+      {
+        "id": "ENT-003",
+        "name": "Prospect",
+        "description": "Potential coaching client financial advisor",
+        "table_name": "prospects",
+        "attributes": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "organization_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "name",
+            "type": "STRING",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "ghl_contact_id",
+            "type": "STRING",
+            "primary_key": false,
+            "nullable": true,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "client_count",
+            "type": "INTEGER",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "main_pain",
+            "type": "STRING",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "revenue_volatility",
+            "type": "INTEGER",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": ["MIN:1|MAX:5"]
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "NOW()",
+            "constraints": []
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_prospects_organization_id",
+            "columns": ["organization_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_prospects_ghl_contact_id",
+            "columns": ["ghl_contact_id"],
+            "unique": true
+          }
+        ]
+      },
+      {
+        "id": "ENT-004",
+        "name": "Milestone",
+        "description": "Call phase definition (M1-M7)",
+        "table_name": "milestones",
+        "attributes": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "organization_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "milestone_number",
+            "type": "INTEGER",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": ["MIN:1|MAX:7"]
+          },
+          {
+            "name": "title",
+            "type": "STRING",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "objective",
+            "type": "TEXT",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "required_questions",
+            "type": "JSON",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "confirmations",
+            "type": "JSON",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "estimated_duration_minutes",
+            "type": "INTEGER",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "order_index",
+            "type": "INTEGER",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "NOW()",
+            "constraints": []
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_milestones_organization_id",
+            "columns": ["organization_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_milestones_order_index",
+            "columns": ["order_index"],
+            "unique": false
+          }
+        ]
+      },
+      {
+        "id": "ENT-005",
+        "name": "CallThread",
+        "description": "Groups primary call with follow-ups",
+        "table_name": "call_threads",
+        "attributes": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "organization_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "prospect_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "primary_call_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "NOW()",
+            "constraints": []
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_call_threads_organization_id",
+            "columns": ["organization_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_call_threads_prospect_id",
+            "columns": ["prospect_id"],
+            "unique": false
+          }
+        ]
+      },
+      {
+        "id": "ENT-006",
+        "name": "CallSession",
+        "description": "Individual call instance",
+        "table_name": "call_sessions",
+        "attributes": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "organization_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "call_thread_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "prospect_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "agent_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "status",
+            "type": "ENUM",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "scheduled",
+            "constraints": ["scheduled|in_progress|completed|cancelled"]
+          },
+          {
+            "name": "mode",
+            "type": "ENUM",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "flexible",
+            "constraints": ["strict|flexible"]
+          },
+          {
+            "name": "language",
+            "type": "ENUM",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "EN",
+            "constraints": ["EN|DE"]
+          },
+          {
+            "name": "started_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "ended_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "recording_reference",
+            "type": "STRING",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "zoom_link",
+            "type": "STRING",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "NOW()",
+            "constraints": []
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_call_sessions_organization_id",
+            "columns": ["organization_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_call_sessions_prospect_id",
+            "columns": ["prospect_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_call_sessions_agent_id",
+            "columns": ["agent_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_call_sessions_status",
+            "columns": ["status"],
+            "unique": false
+          }
+        ]
+      },
+      {
+        "id": "ENT-007",
+        "name": "MilestoneResponse",
+        "description": "Agent responses and checkoffs within a milestone",
+        "table_name": "milestone_responses",
+        "attributes": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "call_session_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "milestone_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "status",
+            "type": "ENUM",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "in_progress",
+            "constraints": ["in_progress|completed|skipped"]
+          },
+          {
+            "name": "required_items_checked",
+            "type": "JSON",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "notes",
+            "type": "TEXT",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "override_reason",
+            "type": "TEXT",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "started_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "NOW()",
+            "constraints": []
+          },
+          {
+            "name": "completed_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_milestone_responses_call_session_id",
+            "columns": ["call_session_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_milestone_responses_milestone_id",
+            "columns": ["milestone_id"],
+            "unique": false
+          }
+        ]
+      },
+      {
+        "id": "ENT-008",
+        "name": "Objection",
+        "description": "Objection type definition (6 types)",
+        "table_name": "objections",
+        "attributes": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "organization_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "objection_type",
+            "type": "ENUM",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": ["Price|Timing|Capacity_Time|Need_to_Think|Partner_Team|Skepticism"]
+          },
+          {
+            "name": "diagnostic_questions",
+            "type": "JSON",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "allowed_outcomes",
+            "type": "JSON",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "NOW()",
+            "constraints": []
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_objections_organization_id",
+            "columns": ["organization_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_objections_type",
+            "columns": ["objection_type"],
+            "unique": false
+          }
+        ]
+      },
+      {
+        "id": "ENT-009",
+        "name": "ObjectionResponse",
+        "description": "Objection instance and outcome during call",
+        "table_name": "objection_responses",
+        "attributes": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "call_session_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "objection_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "milestone_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "outcome",
+            "type": "ENUM",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": ["Resolved|Deferred|Disqualified"]
+          },
+          {
+            "name": "diagnostic_answers",
+            "type": "JSON",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "notes",
+            "type": "TEXT",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "NOW()",
+            "constraints": []
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_objection_responses_call_session_id",
+            "columns": ["call_session_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_objection_responses_objection_id",
+            "columns": ["objection_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_objection_responses_outcome",
+            "columns": ["outcome"],
+            "unique": false
+          }
+        ]
+      },
+      {
+        "id": "ENT-010",
+        "name": "SlideTemplate",
+        "description": "Individual slide definition with static and parameter slots",
+        "table_name": "slide_templates",
+        "attributes": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "organization_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "milestone_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "title_static",
+            "type": "STRING",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "core_message_static",
+            "type": "TEXT",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "parameter_slots",
+            "type": "JSON",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "visualization_template",
+            "type": "TEXT",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "order_index",
+            "type": "INTEGER",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "NOW()",
+            "constraints": []
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_slide_templates_organization_id",
+            "columns": ["organization_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_slide_templates_milestone_id",
+            "columns": ["milestone_id"],
+            "unique": false
+          }
+        ]
+      },
+      {
+        "id": "ENT-011",
+        "name": "SlideDeck",
+        "description": "Versioned slide deck for a product",
+        "table_name": "slide_decks",
+        "attributes": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "organization_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "product_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "version",
+            "type": "STRING",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "status",
+            "type": "ENUM",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "draft",
+            "constraints": ["draft|active|deprecated"]
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "NOW()",
+            "constraints": []
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_slide_decks_organization_id",
+            "columns": ["organization_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_slide_decks_status",
+            "columns": ["status"],
+            "unique": false
+          }
+        ]
+      },
+      {
+        "id": "ENT-012",
+        "name": "SlideInstance",
+        "description": "Slide presentation during specific call",
+        "table_name": "slide_instances",
+        "attributes": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "call_session_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "slide_template_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "prospect_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "rendered_content",
+            "type": "JSON",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "agent_notes",
+            "type": "TEXT",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "outcome_tag",
+            "type": "ENUM",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": ["positive|neutral|negative"]
+          },
+          {
+            "name": "started_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "ended_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "NOW()",
+            "constraints": []
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_slide_instances_call_session_id",
+            "columns": ["call_session_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_slide_instances_slide_template_id",
+            "columns": ["slide_template_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_slide_instances_prospect_id",
+            "columns": ["prospect_id"],
+            "unique": false
+          }
+        ]
+      },
+      {
+        "id": "ENT-013",
+        "name": "PromptConfig",
+        "description": "AI prompt configuration with versioning",
+        "table_name": "prompt_configs",
+        "attributes": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "organization_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "scope",
+            "type": "ENUM",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": ["global|milestone|objection|slide_analysis|call_synthesis"]
+          },
+          {
+            "name": "milestone_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "objection_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "language",
+            "type": "ENUM",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "EN",
+            "constraints": ["EN|DE"]
+          },
+          {
+            "name": "prompt_text",
+            "type": "TEXT",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "variables",
+            "type": "JSON",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "version",
+            "type": "STRING",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "1.0",
+            "constraints": []
+          },
+          {
+            "name": "status",
+            "type": "ENUM",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "draft",
+            "constraints": ["draft|active|deprecated"]
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "NOW()",
+            "constraints": []
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_prompt_configs_organization_id",
+            "columns": ["organization_id"],
+            "unique": false
+          },
+          {
+            "name": "idx_prompt_configs_scope",
+            "columns": ["scope"],
+            "unique": false
+          },
+          {
+            "name": "idx_prompt_configs_status",
+            "columns": ["status"],
+            "unique": false
+          }
+        ]
+      },
+      {
+        "id": "ENT-014",
+        "name": "AIAnalysis",
+        "description": "AI-generated post-call analysis",
+        "table_name": "ai_analyses",
+        "attributes": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "call_session_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "summary",
+            "type": "TEXT",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "objection_classification",
+            "type": "JSON",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "decision_readiness_score",
+            "type": "DECIMAL",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "risk_flags",
+            "type": "JSON",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "agent_execution_feedback",
+            "type": "TEXT",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "slide_effectiveness_signals",
+            "type": "JSON",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "follow_up_email_draft",
+            "type": "TEXT",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "evidence_markers",
+            "type": "JSON",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "NOW()",
+            "constraints": []
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_ai_analyses_call_session_id",
+            "columns": ["call_session_id"],
+            "unique": true
+          }
+        ]
+      },
+      {
+        "id": "ENT-015",
+        "name": "CallOutcome",
+        "description": "Final call outcome classification with qualification tracking",
+        "table_name": "call_outcomes",
+        "attributes": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "call_session_id",
+            "type": "UUID",
+            "primary_key": false,
+            "nullable": false,
+            "unique": true,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "outcome_type",
+            "type": "ENUM",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": null,
+            "constraints": ["Coaching_Client|Follow_up_Scheduled|Implementation_Only|Disqualified"]
+          },
+          {
+            "name": "disqualification_reason",
+            "type": "ENUM",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": ["Under_500_Clients|Cashflow_Mismatch|Misaligned_Expectations|Capacity_Constraint|Authority_Issue"]
+          },
+          {
+            "name": "qualification_flags",
+            "type": "JSON",
+            "primary_key": false,
+            "nullable": true,
+            "unique": false,
+            "default": null,
+            "constraints": []
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "primary_key": false,
+            "nullable": false,
+            "unique": false,
+            "default": "NOW()",
+            "constraints": []
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_call_outcomes_call_session_id",
+            "columns": ["call_session_id"],
+            "unique": true
+          },
+          {
+            "name": "idx_call_outcomes_outcome_type",
+            "columns": ["outcome_type"],
+            "unique": false
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "id": "REL-001",
+        "name": "user_belongs_to_organization",
+        "from_entity": "ENT-002",
+        "to_entity": "ENT-001",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "organization_id",
+        "cascade_delete": false,
+        "_comment": "User has FK to Organization"
+      },
+      {
+        "id": "REL-002",
+        "name": "prospect_belongs_to_organization",
+        "from_entity": "ENT-003",
+        "to_entity": "ENT-001",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "organization_id",
+        "cascade_delete": false,
+        "_comment": "Prospect has FK to Organization"
+      },
+      {
+        "id": "REL-003",
+        "name": "milestone_belongs_to_organization",
+        "from_entity": "ENT-004",
+        "to_entity": "ENT-001",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "organization_id",
+        "cascade_delete": false,
+        "_comment": "Milestone has FK to Organization"
+      },
+      {
+        "id": "REL-004",
+        "name": "call_thread_belongs_to_organization",
+        "from_entity": "ENT-005",
+        "to_entity": "ENT-001",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "organization_id",
+        "cascade_delete": false,
+        "_comment": "CallThread has FK to Organization"
+      },
+      {
+        "id": "REL-005",
+        "name": "call_thread_belongs_to_prospect",
+        "from_entity": "ENT-005",
+        "to_entity": "ENT-003",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "prospect_id",
+        "cascade_delete": false,
+        "_comment": "CallThread has FK to Prospect"
+      },
+      {
+        "id": "REL-006",
+        "name": "call_thread_links_primary_call",
+        "from_entity": "ENT-005",
+        "to_entity": "ENT-006",
+        "from_cardinality": "1",
+        "to_cardinality": "1",
+        "relationship_type": "one-to-one",
+        "foreign_key": "primary_call_id",
+        "cascade_delete": false,
+        "_comment": "CallThread has FK to CallSession (primary)"
+      },
+      {
+        "id": "REL-007",
+        "name": "call_session_belongs_to_organization",
+        "from_entity": "ENT-006",
+        "to_entity": "ENT-001",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "organization_id",
+        "cascade_delete": false,
+        "_comment": "CallSession has FK to Organization"
+      },
+      {
+        "id": "REL-008",
+        "name": "call_session_belongs_to_call_thread",
+        "from_entity": "ENT-006",
+        "to_entity": "ENT-005",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "call_thread_id",
+        "cascade_delete": false,
+        "_comment": "CallSession has FK to CallThread"
+      },
+      {
+        "id": "REL-009",
+        "name": "call_session_involves_prospect",
+        "from_entity": "ENT-006",
+        "to_entity": "ENT-003",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "prospect_id",
+        "cascade_delete": false,
+        "_comment": "CallSession has FK to Prospect"
+      },
+      {
+        "id": "REL-010",
+        "name": "call_session_involves_agent",
+        "from_entity": "ENT-006",
+        "to_entity": "ENT-002",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "agent_id",
+        "cascade_delete": false,
+        "_comment": "CallSession has FK to User (agent)"
+      },
+      {
+        "id": "REL-011",
+        "name": "milestone_response_tracks_call_progress",
+        "from_entity": "ENT-007",
+        "to_entity": "ENT-006",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "call_session_id",
+        "cascade_delete": true,
+        "_comment": "MilestoneResponse has FK to CallSession"
+      },
+      {
+        "id": "REL-012",
+        "name": "milestone_response_tracks_milestone",
+        "from_entity": "ENT-007",
+        "to_entity": "ENT-004",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "milestone_id",
+        "cascade_delete": false,
+        "_comment": "MilestoneResponse has FK to Milestone"
+      },
+      {
+        "id": "REL-013",
+        "name": "objection_belongs_to_organization",
+        "from_entity": "ENT-008",
+        "to_entity": "ENT-001",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "organization_id",
+        "cascade_delete": false,
+        "_comment": "Objection has FK to Organization"
+      },
+      {
+        "id": "REL-014",
+        "name": "objection_response_tracks_call",
+        "from_entity": "ENT-009",
+        "to_entity": "ENT-006",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "call_session_id",
+        "cascade_delete": true,
+        "_comment": "ObjectionResponse has FK to CallSession"
+      },
+      {
+        "id": "REL-015",
+        "name": "objection_response_tracks_objection",
+        "from_entity": "ENT-009",
+        "to_entity": "ENT-008",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "objection_id",
+        "cascade_delete": false,
+        "_comment": "ObjectionResponse has FK to Objection"
+      },
+      {
+        "id": "REL-016",
+        "name": "objection_response_tracks_milestone",
+        "from_entity": "ENT-009",
+        "to_entity": "ENT-004",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "milestone_id",
+        "cascade_delete": false,
+        "_comment": "ObjectionResponse has FK to Milestone"
+      },
+      {
+        "id": "REL-017",
+        "name": "slide_template_belongs_to_organization",
+        "from_entity": "ENT-010",
+        "to_entity": "ENT-001",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "organization_id",
+        "cascade_delete": false,
+        "_comment": "SlideTemplate has FK to Organization"
+      },
+      {
+        "id": "REL-018",
+        "name": "slide_template_belongs_to_milestone",
+        "from_entity": "ENT-010",
+        "to_entity": "ENT-004",
+        "from_cardinality": "many",
+        "to_cardinality": "0..1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "milestone_id",
+        "cascade_delete": false,
+        "_comment": "SlideTemplate has FK to Milestone (optional)"
+      },
+      {
+        "id": "REL-019",
+        "name": "slide_deck_belongs_to_organization",
+        "from_entity": "ENT-011",
+        "to_entity": "ENT-001",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "organization_id",
+        "cascade_delete": false,
+        "_comment": "SlideDeck has FK to Organization"
+      },
+      {
+        "id": "REL-020",
+        "name": "slide_instance_belongs_to_call",
+        "from_entity": "ENT-012",
+        "to_entity": "ENT-006",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "call_session_id",
+        "cascade_delete": true,
+        "_comment": "SlideInstance has FK to CallSession"
+      },
+      {
+        "id": "REL-021",
+        "name": "slide_instance_uses_template",
+        "from_entity": "ENT-012",
+        "to_entity": "ENT-010",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "slide_template_id",
+        "cascade_delete": false,
+        "_comment": "SlideInstance has FK to SlideTemplate"
+      },
+      {
+        "id": "REL-022",
+        "name": "slide_instance_shown_to_prospect",
+        "from_entity": "ENT-012",
+        "to_entity": "ENT-003",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "prospect_id",
+        "cascade_delete": false,
+        "_comment": "SlideInstance has FK to Prospect"
+      },
+      {
+        "id": "REL-023",
+        "name": "prompt_config_belongs_to_organization",
+        "from_entity": "ENT-013",
+        "to_entity": "ENT-001",
+        "from_cardinality": "many",
+        "to_cardinality": "1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "organization_id",
+        "cascade_delete": false,
+        "_comment": "PromptConfig has FK to Organization"
+      },
+      {
+        "id": "REL-024",
+        "name": "prompt_config_for_milestone",
+        "from_entity": "ENT-013",
+        "to_entity": "ENT-004",
+        "from_cardinality": "many",
+        "to_cardinality": "0..1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "milestone_id",
+        "cascade_delete": false,
+        "_comment": "PromptConfig has FK to Milestone (optional, for milestone-scoped prompts)"
+      },
+      {
+        "id": "REL-025",
+        "name": "prompt_config_for_objection",
+        "from_entity": "ENT-013",
+        "to_entity": "ENT-008",
+        "from_cardinality": "many",
+        "to_cardinality": "0..1",
+        "relationship_type": "many-to-one",
+        "foreign_key": "objection_id",
+        "cascade_delete": false,
+        "_comment": "PromptConfig has FK to Objection (optional, for objection-scoped prompts)"
+      },
+      {
+        "id": "REL-026",
+        "name": "ai_analysis_for_call",
+        "from_entity": "ENT-014",
+        "to_entity": "ENT-006",
+        "from_cardinality": "1",
+        "to_cardinality": "1",
+        "relationship_type": "one-to-one",
+        "foreign_key": "call_session_id",
+        "cascade_delete": true,
+        "_comment": "AIAnalysis has FK to CallSession (unique)"
+      },
+      {
+        "id": "REL-027",
+        "name": "call_outcome_for_call",
+        "from_entity": "ENT-015",
+        "to_entity": "ENT-006",
+        "from_cardinality": "1",
+        "to_cardinality": "1",
+        "relationship_type": "one-to-one",
+        "foreign_key": "call_session_id",
+        "cascade_delete": true,
+        "_comment": "CallOutcome has FK to CallSession (unique)"
+      }
+    ],
+    "constraints": [
+      {
+        "type": "check",
+        "entity": "ENT-003",
+        "name": "valid_client_count",
+        "expression": "client_count IS NULL OR client_count >= 0"
+      },
+      {
+        "type": "check",
+        "entity": "ENT-003",
+        "name": "valid_revenue_volatility",
+        "expression": "revenue_volatility IS NULL OR (revenue_volatility >= 1 AND revenue_volatility <= 5)"
+      },
+      {
+        "type": "check",
+        "entity": "ENT-004",
+        "name": "valid_milestone_number",
+        "expression": "milestone_number >= 1 AND milestone_number <= 7"
+      },
+      {
+        "type": "check",
+        "entity": "ENT-012",
+        "name": "valid_slide_timing",
+        "expression": "ended_at IS NULL OR started_at IS NULL OR ended_at >= started_at"
+      },
+      {
+        "type": "check",
+        "entity": "ENT-006",
+        "name": "valid_call_timing",
+        "expression": "ended_at IS NULL OR started_at IS NULL OR ended_at >= started_at"
+      },
+      {
+        "type": "unique",
+        "entity": "ENT-015",
+        "name": "one_outcome_per_call",
+        "columns": ["call_session_id"]
+      },
+      {
+        "type": "unique",
+        "entity": "ENT-014",
+        "name": "one_analysis_per_call",
+        "columns": ["call_session_id"]
+      }
+    ],
+    "migrations": {
+      "initial_schema": "V001_initial_schema.sql",
+      "seed_data": [
+        {
+          "entity": "Milestone",
+          "data": [
+            {
+              "milestone_number": 1,
+              "title": "M1 Context & Frame",
+              "objective": "Establish shared understanding of call scope and diagnostic intent",
+              "estimated_duration_minutes": 5,
+              "order_index": 1
+            },
+            {
+              "milestone_number": 2,
+              "title": "M2 Current State Mapping",
+              "objective": "Map prospect's operational reality and expose fragility without judgment",
+              "estimated_duration_minutes": 20,
+              "order_index": 2
+            },
+            {
+              "milestone_number": 3,
+              "title": "M3 Outcome Vision",
+              "objective": "Capture prospect's desired future state",
+              "estimated_duration_minutes": 15,
+              "order_index": 3
+            },
+            {
+              "milestone_number": 4,
+              "title": "M4 System Reality Check",
+              "objective": "Reveal hidden cost of manual implementation",
+              "estimated_duration_minutes": 10,
+              "order_index": 4
+            },
+            {
+              "milestone_number": 5,
+              "title": "M5 Solution Mapping",
+              "objective": "Present system leverage vs manual execution",
+              "estimated_duration_minutes": 15,
+              "order_index": 5
+            },
+            {
+              "milestone_number": 6,
+              "title": "M6 Offer Presentation",
+              "objective": "Present coaching infrastructure investment with structural framing",
+              "estimated_duration_minutes": 10,
+              "order_index": 6
+            },
+            {
+              "milestone_number": 7,
+              "title": "M7 Decision Point",
+              "objective": "Request explicit decision with forced choice",
+              "estimated_duration_minutes": 5,
+              "order_index": 7
+            }
+          ]
+        },
+        {
+          "entity": "Objection",
+          "data": [
+            {
+              "objection_type": "Price",
+              "diagnostic_questions": [
+                "Compared to what?",
+                "Classify comparison",
+                "Structural check - 6-month payback"
+              ],
+              "allowed_outcomes": ["Resolved", "Deferred", "Disqualified"]
+            },
+            {
+              "objection_type": "Timing",
+              "diagnostic_questions": [
+                "What would need to change?",
+                "Identify type of constraint",
+                "Future projection",
+                "Delay cost acknowledgment"
+              ],
+              "allowed_outcomes": ["Resolved", "Deferred", "Disqualified"]
+            },
+            {
+              "objection_type": "Capacity_Time",
+              "diagnostic_questions": [
+                "Manual overload vs project resistance?",
+                "Core fear identification",
+                "Current trajectory reality check",
+                "Work reduction alignment"
+              ],
+              "allowed_outcomes": ["Resolved", "Deferred", "Disqualified"]
+            },
+            {
+              "objection_type": "Need_to_Think",
+              "diagnostic_questions": [
+                "What specifically do you want to think through?",
+                "Isolate variable",
+                "Containment question"
+              ],
+              "allowed_outcomes": ["Resolved", "Deferred", "Disqualified"]
+            },
+            {
+              "objection_type": "Partner_Team",
+              "diagnostic_questions": [
+                "Authority clarification",
+                "Pre-solve anticipated concerns",
+                "Equip with explanation summary"
+              ],
+              "allowed_outcomes": ["Resolved", "Deferred", "Disqualified"]
+            },
+            {
+              "objection_type": "Skepticism",
+              "diagnostic_questions": [
+                "Validate past experience",
+                "Pattern recognition",
+                "Structural difference articulation"
+              ],
+              "allowed_outcomes": ["Resolved", "Deferred", "Disqualified"]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

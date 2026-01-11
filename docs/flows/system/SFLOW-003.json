@@ -1,0 +1,224 @@
+{
+  "id": "SFLOW-003",
+  "name": "AI Post-Call Analysis Pipeline",
+  "description": "System flow that processes completed call recordings through AI analysis to generate summaries, classifications, and recommendations.",
+  "components": ["api", "database", "queue", "ai_service", "storage"],
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Call session completed with outcome classification",
+      "component": "api",
+      "inputs": ["call_session_id", "outcome_type", "recording_reference"],
+      "outputs": ["analysis_job_trigger"],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "API queues AI analysis job",
+      "component": "queue",
+      "inputs": ["call_session_id", "recording_reference"],
+      "outputs": ["job_id", "job_queued"],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Worker picks up analysis job",
+      "component": "queue",
+      "inputs": ["job_id"],
+      "outputs": ["job_processing"],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Storage retrieves recording audio file",
+      "component": "storage",
+      "inputs": ["recording_reference"],
+      "outputs": ["audio_file"],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "AI service generates transcript with speaker detection",
+      "component": "ai_service",
+      "inputs": ["audio_file"],
+      "outputs": ["transcript", "speaker_labels"],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Database retrieves relevant AI prompts (scope: analysis)",
+      "component": "database",
+      "inputs": ["prompt_scope_analysis", "language"],
+      "outputs": ["analysis_prompts"],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Database retrieves call session data for context",
+      "component": "database",
+      "inputs": ["call_session_id"],
+      "outputs": ["milestone_responses", "objection_responses", "call_data"],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "AI service generates call summary (factual, neutral)",
+      "component": "ai_service",
+      "inputs": ["transcript", "call_data", "summary_prompt"],
+      "outputs": ["call_summary"],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "AI service classifies objections",
+      "component": "ai_service",
+      "inputs": ["transcript", "objection_responses", "classification_prompt"],
+      "outputs": ["objection_classification"],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "AI service calculates decision readiness score",
+      "component": "ai_service",
+      "inputs": ["transcript", "milestone_responses", "readiness_prompt"],
+      "outputs": ["decision_readiness_score"],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "AI service identifies risk flags",
+      "component": "ai_service",
+      "inputs": ["transcript", "risk_flags_prompt"],
+      "outputs": ["risk_flags"],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "AI service generates agent execution feedback",
+      "component": "ai_service",
+      "inputs": ["transcript", "milestone_responses", "execution_prompt"],
+      "outputs": ["execution_feedback"],
+      "next_steps": ["STEP-013"]
+    },
+    {
+      "id": "STEP-013",
+      "sequence": 13,
+      "action": "AI service analyzes slide effectiveness signals",
+      "component": "ai_service",
+      "inputs": ["transcript", "slide_instances", "slide_analysis_prompt"],
+      "outputs": ["slide_effectiveness_signals"],
+      "next_steps": ["STEP-014"]
+    },
+    {
+      "id": "STEP-014",
+      "sequence": 14,
+      "action": "API validates all outputs have traceable evidence",
+      "component": "api",
+      "inputs": ["all_ai_outputs", "transcript"],
+      "outputs": ["evidence_links"],
+      "next_steps": ["STEP-015"]
+    },
+    {
+      "id": "STEP-015",
+      "sequence": 15,
+      "action": "Database creates AIAnalysis record",
+      "component": "database",
+      "inputs": ["call_session_id", "summary", "objection_classification", "readiness_score", "risk_flags", "execution_feedback", "slide_signals", "evidence_links"],
+      "outputs": ["ai_analysis_id"],
+      "next_steps": ["STEP-016"]
+    },
+    {
+      "id": "STEP-016",
+      "sequence": 16,
+      "action": "Storage saves transcript with timeline markers",
+      "component": "storage",
+      "inputs": ["call_session_id", "transcript", "timeline_markers"],
+      "outputs": ["transcript_stored"],
+      "next_steps": ["STEP-017"]
+    },
+    {
+      "id": "STEP-017",
+      "sequence": 17,
+      "action": "Queue marks job complete",
+      "component": "queue",
+      "inputs": ["job_id"],
+      "outputs": ["job_completed"],
+      "next_steps": ["STEP-018"]
+    },
+    {
+      "id": "STEP-018",
+      "sequence": 18,
+      "action": "API updates call session with analysis status",
+      "component": "api",
+      "inputs": ["call_session_id", "ai_analysis_id"],
+      "outputs": ["session_updated", "analysis_available_notification"],
+      "next_steps": []
+    }
+  ],
+  "data_flow": [
+    {
+      "from": "api",
+      "to": "queue",
+      "data": "Analysis job with call_session_id"
+    },
+    {
+      "from": "queue",
+      "to": "storage",
+      "data": "Recording retrieval request"
+    },
+    {
+      "from": "storage",
+      "to": "ai_service",
+      "data": "Audio file for transcription"
+    },
+    {
+      "from": "database",
+      "to": "ai_service",
+      "data": "Prompts and call context"
+    },
+    {
+      "from": "ai_service",
+      "to": "database",
+      "data": "Analysis results"
+    },
+    {
+      "from": "ai_service",
+      "to": "storage",
+      "data": "Transcript with markers"
+    }
+  ],
+  "error_handling": [
+    {
+      "error": "Recording not available",
+      "response": "Retry after delay, alert if persistent failure"
+    },
+    {
+      "error": "Transcription failed",
+      "response": "Log error, mark analysis as partial, allow manual transcript upload"
+    },
+    {
+      "error": "AI service timeout",
+      "response": "Retry with exponential backoff, max 3 attempts"
+    },
+    {
+      "error": "Analysis exceeds 2-minute SLA",
+      "response": "Log performance issue, complete async, notify when ready"
+    },
+    {
+      "error": "Evidence linking failed",
+      "response": "Flag outputs as unverified, allow manual review"
+    }
+  ]
+}

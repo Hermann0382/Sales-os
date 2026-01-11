@@ -1,0 +1,1128 @@
+{
+  "artifact_type": "adr",
+  "scope": "project",
+  "status": "complete",
+  "validation": "passed",
+  "approval_required": true,
+  "approvers": ["Hermann", "Usama"],
+  "next_phase": "scaffolding",
+  "data": {
+    "project_name": "CallOS",
+    "version": "1.0.0",
+    "created_at": "2026-01-08T18:00:00Z",
+    "decisions": [
+      {
+        "id": "ADR-0001",
+        "title": "Use Next.js as Web Framework",
+        "status": "accepted",
+        "date": "2026-01-08T18:00:00Z",
+        "author": "Claude Code (Pipeline Generator)",
+        "context": {
+          "description": "CallOS is a complex SaaS platform requiring server-side rendering, real-time synchronization, and full-stack integration. The framework must support rapid development, TypeScript, and deployment to Vercel.",
+          "requirements": [
+            "Server-side rendering for SEO and initial page load performance",
+            "Built-in API routes for backend services",
+            "TypeScript support for type safety",
+            "Real-time capabilities via WebSocket",
+            "Deployment flexibility (Vercel, Railway, self-hosted)",
+            "Middleware support for authentication and CORS",
+            "File-based routing for developer experience"
+          ],
+          "constraints": [
+            "Must support 50+ concurrent calls per deployment",
+            "Page load time < 2 seconds required",
+            "Slide sync latency < 500ms required",
+            "No cost per API call (self-hosted backend preferred)",
+            "Team has existing React experience, not Vue or Angular"
+          ]
+        },
+        "decision": "Use Next.js 14+ with TypeScript as the primary web framework for CallOS. Implement both frontend (React components) and backend (API routes) within the same Next.js application with potential microservice separation in Phase 2.",
+        "alternatives": [
+          {
+            "option": "Remix",
+            "pros": [
+              "Better data loading patterns with nested routing",
+              "Server actions for form handling",
+              "Strong focus on web standards",
+              "Good TypeScript support"
+            ],
+            "cons": [
+              "Smaller ecosystem than Next.js",
+              "Fewer third-party integrations",
+              "Learning curve for team experienced with Next.js",
+              "Hosting complexity (requires Node.js server)"
+            ],
+            "cost_estimate": "Same as Next.js, more ops effort"
+          },
+          {
+            "option": "SvelteKit",
+            "pros": [
+              "Smaller bundle sizes",
+              "Reactive by default",
+              "Good developer experience",
+              "Built-in form handling"
+            ],
+            "cons": [
+              "Svelte less mainstream in market",
+              "Smaller ecosystem of UI component libraries",
+              "Team needs to learn new framework syntax",
+              "Fewer AI/LLM integration examples"
+            ],
+            "cost_estimate": "Higher training cost"
+          },
+          {
+            "option": "Astro",
+            "pros": [
+              "Excellent for content-heavy sites",
+              "Low JavaScript by default",
+              "Good performance metrics"
+            ],
+            "cons": [
+              "Not ideal for interactive SaaS applications",
+              "Limited real-time synchronization patterns",
+              "Less suitable for complex state management",
+              "Not recommended for WebSocket-heavy apps"
+            ],
+            "cost_estimate": "Architectural mismatch"
+          }
+        ],
+        "rationale": "Next.js is the best fit for CallOS because it provides full-stack capabilities within a single codebase, eliminating the complexity of maintaining separate frontend and backend repositories. The framework's API routes allow rapid implementation of REST endpoints and WebSocket handlers. Vercel deployment provides zero-configuration production deployments, critical for reducing operational overhead. Next.js 14 with App Router enables modern patterns like Server Components for performance optimization. The ecosystem is mature with excellent TypeScript support, real-time libraries (Socket.io, ws), and AI/LLM integrations (Anthropic SDK). Team familiarity reduces training cost. Streaming responses support post-call AI analysis with real-time progress updates.",
+        "consequences": {
+          "positive": [
+            "Unified codebase simplifies development velocity and knowledge sharing",
+            "Built-in API routes reduce need for separate backend service setup",
+            "Native TypeScript support enforces type safety across stack",
+            "Vercel deployment enables frictionless production releases",
+            "App Router with Server Components optimize initial page load",
+            "Streaming responses enable real-time AI analysis UI updates",
+            "File-based routing reduces boilerplate and mental overhead",
+            "Rich ecosystem of middleware (authentication, CORS, logging)",
+            "WebSocket support via Next.js API routes enables real-time slide sync"
+          ],
+          "negative": [
+            "Single deployment unit couples frontend and backend (mitigated in Phase 2 with microservices)",
+            "Vercel vendor lock-in (mitigated by self-hosting capability)",
+            "API routes not as scalable as dedicated backend service (acceptable for Phase 1 load)",
+            "Server Components learning curve for team (worth investment)",
+            "Build times may increase with growing codebase (mitigated by incremental builds)"
+          ],
+          "risks": [
+            "Production performance under 50+ concurrent calls must be tested (mitigation: load testing before release)",
+            "WebSocket connection state management complexity (mitigation: use battle-tested library like Socket.io)",
+            "Cold starts on Vercel could exceed 500ms SLA (mitigation: implement warming strategy)",
+            "Database connection pooling required for API route scalability (mitigation: use Prisma connection pooling)"
+          ]
+        },
+        "related_decisions": ["ADR-0002", "ADR-0007"],
+        "superseded_by": null,
+        "artifact_references": {
+          "features": ["FR-008", "FR-009", "FR-013", "FR-014"],
+          "entities": ["ENT-001", "ENT-002"],
+          "tasks": ["TASK-001", "TASK-008", "TASK-013", "TASK-014"]
+        }
+      },
+      {
+        "id": "ADR-0002",
+        "title": "Use PostgreSQL as Primary Database",
+        "status": "accepted",
+        "date": "2026-01-08T18:00:00Z",
+        "author": "Claude Code (Pipeline Generator)",
+        "context": {
+          "description": "CallOS requires a robust relational database to store complex interconnected data: users, prospects, calls, milestones, objections, responses, slides, AI analysis, and audit logs. The database must support multi-tenancy, ACID compliance, and advanced query patterns for analytics.",
+          "requirements": [
+            "Support 15 interconnected entities with 27 relationships",
+            "ACID compliance for data integrity (critical for financial transactions)",
+            "Support complex queries for analytics (aggregations, filtering, date ranges)",
+            "Multi-tenancy support for white-label readiness",
+            "Full-text search on call transcripts (Phase 2)",
+            "Time-series data for trend analysis",
+            "Soft delete pattern for audit compliance",
+            "Row-level security for multi-tenant isolation"
+          ],
+          "constraints": [
+            "Must be cost-effective for startup (avoid licensing costs)",
+            "Open-source preferred for transparency",
+            "Cloud-hosted option required for rapid deployment",
+            "Schema versioning and migrations essential",
+            "Performance: queries < 500ms for analytics dashboard"
+          ]
+        },
+        "decision": "Use PostgreSQL as the primary relational database. Deploy on Supabase (managed PostgreSQL) for Phase 1 with self-hosted PostgreSQL option for Phase 2. Use Prisma ORM for type-safe database access and schema migrations.",
+        "alternatives": [
+          {
+            "option": "MySQL / MariaDB",
+            "pros": [
+              "Lightweight and fast for simple queries",
+              "Wide hosting support",
+              "Good for read-heavy workloads"
+            ],
+            "cons": [
+              "Weaker ACID transaction support (until version 5.7+)",
+              "Limited window function support for analytics",
+              "Less sophisticated JSON support",
+              "No native row-level security"
+            ],
+            "cost_estimate": "Same as PostgreSQL"
+          },
+          {
+            "option": "Supabase (PostgreSQL managed)",
+            "pros": [
+              "Zero-configuration PostgreSQL with built-in auth",
+              "Realtime subscriptions out of box",
+              "Easy local development with Docker",
+              "Generous free tier",
+              "Same PostgreSQL power"
+            ],
+            "cons": [
+              "Vendor lock-in (less critical for Phase 1)",
+              "Pricing scales with seat count (agent licenses)",
+              "Less control over performance tuning",
+              "Realtime API overhead if not used"
+            ],
+            "cost_estimate": "$100-500/month depending on scale"
+          },
+          {
+            "option": "MongoDB / NoSQL",
+            "pros": [
+              "Flexible schema for evolving data models",
+              "Good for unstructured data (transcripts, AI output)",
+              "Horizontal scaling built-in"
+            ],
+            "cons": [
+              "Weak transaction support for multi-document operations",
+              "Complex queries harder to optimize",
+              "No native audit trail support",
+              "Requires different mental model vs SQL"
+            ],
+            "cost_estimate": "Higher for this use case"
+          }
+        ],
+        "rationale": "PostgreSQL is the ideal choice because CallOS requires strong ACID guarantees for financial transactions (coaching contracts are EU 20k-28k). The complex web of relationships between calls, milestones, objections, and AI analysis demands a relational model. PostgreSQL's window functions, CTEs, and JSON support enable sophisticated analytics queries for the manager dashboard without denormalization. Multi-tenancy support via schemas or row-level security aligns with white-label vision. Prisma ORM provides type-safe queries, automatic migrations, and excellent TypeScript support. Supabase reduces operational complexity in Phase 1 while preserving the option to self-host. PostgreSQL is the de-facto standard for SaaS applications, with proven track record at scale.",
+        "consequences": {
+          "positive": [
+            "ACID compliance ensures financial data integrity (coaching agreements)",
+            "Complex relationships modeled naturally without denormalization",
+            "Prisma provides type-safe queries matching TypeScript frontend",
+            "Built-in audit triggers support compliance logging",
+            "Row-level security enables multi-tenancy without application logic",
+            "Advanced analytics queries (window functions, aggregates) performant",
+            "JSON columns support semi-structured data (call metadata, AI output)",
+            "Soft delete pattern preserves audit trail",
+            "Supabase manages backups, replication, and failover automatically"
+          ],
+          "negative": [
+            "Scaling to multiple regions requires sharding (Phase 2 concern)",
+            "Schema migrations need careful planning as data grows",
+            "JSON queries less optimized than native document databases",
+            "Supabase free tier limited (100GB storage, 5M requests/month)",
+            "Operational overhead if self-hosting (backups, monitoring, upgrades)"
+          ],
+          "risks": [
+            "Connection pooling exhaustion under 50+ concurrent calls (mitigation: configure connection limits and pooling)",
+            "Analytics queries on large call history could impact performance (mitigation: add indexes, materialized views)",
+            "Data migration from Supabase to self-hosted difficult if needed (mitigation: use standard PostgreSQL exports)",
+            "Compliance with GDPR right-to-forget (soft deletes complicate this) (mitigation: implement privacy-aware deletion)"
+          ]
+        },
+        "related_decisions": ["ADR-0001", "ADR-0003"],
+        "superseded_by": null,
+        "artifact_references": {
+          "features": ["FR-001", "FR-002", "FR-012", "FR-014"],
+          "entities": ["ENT-001", "ENT-002", "ENT-003", "ENT-004", "ENT-005", "ENT-006", "ENT-007", "ENT-008", "ENT-009", "ENT-010", "ENT-011", "ENT-012", "ENT-013", "ENT-014", "ENT-015"],
+          "tasks": ["TASK-002", "TASK-004"]
+        }
+      },
+      {
+        "id": "ADR-0003",
+        "title": "Use WebSocket for Real-Time Slide Synchronization",
+        "status": "accepted",
+        "date": "2026-01-08T18:00:00Z",
+        "author": "Claude Code (Pipeline Generator)",
+        "context": {
+          "description": "CallOS requires real-time synchronization between agent's control panel and client's presentation view with <500ms latency. The agent navigates slides while the prospect watches in a separate browser tab via Zoom screen share. Any lag breaks the seamless experience.",
+          "requirements": [
+            "Slide navigation changes propagate to presentation view in <500ms",
+            "Bidirectional communication (agent controls, presentation responds)",
+            "Handle connection drops gracefully with automatic reconnect",
+            "Queue messages during disconnection, replay on reconnect",
+            "Support 50+ concurrent calls on single server instance",
+            "Minimal bandwidth footprint (agent navigating slides frequently)",
+            "No polling overhead (real-time vs polling SLA impact)"
+          ],
+          "constraints": [
+            "WebSocket latency SLA: <500ms 95th percentile",
+            "Must work through enterprise proxies and firewalls",
+            "No persistent server state (stateless for horizontal scaling Phase 2)",
+            "Secure: only authenticated users for specific call_session",
+            "No third-party WebSocket SaaS cost (self-hosted preferred)"
+          ]
+        },
+        "decision": "Use WebSocket (via Socket.io or ws library) for real-time bidirectional communication between control panel and presentation view. Implement message queuing during disconnections. Run WebSocket server as part of Next.js API routes.",
+        "alternatives": [
+          {
+            "option": "Server-Sent Events (SSE)",
+            "pros": [
+              "Built-in browser support, no extra library needed",
+              "HTTP/1.1 compatible, works through more proxies",
+              "Simpler to understand than WebSocket",
+              "Reconnection built-in"
+            ],
+            "cons": [
+              "One-way communication only (server to client)",
+              "Presentation view can't send control back to agent",
+              "HTTP polling overhead for reverse channel",
+              "Less efficient for high-frequency messages"
+            ],
+            "cost_estimate": "Same"
+          },
+          {
+            "option": "Long Polling HTTP",
+            "pros": [
+              "Works through any HTTP proxy",
+              "No special server-side support needed",
+              "Familiar HTTP semantics"
+            ],
+            "cons": [
+              "High latency (poll interval delay)",
+              "CPU overhead with frequent polling",
+              "Bandwidth inefficient (HTTP headers per request)",
+              "Doesn't meet <500ms SLA"
+            ],
+            "cost_estimate": "Higher server cost"
+          },
+          {
+            "option": "GraphQL Subscriptions",
+            "pros": [
+              "Typed schema for real-time events",
+              "Integrates with existing GraphQL API",
+              "Good for complex event filtering"
+            ],
+            "cons": [
+              "Requires GraphQL server setup (extra complexity)",
+              "Overkill for simple slide sync message",
+              "Higher latency than raw WebSocket",
+              "More client-side complexity"
+            ],
+            "cost_estimate": "Higher development cost"
+          }
+        ],
+        "rationale": "WebSocket is the only option that meets the <500ms latency SLA while supporting bidirectional communication. Socket.io wraps WebSocket with fallbacks (polling, etc.) and provides auto-reconnection, critical for mobile/unreliable networks where agent's connection might drop. Message queuing during disconnection prevents sync loss. Raw ws library is lighter but Socket.io's robustness justifies minimal overhead. Running WebSocket server within Next.js API routes (using ws package directly or Socket.io adapter) avoids separate infrastructure. For Phase 1, single-server WebSocket is sufficient (50 concurrent calls manageable). Phase 2 can split to dedicated WebSocket server with Redis pub/sub for horizontal scaling.",
+        "consequences": {
+          "positive": [
+            "Sub-500ms latency for slide navigation (primary UX goal)",
+            "Bidirectional communication enables future agent-presentation interactions",
+            "Auto-reconnection handles network flakiness",
+            "Message queuing prevents sync loss during brief disconnections",
+            "Socket.io fallbacks work through restrictive proxies and firewalls",
+            "Built-in room/namespace support for call isolation",
+            "Monitoring/logging built into Socket.io for debugging",
+            "Scales to 50+ concurrent calls on single server"
+          ],
+          "negative": [
+            "WebSocket server adds operational complexity",
+            "Connection state management required (vs stateless HTTP)",
+            "Memory usage per connected client (mitigated by careful limits)",
+            "Socket.io adds ~45KB gzip overhead per client (acceptable)",
+            "Horizontal scaling requires Redis pub/sub adapter (Phase 2)"
+          ],
+          "risks": [
+            "Connection storms if many clients reconnect simultaneously (mitigation: exponential backoff on client)",
+            "Message ordering issues if using Redis pub/sub (mitigation: sequence numbers)",
+            "Memory exhaustion with 50+ concurrent connections (mitigation: monitor heap, set ulimits)",
+            "Corporate firewalls blocking WebSocket (mitigation: fallback to polling provided by Socket.io)"
+          ]
+        },
+        "related_decisions": ["ADR-0001", "ADR-0007"],
+        "superseded_by": null,
+        "artifact_references": {
+          "features": ["FR-008", "FR-009"],
+          "entities": ["ENT-006"],
+          "tasks": ["TASK-015", "TASK-016", "TASK-024"]
+        }
+      },
+      {
+        "id": "ADR-0004",
+        "title": "Use Claude (Anthropic) for Post-Call AI Analysis",
+        "status": "accepted",
+        "date": "2026-01-08T18:00:00Z",
+        "author": "Claude Code (Pipeline Generator)",
+        "context": {
+          "description": "CallOS requires post-call AI analysis to generate summaries, objection classifications, risk flags, and follow-up emails. The AI must understand context, read sales dynamics, and provide neutral (non-persuasive) feedback aligned with CallOS integrity principles. Analysis must complete within 2 minutes of call end.",
+          "requirements": [
+            "Understand sales call context and dynamics",
+            "Generate factual, neutral summaries (no persuasion language)",
+            "Classify objections by type (Price, Timing, etc.)",
+            "Detect risk signals: overpromise, pressure tactics, misalignment",
+            "Score decision readiness (0-100 scale with evidence)",
+            "Generate follow-up email drafts with appropriate tone",
+            "Trace all outputs to call evidence (transcript references)",
+            "Complete analysis within 2 minutes",
+            "Support German and English language analysis",
+            "Cost-effective per-call pricing model"
+          ],
+          "constraints": [
+            "No live AI during calls (analysis only post-call)",
+            "Cannot suggest persuasion tactics or rebuttals",
+            "Hallucination acceptable in minor details but not on critical signals",
+            "Batch processing acceptable (async queue)",
+            "Privacy: transcripts not retained in LLM training"
+          ]
+        },
+        "decision": "Use Anthropic's Claude API (claude-opus or claude-sonnet depending on cost/performance) for all post-call AI analysis. Process analysis asynchronously via Bull.js job queue with 2-minute SLA. Use structured prompts for each analysis layer (summary, objection classification, risk flags).",
+        "alternatives": [
+          {
+            "option": "OpenAI GPT-4/GPT-4 Turbo",
+            "pros": [
+              "Widely used and well-documented",
+              "Good context window (8K-128K)",
+              "Excellent instruction-following",
+              "Mature API with comprehensive features"
+            ],
+            "cons": [
+              "Higher cost per request than Claude",
+              "Vision capabilities not needed (add cost)",
+              "Less transparent on data handling",
+              "Pricing per input/output tokens"
+            ],
+            "cost_estimate": "$0.03-0.05 per call"
+          },
+          {
+            "option": "Open-source LLM (Llama 2, Mistral)",
+            "pros": [
+              "No per-call API cost (one-time hardware)",
+              "Complete data privacy (self-hosted)",
+              "Predictable costs at scale"
+            ],
+            "cons": [
+              "Significant operational overhead (GPU hosting, monitoring)",
+              "Smaller context window (4K-32K)",
+              "Requires prompt engineering expertise",
+              "Inference latency longer (may exceed 2-min SLA)",
+              "Missing features for production reliability"
+            ],
+            "cost_estimate": "$2000-5000/month for adequate GPU"
+          },
+          {
+            "option": "Google PaLM / Vertex AI",
+            "pros": [
+              "Competitive pricing",
+              "Integration with Google Cloud ecosystem",
+              "Good instruction following"
+            ],
+            "cons": [
+              "Less transparent on data usage",
+              "API stability concerns (rapid model changes)",
+              "Smaller market adoption, fewer examples",
+              "Longer context than Claude but more costly"
+            ],
+            "cost_estimate": "$0.02-0.04 per call"
+          }
+        ],
+        "rationale": "Claude is the best choice for CallOS because Anthropic's Constitutional AI approach aligns with the product's integrity-focused values. Claude's instruction-following is exceptional, enabling precise prompts for neutral analysis without persuasion bias. The API is transparent on data handling (Claude API conversations not used for training unless opted in). Claude Opus has larger context window (200K tokens) enabling full call transcripts + analysis examples. Anthropic provides better documentation on prompt engineering for guardrails. Cost-per-call ($0.01-0.03 for Sonnet) is reasonable at scale. Async job queue prevents API latency from blocking call completion UI. Phase 1 uses Claude Sonnet (faster, cheaper), Phase 2 upgrades to Opus if needed for analysis quality.",
+        "consequences": {
+          "positive": [
+            "Constitutional AI training reduces harmful/persuasive output risk",
+            "Large context window accommodates full transcript + few-shot examples",
+            "Exceptional instruction-following enables precise guardrail prompts",
+            "Data transparency aligns with product values",
+            "Async processing prevents UI blocking",
+            "Job queue provides reliability and retry logic",
+            "Cost scales with call volume (low fixed cost)",
+            "Multi-language support (DE/EN) built-in",
+            "Streaming support enables real-time analysis UI updates"
+          ],
+          "negative": [
+            "API rate limits if call volume spikes (mitigated by request batching)",
+            "Hallucination risk on minor details (acceptable, not on critical signals)",
+            "No custom model training on CallOS data (Phase 2 opportunity)",
+            "Dependency on external API (network failures possible)",
+            "Latency variability (usually 10-30s, sometimes 60s+)"
+          ],
+          "risks": [
+            "Analysis quality degradation if Claude API changes (mitigation: version lock, test harness)",
+            "Cost explosion if call volume exceeds projections (mitigation: implement per-call rate limits)",
+            "Privacy breach if Anthropic breached (mitigation: no PII in transcripts, encrypt at rest)",
+            "Hallucination on risk flags leading to false coaching feedback (mitigation: require evidence references)"
+          ]
+        },
+        "related_decisions": ["ADR-0001", "ADR-0002"],
+        "superseded_by": null,
+        "artifact_references": {
+          "features": ["FR-012", "FR-016"],
+          "entities": ["ENT-014"],
+          "tasks": ["TASK-012", "TASK-013"]
+        }
+      },
+      {
+        "id": "ADR-0005",
+        "title": "Use Clerk for User Authentication and Authorization",
+        "status": "accepted",
+        "date": "2026-01-08T18:00:00Z",
+        "author": "Claude Code (Pipeline Generator)",
+        "context": {
+          "description": "CallOS requires robust multi-role authentication (Sales Agent, Manager, Admin) with session management, password policies, and integration with identity systems. The system must support 50+ users across multiple organizations, audit logging, and MFA for security.",
+          "requirements": [
+            "Three distinct roles (Sales Agent, Manager, Admin) with role-based access control",
+            "User registration, login, logout with secure password handling",
+            "Session management with timeout (2 hours idle)",
+            "Email verification for account security",
+            "MFA support (authenticator apps)",
+            "Audit logging of auth events",
+            "Per-organization user isolation (multi-tenancy)",
+            "Social login support (Google, GitHub) for Phase 2",
+            "SAML/OIDC support for enterprise customers (Phase 2)",
+            "Soft delete of users (audit trail preservation)"
+          ],
+          "constraints": [
+            "No complex custom auth logic (reduce surface area for bugs)",
+            "Must integrate seamlessly with Next.js",
+            "GDPR compliant (data deletion, consent)",
+            "Open-source or transparent SaaS preferred",
+            "Cost-effective at startup scale"
+          ]
+        },
+        "decision": "Use Clerk for authentication and authorization. Implement RBAC within CallOS application layer using custom role checks on endpoints. Clerk handles user identity, sessions, and audit logs; application handles permission enforcement per role.",
+        "alternatives": [
+          {
+            "option": "NextAuth.js",
+            "pros": [
+              "Open-source, full transparency",
+              "Integrates perfectly with Next.js",
+              "No vendor lock-in",
+              "Excellent documentation"
+            ],
+            "cons": [
+              "Requires explicit session/token implementation",
+              "No built-in user management UI (must build)",
+              "No MFA, RBAC features (must implement)",
+              "Audit logging not included",
+              "More development time needed"
+            ],
+            "cost_estimate": "40-60 dev hours vs Clerk's faster setup"
+          },
+          {
+            "option": "Auth0",
+            "pros": [
+              "Enterprise-grade authentication",
+              "Built-in MFA, SAML, OIDC",
+              "Excellent RBAC features",
+              "Proven at scale"
+            ],
+            "cons": [
+              "Higher cost (~$23/month minimum)",
+              "Complex setup for startups",
+              "Overkill for Phase 1 needs",
+              "More enterprise-focused (less startup-friendly)"
+            ],
+            "cost_estimate": "$23-100+/month"
+          },
+          {
+            "option": "Supabase Auth",
+            "pros": [
+              "Included with Supabase PostgreSQL",
+              "No additional vendor",
+              "Row-level security integration",
+              "JWT-based (full control)"
+            ],
+            "cons": [
+              "Less polished than Clerk/Auth0",
+              "User management UI basic",
+              "Audit logging limited",
+              "Community-driven, not enterprise"
+            ],
+            "cost_estimate": "Free with Supabase"
+          }
+        ],
+        "rationale": "Clerk provides the best balance of ease-of-use, features, and startup economics. The pre-built user management dashboard eliminates custom UI implementation. Clerk handles sessions, password reset, email verification, and audit logging out-of-box. Seamless Next.js integration via middleware. Enterprise-grade security (BCRYPT password hashing, Argon2 support). Generous free tier supports up to 10k users. Phase 2 upgrades to SAML/OIDC for enterprise customers without architectural changes. RBAC implemented in application (not Clerk) to keep CallOS logic self-contained and testable. Auth0 is overkill for Phase 1; NextAuth.js requires too much custom work.",
+        "consequences": {
+          "positive": [
+            "Pre-built user management dashboard saves 30+ dev hours",
+            "Clerk handles password hashing, session tokens, cookies securely",
+            "Email verification and password reset flows included",
+            "MFA support ready (authenticator apps, backup codes)",
+            "Audit logging of login/logout events",
+            "GDPR-compliant (user deletion, data export)",
+            "Multi-organization support built-in",
+            "Generous free tier scales to Phase 1 needs",
+            "Next.js middleware integration is seamless"
+          ],
+          "negative": [
+            "Vendor lock-in (migrating off Clerk requires user export, re-hashing)",
+            "Cost increases with user growth ($25+/month at scale)",
+            "Limited customization of login UI (brand alignment)",
+            "Third-party dependency risk (service outages affect all users)",
+            "Clerk dashboard exposes user data (governance concern)"
+          ],
+          "risks": [
+            "Clerk service outage prevents login (mitigation: fallback static page, status monitoring)",
+            "User data stored on Clerk servers (mitigation: no PII beyond email, encrypted at rest)",
+            "Pricing tier changes (mitigation: review costs quarterly, plan migration if needed)",
+            "Integration bugs with Next.js updates (mitigation: test auth flows in CI)"
+          ]
+        },
+        "related_decisions": ["ADR-0001", "ADR-0002"],
+        "superseded_by": null,
+        "artifact_references": {
+          "features": ["FR-013"],
+          "entities": ["ENT-002"],
+          "tasks": ["TASK-003", "TASK-024"]
+        }
+      },
+      {
+        "id": "ADR-0006",
+        "title": "Use Zustand for Client-Side State Management",
+        "status": "accepted",
+        "date": "2026-01-08T18:00:00Z",
+        "author": "Claude Code (Pipeline Generator)",
+        "context": {
+          "description": "CallOS control panel manages complex state: current call, milestone progress, milestone responses, objections, notes, presentation mode state, etc. State must be persisted across component renders, synced with server via WebSocket, and available to deeply nested components without prop drilling.",
+          "requirements": [
+            "Manage call session state (prospect, agent, current milestone, mode, language)",
+            "Track milestone responses (required_items_checked, notes, timestamps)",
+            "Handle objection subflows (selected type, diagnostic answers, outcome)",
+            "Manage presentation mode sync state (WebSocket connected, slide index)",
+            "Persist state across browser tabs (localStorage optional)",
+            "DevTools for debugging (time-travel, action inspection)",
+            "Minimal bundle size (<10KB gzipped ideally)",
+            "TypeScript support for type safety",
+            "Efficient re-render (only affected components update)",
+            "Async actions (API calls, database operations)"
+          ],
+          "constraints": [
+            "No Redux boilerplate (reduces development speed)",
+            "Must work with React 18+ hooks",
+            "Team familiar with hooks API (React context, useState)",
+            "Zero external dependencies preferred (Zustand is 2.6KB)"
+          ]
+        },
+        "decision": "Use Zustand for client-side state management. Create separate stores for: CallSessionStore (prospect, agent, session state), MilestoneStore (current milestone, responses), ObjectionStore (active objection, answers), PresentationStore (sync state, slide index). Use Zustand's immer middleware for immutable updates.",
+        "alternatives": [
+          {
+            "option": "Redux Toolkit",
+            "pros": [
+              "Mature ecosystem with many tools",
+              "Excellent DevTools (time-travel debugging)",
+              "Strong community and documentation",
+              "Predictable state shape"
+            ],
+            "cons": [
+              "Significant boilerplate (actions, reducers, selectors)",
+              "Learning curve for team unfamiliar with Redux",
+              "Bundle size ~20KB gzipped",
+              "Slower development velocity due to ceremony"
+            ],
+            "cost_estimate": "50-100 extra dev hours"
+          },
+          {
+            "option": "React Context + useReducer",
+            "pros": [
+              "No external dependency",
+              "Simple for small apps",
+              "Built-in to React"
+            ],
+            "cons": [
+              "No performance optimizations (all consumers re-render on state change)",
+              "No DevTools or debugging support",
+              "Boilerplate with useReducer patterns",
+              "Not suitable for complex state trees"
+            ],
+            "cost_estimate": "Performance issues as complexity grows"
+          },
+          {
+            "option": "Jotai / Recoil",
+            "pros": [
+              "Atomic state management (fine-grained reactivity)",
+              "Similar bundle size to Zustand",
+              "Good for derived/computed state"
+            ],
+            "cons": [
+              "Smaller ecosystem than Zustand",
+              "Less straightforward for beginners",
+              "DevTools less mature",
+              "Recoil is Facebook experimental (uncertain future)"
+            ],
+            "cost_estimate": "Same as Zustand, less ecosystem support"
+          }
+        ],
+        "rationale": "Zustand is the best choice for CallOS because it combines simplicity with power. Minimal boilerplate (store definitions are plain JavaScript functions) accelerates development. Bundle size is negligible (2.6KB). API is intuitive for team familiar with React hooks. Immer middleware enables immutable updates without verbose spread operators. Store splitting (separate stores per domain) keeps concerns isolated. Devtools addon provides time-travel debugging when needed. Zustand scales from simple cases (one store) to complex (multiple stores with interdependencies). Redux would add bureaucracy without benefit; Context would cause performance issues. Jotai/Recoil not mature enough.",
+        "consequences": {
+          "positive": [
+            "Minimal boilerplate accelerates development",
+            "Tiny bundle footprint (2.6KB gzipped)",
+            "Intuitive API matches React hooks thinking",
+            "Multiple stores enable separation of concerns",
+            "Immer middleware prevents mutation bugs",
+            "DevTools addon for debugging (optional)",
+            "No prop drilling needed for deeply nested components",
+            "Async actions (thunks) supported natively",
+            "TypeScript support is excellent"
+          ],
+          "negative": [
+            "Smaller ecosystem than Redux (fewer integrations)",
+            "Less extensive documentation than Redux",
+            "DevTools not as mature as Redux DevTools",
+            "Learning curve for team used to MobX/Redux",
+            "Middleware system less flexible than Redux"
+          ],
+          "risks": [
+            "Zustand library abandonment (mitigation: small library, easy to fork)",
+            "Performance issues with many subscribers (mitigated: split stores, use selectors)",
+            "Debugging complex state flows without DevTools (mitigation: use logging middleware)",
+            "State serialization for persistence (mitigation: localStorage plugin available)"
+          ]
+        },
+        "related_decisions": ["ADR-0001"],
+        "superseded_by": null,
+        "artifact_references": {
+          "features": ["FR-001", "FR-003", "FR-008"],
+          "tasks": ["TASK-008", "TASK-010"]
+        }
+      },
+      {
+        "id": "ADR-0007",
+        "title": "Deploy on Vercel for Phase 1, Self-Host for Phase 2+",
+        "status": "accepted",
+        "date": "2026-01-08T18:00:00Z",
+        "author": "Claude Code (Pipeline Generator)",
+        "context": {
+          "description": "CallOS requires a reliable, scalable deployment platform. Phase 1 prioritizes speed-to-market and operational simplicity. Phase 2 may require cost optimization or stricter data residency. The choice must support Next.js, PostgreSQL (Supabase), WebSocket, and future microservices.",
+          "requirements": [
+            "Zero-configuration Node.js deployment",
+            "Automatic HTTPS and CDN",
+            "Environment variable management",
+            "Log aggregation and monitoring",
+            "Custom domains and SSL certificates",
+            "Database integration (PostgreSQL via Supabase)",
+            "WebSocket support (native or Socket.io adapter)",
+            "Cost predictability for startup",
+            "Fast deployments (git push automation)",
+            "Option to migrate to self-hosted if needed"
+          ],
+          "constraints": [
+            "Must support Next.js 14+",
+            "No vendor lock-in that prevents migration",
+            "Cold start latency acceptable (<5 seconds)",
+            "Budget: <$500/month Phase 1",
+            "Scalability to 50+ concurrent calls"
+          ]
+        },
+        "decision": "Use Vercel for Phase 1 deployment: zero configuration, automatic CI/CD, global CDN, and tight Next.js integration. Plan migration to self-hosted (AWS EC2, Railway, or Fly.io) in Phase 2 if cost optimization needed. Avoid Vercel-specific features (ISR, Analytics) to enable easy migration.",
+        "alternatives": [
+          {
+            "option": "Railway",
+            "pros": [
+              "Startup-friendly platform",
+              "Simple deployment from git",
+              "Affordable pricing ($7-50/month typical)",
+              "No vendor lock-in",
+              "PostgreSQL included"
+            ],
+            "cons": [
+              "No global CDN (slower for international users)",
+              "No automatic preview deployments",
+              "Smaller ecosystem than Vercel",
+              "Cold starts slightly slower"
+            ],
+            "cost_estimate": "$20-50/month"
+          },
+          {
+            "option": "AWS (EC2 + RDS + CloudFront)",
+            "pros": [
+              "Maximum flexibility and control",
+              "Highly scalable (enterprise-grade)",
+              "No vendor lock-in",
+              "Runs anything (containers, etc.)"
+            ],
+            "cons": [
+              "Significant operational overhead (DevOps needed)",
+              "Complex setup (VPC, security groups, IAM)",
+              "Cost optimization requires expertise",
+              "Slower deployment cycles",
+              "Not ideal for early-stage startup"
+            ],
+            "cost_estimate": "$50-200/month, plus OpEx"
+          },
+          {
+            "option": "Fly.io",
+            "pros": [
+              "Docker-based, maximum portability",
+              "Affordable and predictable pricing",
+              "Global edge deployment",
+              "PostgreSQL support"
+            ],
+            "cons": [
+              "Smaller ecosystem than Vercel",
+              "Less marketing/community",
+              "Slightly more ops overhead than Vercel",
+              "Cold starts on regional deployment"
+            ],
+            "cost_estimate": "$15-50/month"
+          }
+        ],
+        "rationale": "Vercel is the optimal choice for Phase 1 because it eliminates deployment friction, a critical concern for a startup. Git push deployments with automatic preview URLs accelerate development velocity. Edge Functions enable low-latency API routes. Vercel's Next.js optimization (ISR, Image optimization) are built-in. Generous free tier with $100/month credit for startups. Global CDN ensures fast slide presentation (critical for international prospects). However, Vercel vendor lock-in is a concern long-term (pricing, ISR semantics, etc.). Phase 2 strategy: migrate to Railway (lower cost, simpler setup) or Fly.io (Docker, portability) if cost becomes issue. Avoid Vercel-specific features (ISR, Analytics) to enable painless migration.",
+        "consequences": {
+          "positive": [
+            "Zero infrastructure setup (git push = deploy)",
+            "Automatic HTTPS, CDN, and global distribution",
+            "Preview deployments for every PR (testing before main)",
+            "Logs and monitoring included",
+            "Generous free tier and startup credits",
+            "Fast deployments (typically < 1 minute)",
+            "Environment variables and secrets management built-in",
+            "WebSocket support (via Next.js API routes)",
+            "Integrates with GitHub/GitLab/Bitbucket automatically"
+          ],
+          "negative": [
+            "Vendor lock-in (Vercel-specific features harder to migrate)",
+            "Cold start latency on first request after deploy (mitigated: pre-warm)",
+            "Pricing increases with usage (function invocations, bandwidth)",
+            "Less control over infrastructure (containers, performance tuning)",
+            "Support is community/docs-based (not hands-on)"
+          ],
+          "risks": [
+            "Vercel pricing change (mitigation: set spending alerts, plan migration option)",
+            "Cold starts exceed SLA (<5s acceptable for Phase 1) (mitigation: load testing, warming strategy)",
+            "Regional unavailability (Vercel rare, but possible) (mitigation: multi-region Phase 2)",
+            "ISR complexity for cache invalidation (mitigation: use only if needed, prefer on-demand)"
+          ]
+        },
+        "related_decisions": ["ADR-0001", "ADR-0002", "ADR-0003"],
+        "superseded_by": null,
+        "artifact_references": {
+          "features": ["FR-001", "FR-012", "FR-014"],
+          "tasks": ["TASK-001"]
+        }
+      },
+      {
+        "id": "ADR-0008",
+        "title": "Implement Zoom Bot Recording for Call Capture",
+        "status": "accepted",
+        "date": "2026-01-08T18:00:00Z",
+        "author": "Claude Code (Pipeline Generator)",
+        "context": {
+          "description": "CallOS requires call recording to enable post-call AI analysis and manager coaching review. Prospects join via Zoom link. The system must join silently as a bot, capture audio with speaker detection, generate transcripts, and link recordings to call sessions.",
+          "requirements": [
+            "Bot joins Zoom meeting silently (no announcement)",
+            "Captures audio from all participants",
+            "Speaker detection (identify who spoke when)",
+            "Transcript generated with timestamps",
+            "Transcript searchable and displayed in UI",
+            "Timeline markers for milestones, objections, slides",
+            "Recording linked to call_session_id",
+            "Secure storage (S3 with access logging)",
+            "Recording available within 2 minutes of call end",
+            "Consent verification (prospect informed of recording)",
+            "Support for EU GDPR (recording deletion, consent)"
+          ],
+          "constraints": [
+            "Must integrate with Zoom API (no alternative)",
+            "Latency: join <5 seconds of link paste",
+            "Cost-effective per-call pricing",
+            "No vendor for cloud recording (in-house infrastructure preferred)"
+          ]
+        },
+        "decision": "Use Zoom Bot SDK to implement custom bot that joins Zoom meetings, captures audio, and sends to backend for processing. Transcript generation via AssemblyAI or AWS Transcribe (more reliable than Zoom's API). Store recordings in AWS S3 with server-side encryption and access logging. Link recordings to call sessions with metadata (start_time, end_time, speaker_map).",
+        "alternatives": [
+          {
+            "option": "Zoom Native Recording",
+            "pros": [
+              "Built-in to Zoom (no custom bot needed)",
+              "Transcription included (Zoom's proprietary)",
+              "Simple setup (enable in account settings)"
+            ],
+            "cons": [
+              "Recordings stored on Zoom servers (no control)",
+              "Transcript quality inconsistent",
+              "Speaker detection limited",
+              "Download latency variable",
+              "Costs per-meeting-minute"
+            ],
+            "cost_estimate": "$0.10-0.20 per recording"
+          },
+          {
+            "option": "Third-party SaaS (Fireflies.ai, Otter.ai)",
+            "pros": [
+              "Handles bot join, recording, transcription",
+              "High-quality transcripts",
+              "API for integration"
+            ],
+            "cons": [
+              "Vendor lock-in (higher cost than DIY)",
+              "Monthly costs per user (~$10-20)",
+              "Data stored on vendor servers",
+              "Less control over recording lifecycle"
+            ],
+            "cost_estimate": "$10-20 per recording or per user"
+          },
+          {
+            "option": "Twilio Programmable Video",
+            "pros": [
+              "Custom control over recording",
+              "Flexible API",
+              "Good documentation"
+            ],
+            "cons": [
+              "Requires Twilio account (parallel with Zoom)",
+              "User experience split between Zoom and Twilio",
+              "Higher cost than Zoom native",
+              "More complex integration"
+            ],
+            "cost_estimate": "$0.10-0.15 per minute"
+          }
+        ],
+        "rationale": "Zoom Bot SDK is the only option that meets the requirements. Zoom is the de-facto standard for sales calls (prospects already using it). Custom bot provides complete control over recording lifecycle (storage, access, deletion). AssemblyAI transcript quality is excellent with speaker identification. AWS S3 provides cheap, scalable storage ($0.02 per GB) with encryption and access logging for GDPR compliance. Timeline markers inserted by backend using milestone/objection timestamps from call_session data. This approach avoids vendor lock-in vs Zoom native or SaaS solutions.",
+        "consequences": {
+          "positive": [
+            "Complete control over recording storage and lifecycle",
+            "High-quality transcripts with speaker detection",
+            "Sub-5-second bot join (good UX)",
+            "Cost-effective ($0.01-0.05 per recording depending on duration)",
+            "Integration with CallOS database (recordings linked to calls)",
+            "GDPR compliance (can delete on user request)",
+            "Encrypted storage with access logging",
+            "Flexible timeline markers (custom integration logic)"
+          ],
+          "negative": [
+            "Custom bot development required (integration risk)",
+            "Dependency on Zoom API stability",
+            "AssemblyAI costs scale with usage (~$0.01 per minute audio)",
+            "Bot account and Zoom app credentials management needed",
+            "Recording failure modes must be handled (network issues, etc.)"
+          ],
+          "risks": [
+            "Zoom API rate limits or changes (mitigation: version lock bot, test with Zoom sandbox)",
+            "Recording fails due to Zoom connection issues (mitigation: fallback to agent-side recording)",
+            "Transcript quality issues with accents/background noise (mitigation: user review, correction UI)",
+            "S3 storage costs explode with high call volume (mitigation: compress audio, implement retention policy)",
+            "Privacy breach if S3 bucket misconfigured (mitigation: bucket policies reviewed by security)"
+          ]
+        },
+        "related_decisions": ["ADR-0001", "ADR-0004"],
+        "superseded_by": null,
+        "artifact_references": {
+          "features": ["FR-011", "FR-012"],
+          "entities": ["ENT-006"],
+          "tasks": ["TASK-011", "TASK-012"]
+        }
+      },
+      {
+        "id": "ADR-0009",
+        "title": "Integrate with GoHighLevel for CRM and Calendar Sync",
+        "status": "accepted",
+        "date": "2026-01-08T18:00:00Z",
+        "author": "Claude Code (Pipeline Generator)",
+        "context": {
+          "description": "CallOS is part of a larger ecosystem where leads live in GoHighLevel (GHL). Prospects are pre-qualified through GHL, and after calls, outcomes must sync back to update pipeline status. Follow-up calls must sync with GHL calendar. The system must use GHL as the source-of-truth for contacts.",
+          "requirements": [
+            "Sync prospect contacts from GHL to CallOS (ghl_contact_id mapping)",
+            "Read prospect data from GHL (client_count, main_pain, etc.)",
+            "Update call outcomes back to GHL (Coaching Client, Follow-up, Disqualified)",
+            "Sync follow-up appointments to GHL calendar",
+            "Maintain GHL contact history with call summaries",
+            "Bidirectional sync (near real-time, 5-minute acceptable)",
+            "Handle connection failures gracefully (queue + retry)",
+            "Audit trail of sync events"
+          ],
+          "constraints": [
+            "GHL API may change (build abstraction layer)",
+            "GHL account required (not all users have GHL)",
+            "Rate limiting on GHL API (batch operations preferred)",
+            "GHL learning curve (complex platform)"
+          ]
+        },
+        "decision": "Implement GHL integration layer with three components: (1) Sync service to import contacts/prospects from GHL on schedule or webhook, (2) Outcome sync to push call results back to GHL pipeline stages, (3) Calendar sync to create follow-up appointments in GHL. Use GHL API v4.1+. Plan Phase 2 expansion to sync AI analysis and slide effectiveness scores.",
+        "alternatives": [
+          {
+            "option": "No Integration (Manual Entry)",
+            "pros": [
+              "No dependency on GHL API",
+              "Simple, works offline",
+              "Agent has full control"
+            ],
+            "cons": [
+              "Manual data entry is error-prone",
+              "Duplicate prospect information",
+              "No pipeline visibility",
+              "Agent time wasted on data entry",
+              "User expectation mismatch (GHL is standard in space)"
+            ],
+            "cost_estimate": "High operational cost"
+          },
+          {
+            "option": "Use Zapier/Make for Integration",
+            "pros": [
+              "No code required",
+              "Visual workflow builder",
+              "Pre-built GHL connectors"
+            ],
+            "cons": [
+              "Cost per task (workflow steps)",
+              "Limited control over sync logic",
+              "Debugging difficult",
+              "Not suitable for real-time syncs"
+            ],
+            "cost_estimate": "$20-50/month"
+          },
+          {
+            "option": "Implement Custom Direct Integration",
+            "pros": [
+              "Full control over sync logic",
+              "Cost-effective long-term",
+              "Real-time syncs possible"
+            ],
+            "cons": [
+              "Development effort (30-50 hours)",
+              "GHL API complexity (many endpoints)",
+              "Ongoing maintenance burden",
+              "Need GHL API expertise"
+            ],
+            "cost_estimate": "40-50 dev hours"
+          }
+        ],
+        "rationale": "Custom GHL integration is necessary because it's core to the sales workflow. GHL is the standard CRM for agency/coaching businesses (target market). Syncing prospects from GHL into CallOS ensures single source of truth. Syncing outcomes back to GHL pipeline enables coaches to see who's qualified. Calendar sync reduces manual calendar entry overhead. Custom integration provides better control and cost-efficiency than Zapier. Phase 1 focuses on core flows (contact import, outcome sync); Phase 2 adds advanced features (engagement scoring, AI insights to GHL).",
+        "consequences": {
+          "positive": [
+            "Single source of truth for prospects (GHL is canonical)",
+            "Pipeline visibility for coaches (outcomes feed back to GHL)",
+            "Reduced manual data entry (agent time savings)",
+            "Calendar sync prevents double-booking",
+            "Audit trail of sync events for compliance",
+            "Real-time sync possible (vs Zapier delays)",
+            "Foundation for Phase 2 features (scoring, insights)"
+          ],
+          "negative": [
+            "Dependency on GHL API stability (GHL is third-party)",
+            "GHL API changes require maintenance",
+            "Learning curve on GHL API (complex, poorly documented)",
+            "Rate limiting on GHL API (batch operations needed)",
+            "Error handling complexity (sync failures, conflicts)"
+          ],
+          "risks": [
+            "GHL API changes breaking integration (mitigation: abstract API layer, version tests)",
+            "Contact data divergence if sync fails (mitigation: conflict resolution logic, audit trail)",
+            "Rate limit exhaustion (mitigation: batch operations, queue with exponential backoff)",
+            "Privacy concerns (data in two systems) (mitigation: encryption, access controls)"
+          ]
+        },
+        "related_decisions": ["ADR-0001", "ADR-0002"],
+        "superseded_by": null,
+        "artifact_references": {
+          "features": ["FR-007"],
+          "entities": ["ENT-003", "ENT-006", "ENT-015"],
+          "tasks": ["TASK-017"]
+        }
+      },
+      {
+        "id": "ADR-0010",
+        "title": "Implement 5-Layer AI Prompt Architecture for Guardrails",
+        "status": "accepted",
+        "date": "2026-01-08T18:00:00Z",
+        "author": "Claude Code (Pipeline Generator)",
+        "context": {
+          "description": "CallOS uses AI for post-call analysis, but AI must not influence live decisions or suggest manipulation tactics. The system must include explicit guardrails through prompting strategy. Admin must be able to update prompts without code changes. Prompts must support both German and English. The prompt system has 5 layers: global, milestone, objection, slide analysis, call synthesis.",
+          "requirements": [
+            "Global prompts: system-wide guardrails (no persuasion, integrity focus)",
+            "Milestone prompts: context for specific milestones (M1-M7)",
+            "Objection prompts: how to classify and analyze objections",
+            "Slide analysis prompts: effectiveness scoring from call context",
+            "Call synthesis prompts: overall call summary generation",
+            "Prompts versioned with status (draft/active/deprecated)",
+            "Variables for runtime injection (prospect_name, client_count, etc.)",
+            "Bilingual support (DE/EN) with translations",
+            "Admin UI to edit/test prompts",
+            "Prompt execution logging for debugging",
+            "Rollback capability (revert to previous version)"
+          ],
+          "constraints": [
+            "Prompts stored in database, not hardcoded",
+            "Admin must not require technical skills to update",
+            "Changes take effect immediately (no code deployment)",
+            "Prompts must be tested before activation"
+          ]
+        },
+        "decision": "Implement 5-layer prompt system stored in PostgreSQL (PromptConfig table with scope enum). Create admin UI for editing/versioning prompts. Use variable templating (handlebars-style {variable_name}) for runtime injection. Implement prompt testing mode with sample call data. Global prompts enforce integrity (no persuasion, neutral tone); layer-specific prompts add context.",
+        "alternatives": [
+          {
+            "option": "Hardcoded Prompts in Application",
+            "pros": [
+              "No database overhead",
+              "Simpler implementation",
+              "Type-safe (TypeScript)"
+            ],
+            "cons": [
+              "Admin cannot update without developer help",
+              "Code deployment required for prompt changes",
+              "Slower iteration on prompt quality",
+              "Higher operational friction"
+            ],
+            "cost_estimate": "Blocks autonomy"
+          },
+          {
+            "option": "Prompt Management SaaS (e.g., Promptly)",
+            "pros": [
+              "Professional prompt management UI",
+              "Built-in testing and versioning",
+              "No in-house development"
+            ],
+            "cons": [
+              "Vendor lock-in (external service)",
+              "API overhead (latency impact)",
+              "Cost per-request or monthly fee",
+              "Less control over prompt execution"
+            ],
+            "cost_estimate": "$50-200/month"
+          },
+          {
+            "option": "Simple JSON Configuration Files",
+            "pros": [
+              "Human-readable",
+              "Git version control",
+              "No database needed"
+            ],
+            "cons": [
+              "Admin must commit files (requires GitHub access)",
+              "Slow feedback loop (git push -> deploy)",
+              "Merge conflicts if multiple admins",
+              "No UI for editing"
+            ],
+            "cost_estimate": "Cumbersome"
+          }
+        ],
+        "rationale": "Custom 5-layer prompt system strikes the right balance. Layer 1 (Global) sets tone: emphasize integrity, prohibit persuasion, focus on diagnostic approach. Layer 2 (Milestone) adds context: 'You are analyzing an M2 call where the agent maps current state. Look for...' Layer 3 (Objection) provides classification guidance. Layer 4 (Slide) analyzes effectiveness signals. Layer 5 (Synthesis) generates overall summary. This structure allows fine-grained control without massive single prompt. Admin UI enables non-technical prompt iteration. Versioning prevents accidental breaks. Database storage allows A/B testing variants. German/English support critical for market (German financial advisor coaching).",
+        "consequences": {
+          "positive": [
+            "Admin can iterate prompts without developer help",
+            "Prompt changes take effect immediately (no deployments)",
+            "5-layer structure enables granular control",
+            "Versioning prevents breaking changes",
+            "Logging enables debugging of AI output quality",
+            "Testing mode validates prompts before activation",
+            "Bilingual prompts serve German and English markets",
+            "Variable templating enables dynamic context injection",
+            "Layered approach separates concerns (global vs specific)"
+          ],
+          "negative": [
+            "Database overhead (PromptConfig queries on every analysis)",
+            "Complexity of prompt testing UI (requires development)",
+            "Inconsistency if layers conflict (requires clear guidelines)",
+            "Admin responsibility for prompt quality (non-technical admins may struggle)",
+            "Variable templating adds complexity"
+          ],
+          "risks": [
+            "Bad prompts causing poor AI output (mitigation: testing mode, peer review)",
+            "Prompt injection attacks (variables from user input) (mitigation: sanitize variables, escape template syntax)",
+            "Layer conflicts causing contradictory guidance (mitigation: clear documentation, testing)",
+            "Performance overhead if querying prompts inefficiently (mitigation: cache active prompts in memory)"
+          ]
+        },
+        "related_decisions": ["ADR-0001", "ADR-0004"],
+        "superseded_by": null,
+        "artifact_references": {
+          "features": ["FR-016"],
+          "entities": ["ENT-013"],
+          "tasks": ["TASK-012"]
+        }
+      }
+    ]
+  }
+}

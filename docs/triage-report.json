@@ -1,0 +1,161 @@
+{
+  "report": {
+    "title": "Sprint 3 Phase 3 Code Review Triage Report",
+    "generated": "2026-01-11T12:00:00Z",
+    "sprint": "Sprint 3",
+    "phase": "Phase 3 - Manager Dashboard",
+    "reviewedBy": [
+      "security-sentinel",
+      "performance-oracle",
+      "architecture-strategist",
+      "code-simplicity-reviewer",
+      "data-integrity-guardian"
+    ]
+  },
+  "summary": {
+    "totalFindings": 28,
+    "openFindings": 14,
+    "resolvedFindings": 14,
+    "byPriority": {
+      "P1": {
+        "total": 9,
+        "open": 4,
+        "resolved": 5
+      },
+      "P2": {
+        "total": 13,
+        "open": 7,
+        "resolved": 6
+      },
+      "P3": {
+        "total": 6,
+        "open": 6,
+        "resolved": 0
+      }
+    },
+    "byCategory": {
+      "security": {
+        "total": 8,
+        "open": 4,
+        "issues": ["SEC-001", "SEC-002", "SEC-003", "SEC-004", "SEC-005", "SEC-006"]
+      },
+      "performance": {
+        "total": 6,
+        "open": 2,
+        "issues": ["PERF-001", "PERF-002", "PERF-003", "PERF-004"]
+      },
+      "architecture": {
+        "total": 4,
+        "open": 3,
+        "issues": ["ARCH-003", "ARCH-004", "ARCH-007"]
+      },
+      "data": {
+        "total": 5,
+        "open": 3,
+        "issues": ["DATA-001", "DATA-002", "DATA-005", "DATA-006", "DATA-008"]
+      },
+      "simplicity": {
+        "total": 5,
+        "open": 5,
+        "issues": ["SIMP-001", "SIMP-003", "SIMP-006", "SIMP-009"]
+      }
+    }
+  },
+  "criticalPath": {
+    "mustFixBeforeProduction": [
+      {
+        "id": "DATA-001",
+        "title": "RecordingSession Missing Tenant Isolation",
+        "severity": "CRITICAL",
+        "file": "src/services/analytics-service/analytics-service.ts",
+        "line": 245,
+        "impact": "Multi-tenant data leak risk",
+        "effort": "15 minutes"
+      },
+      {
+        "id": "PERF-001",
+        "title": "N+1 Query in getAgentVariance",
+        "severity": "HIGH",
+        "file": "src/services/analytics-service/analytics-service.ts",
+        "line": 68,
+        "impact": "Database performance degradation",
+        "effort": "30 minutes"
+      },
+      {
+        "id": "PERF-002",
+        "title": "N+1 Query in getMilestoneEffectiveness",
+        "severity": "HIGH",
+        "file": "src/services/analytics-service/analytics-service.ts",
+        "line": 130,
+        "impact": "Database performance degradation",
+        "effort": "30 minutes"
+      },
+      {
+        "id": "SEC-003",
+        "title": "Missing Rate Limiting on Analytics Endpoints",
+        "severity": "HIGH",
+        "file": "app/api/analytics/",
+        "impact": "DoS vulnerability",
+        "effort": "45 minutes"
+      }
+    ],
+    "estimatedTotalEffort": "2 hours"
+  },
+  "actionPlan": {
+    "immediate": {
+      "description": "Fix before any production deployment",
+      "items": [
+        "DATA-001: Add organizationId filter to RecordingSession query",
+        "PERF-001: Replace N+1 with single aggregation query",
+        "PERF-002: Replace N+1 with single aggregation query",
+        "SEC-003: Implement rate limiting middleware"
+      ]
+    },
+    "shortTerm": {
+      "description": "Fix within next sprint",
+      "items": [
+        "SEC-001: Add Zod validation for agentIds array",
+        "SEC-004: Add callId CUID validation",
+        "SEC-006: Enforce maximum pagination limit",
+        "DATA-002: Add filter before groupBy for CallOutcome",
+        "DATA-008: Standardize UTC timezone handling",
+        "ARCH-003: Extract call detail transformation logic",
+        "ARCH-004: Create shared auth middleware"
+      ]
+    },
+    "backlog": {
+      "description": "Address during refactoring cycles",
+      "items": [
+        "SIMP-001: Convert stateless class to module",
+        "SIMP-003: Remove placeholder/unused methods",
+        "SIMP-006: Create shared icon components",
+        "SIMP-009: Remove unused imports",
+        "ARCH-007: Consolidate outcome color mappings"
+      ]
+    }
+  },
+  "filesAffected": {
+    "high": [
+      "src/services/analytics-service/analytics-service.ts",
+      "app/api/analytics/calls/[callId]/route.ts",
+      "app/api/analytics/calls/route.ts"
+    ],
+    "medium": [
+      "app/api/analytics/agents/route.ts",
+      "app/api/analytics/team/route.ts",
+      "src/components/dashboard/manager/metrics-card.tsx",
+      "src/components/dashboard/manager/calls-table.tsx"
+    ],
+    "low": [
+      "src/services/analytics-service/metrics-calculator.ts",
+      "src/components/dashboard/manager/call-summary.tsx"
+    ]
+  },
+  "metrics": {
+    "codeQualityScore": 78,
+    "securityScore": 72,
+    "performanceScore": 68,
+    "architectureScore": 82,
+    "recommendation": "Address P1 issues before production. Code quality is acceptable for MVP with noted improvements."
+  }
+}

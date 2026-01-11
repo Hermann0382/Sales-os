@@ -1,0 +1,192 @@
+{
+  "id": "FLOW-023",
+  "name": "Manage Users and Roles",
+  "description": "Admin manages users and assigns roles (Sales Agent, Manager, Admin) with appropriate permissions.",
+  "feature_id": "FR-013",
+  "story_ids": ["ST-031"],
+  "actor": "admin",
+  "trigger": "Admin navigates to user management from admin panel",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Admin navigates to Admin Configuration Panel",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["admin_panel_loaded"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "System verifies admin role",
+      "actor": "system",
+      "inputs": ["user_role"],
+      "outputs": ["access_granted"],
+      "conditions": [
+        {
+          "condition": "role != admin",
+          "outcome": "access_denied"
+        }
+      ],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Select User Management section",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["user_management_loaded"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "System displays list of all users",
+      "actor": "system",
+      "inputs": [],
+      "outputs": ["user_list_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Filter users by role or search",
+      "actor": "user",
+      "inputs": ["filter_criteria"],
+      "outputs": ["filtered_list_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Select user to edit or create new",
+      "actor": "user",
+      "inputs": ["user_id"],
+      "outputs": ["user_editor_loaded"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Edit user details (name, email)",
+      "actor": "user",
+      "inputs": ["user_name", "user_email"],
+      "outputs": ["details_updated"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Assign role",
+      "actor": "user",
+      "inputs": ["role_selection"],
+      "outputs": ["role_assigned"],
+      "conditions": [
+        {
+          "condition": "role == sales_agent",
+          "outcome": "set_agent_permissions"
+        },
+        {
+          "condition": "role == manager",
+          "outcome": "set_manager_permissions"
+        },
+        {
+          "condition": "role == admin",
+          "outcome": "set_admin_permissions"
+        }
+      ],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "System displays role permissions",
+      "actor": "system",
+      "inputs": ["role_selection"],
+      "outputs": ["permissions_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Set language preference",
+      "actor": "user",
+      "inputs": ["language_preference"],
+      "outputs": ["language_set"],
+      "conditions": [],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "Assign to team (if applicable)",
+      "actor": "user",
+      "inputs": ["team_assignment"],
+      "outputs": ["team_assigned"],
+      "conditions": [],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "Save user changes",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["user_saved"],
+      "conditions": [],
+      "next_steps": ["STEP-013"]
+    },
+    {
+      "id": "STEP-013",
+      "sequence": 13,
+      "action": "Activate or deactivate user account",
+      "actor": "user",
+      "inputs": ["account_status"],
+      "outputs": ["status_updated"],
+      "conditions": [],
+      "next_steps": ["STEP-014"]
+    },
+    {
+      "id": "STEP-014",
+      "sequence": 14,
+      "action": "System logs change with audit trail",
+      "actor": "system",
+      "inputs": ["admin_id", "user_id", "change_details", "timestamp"],
+      "outputs": ["audit_log_created"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "User list with filtering accessible",
+    "Create/edit/deactivate users",
+    "3 roles assignable: Sales Agent, Manager, Admin",
+    "Role permissions clearly displayed",
+    "Language preference configurable",
+    "Team assignment supported",
+    "Audit trail for all changes"
+  ],
+  "error_handling": [
+    {
+      "error": "Duplicate email",
+      "response": "Display error, require unique email"
+    },
+    {
+      "error": "Last admin deactivation",
+      "response": "Block action, require at least one admin"
+    },
+    {
+      "error": "Invalid email format",
+      "response": "Validate and display error"
+    }
+  ]
+}

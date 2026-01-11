@@ -1,0 +1,206 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 168 44% 17%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 168 44% 17%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 168 44% 17%;
+
+    --primary: 168 62% 40%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 171 76% 29%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 189 94% 36%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 37 91% 55%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 168 62% 40% / 0.2;
+    --input: 168 62% 40% / 0.2;
+    --ring: 168 62% 40%;
+
+    --radius: 0.5rem;
+
+    /* Surface colors for glassmorphism */
+    --surface: 166 76% 97%;
+    --surface-50: 210 40% 98%;
+    --surface-100: 214 32% 91%;
+    --surface-200: 213 27% 84%;
+
+    /* Glass effect variables */
+    --glass-blur: 12px;
+    --glass-opacity: 0.6;
+    --glass-border-opacity: 0.2;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Glass card effect */
+  .glass-card {
+    @apply bg-white/60 backdrop-blur-[12px] border border-primary/20 shadow-glass rounded-lg;
+  }
+
+  /* Aviation checklist style */
+  .checklist-item {
+    @apply flex items-center gap-3 p-3 rounded-md transition-colors;
+    @apply hover:bg-primary/5;
+  }
+
+  .checklist-item-checked {
+    @apply bg-success/10 text-success;
+  }
+
+  /* Milestone indicator */
+  .milestone-indicator {
+    @apply w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold;
+    @apply border-2 transition-all duration-200;
+  }
+
+  .milestone-indicator-pending {
+    @apply border-muted-foreground/30 text-muted-foreground bg-muted;
+  }
+
+  .milestone-indicator-active {
+    @apply border-primary bg-primary text-white;
+    @apply ring-4 ring-primary/20;
+  }
+
+  .milestone-indicator-completed {
+    @apply border-success bg-success text-white;
+  }
+
+  .milestone-indicator-skipped {
+    @apply border-warning bg-warning text-white;
+  }
+
+  /* Control panel button */
+  .control-btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2;
+    @apply rounded-md font-medium text-sm;
+    @apply transition-all duration-150;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .control-btn-primary {
+    @apply bg-primary text-primary-foreground;
+    @apply hover:bg-primary/90;
+    @apply focus:ring-primary;
+  }
+
+  .control-btn-secondary {
+    @apply bg-secondary text-secondary-foreground;
+    @apply hover:bg-secondary/90;
+    @apply focus:ring-secondary;
+  }
+
+  .control-btn-outline {
+    @apply border border-primary text-primary bg-transparent;
+    @apply hover:bg-primary/10;
+    @apply focus:ring-primary;
+  }
+
+  .control-btn-ghost {
+    @apply text-foreground bg-transparent;
+    @apply hover:bg-muted;
+    @apply focus:ring-primary;
+  }
+
+  .control-btn-destructive {
+    @apply bg-destructive text-destructive-foreground;
+    @apply hover:bg-destructive/90;
+    @apply focus:ring-destructive;
+  }
+
+  /* Objection badge */
+  .objection-badge {
+    @apply inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium;
+    @apply bg-warning/10 text-warning border border-warning/20;
+  }
+
+  .objection-badge-resolved {
+    @apply bg-success/10 text-success border-success/20;
+  }
+
+  .objection-badge-disqualified {
+    @apply bg-destructive/10 text-destructive border-destructive/20;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    @apply h-2 bg-muted rounded-full overflow-hidden;
+  }
+
+  .progress-bar-fill {
+    @apply h-full bg-primary rounded-full transition-all duration-300;
+  }
+
+  /* Notes textarea */
+  .notes-textarea {
+    @apply w-full min-h-[100px] p-3 rounded-md;
+    @apply border border-input bg-background;
+    @apply text-sm font-mono;
+    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent;
+    @apply resize-none;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Custom focus ring */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+  }
+
+  /* Truncate text with ellipsis */
+  .truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

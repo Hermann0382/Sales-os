@@ -1,0 +1,116 @@
+{
+  "id": "FLOW-002",
+  "name": "Execute M1 Context and Frame",
+  "description": "Sales agent executes the first milestone to establish shared understanding of call scope, setting expectations that this is a diagnostic, not a pitch.",
+  "feature_id": "FR-002",
+  "story_ids": ["ST-003"],
+  "actor": "user",
+  "trigger": "Call session started, agent on M1 milestone",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "System displays M1 milestone panel with objective and time indicator (5 min)",
+      "actor": "system",
+      "inputs": ["call_session_id", "milestone_id"],
+      "outputs": ["milestone_ui_rendered", "timer_started"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "Agent states the reason for the call (diagnostic framing)",
+      "actor": "user",
+      "inputs": ["reason_for_call_text"],
+      "outputs": ["reason_captured"],
+      "conditions": [],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Agent follows script guidance for 3 possible outcomes",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["script_followed"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Confirm expectation alignment with prospect",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["expectation_confirmed_checkbox"],
+      "conditions": [],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Track prospect relaxation signal (optional observation)",
+      "actor": "user",
+      "inputs": ["relaxation_signal_observed"],
+      "outputs": ["relaxation_noted"],
+      "conditions": [],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Agent adds notes if needed",
+      "actor": "user",
+      "inputs": ["milestone_notes"],
+      "outputs": ["notes_saved"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "System validates required items (reason + expectation confirmation)",
+      "actor": "system",
+      "inputs": ["reason_for_call", "expectation_confirmed"],
+      "outputs": ["milestone_validation_result"],
+      "conditions": [
+        {
+          "condition": "strict_mode AND required_items_incomplete",
+          "outcome": "block_progression"
+        },
+        {
+          "condition": "flexible_mode AND required_items_incomplete",
+          "outcome": "allow_with_override_logging"
+        }
+      ],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Agent marks M1 complete and proceeds to M2",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["milestone_status_complete", "next_milestone_activated"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "Reason for call captured in text field",
+    "Expectation confirmed checkbox checked",
+    "M1 marked complete within approximately 5 minutes",
+    "Prospect understands this is diagnostic, not pitch"
+  ],
+  "error_handling": [
+    {
+      "error": "Required fields not completed in strict mode",
+      "response": "Block progression, highlight missing items"
+    },
+    {
+      "error": "Objection raised during M1",
+      "response": "Trigger objection subflow, return to M1 after resolution"
+    }
+  ]
+}

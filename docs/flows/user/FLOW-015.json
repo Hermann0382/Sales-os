@@ -1,0 +1,190 @@
+{
+  "id": "FLOW-015",
+  "name": "Complete Call with Outcome Classification",
+  "description": "Sales agent classifies the call outcome at the end of every call with mandatory disqualification reasons when applicable.",
+  "feature_id": "FR-006",
+  "story_ids": ["ST-020"],
+  "actor": "user",
+  "trigger": "M7 completed or call ends at any point",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "System displays call outcome classification panel",
+      "actor": "system",
+      "inputs": ["call_session_id", "milestones_completed"],
+      "outputs": ["outcome_panel_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "Select forced outcome type",
+      "actor": "user",
+      "inputs": ["outcome_type_selection"],
+      "outputs": ["outcome_type_recorded"],
+      "conditions": [
+        {
+          "condition": "outcome == coaching_client",
+          "outcome": "route_to_onboarding"
+        },
+        {
+          "condition": "outcome == follow_up_scheduled",
+          "outcome": "route_to_follow_up_flow"
+        },
+        {
+          "condition": "outcome == implementation_only",
+          "outcome": "route_to_implementation_pipeline"
+        },
+        {
+          "condition": "outcome == disqualified",
+          "outcome": "require_disqualification_reason"
+        }
+      ],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "If disqualified: select mandatory disqualification reason",
+      "actor": "user",
+      "inputs": ["disqualification_reason"],
+      "outputs": ["reason_recorded"],
+      "conditions": [
+        {
+          "condition": "reason == under_500_clients",
+          "outcome": "record_client_count_issue"
+        },
+        {
+          "condition": "reason == cashflow_mismatch",
+          "outcome": "record_financial_issue"
+        },
+        {
+          "condition": "reason == misaligned_expectations",
+          "outcome": "record_alignment_issue"
+        },
+        {
+          "condition": "reason == capacity_constraint",
+          "outcome": "record_capacity_issue"
+        },
+        {
+          "condition": "reason == authority_issue",
+          "outcome": "record_authority_issue"
+        }
+      ],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Set qualification flags",
+      "actor": "user",
+      "inputs": ["qualification_flag_values"],
+      "outputs": ["flags_recorded"],
+      "conditions": [],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "System validates outcome data completeness",
+      "actor": "system",
+      "inputs": ["outcome_type", "disqualification_reason", "qualification_flags"],
+      "outputs": ["validation_result"],
+      "conditions": [
+        {
+          "condition": "disqualified AND no_reason",
+          "outcome": "block_completion"
+        }
+      ],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Add final call notes",
+      "actor": "user",
+      "inputs": ["final_notes"],
+      "outputs": ["notes_saved"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Confirm call completion",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["completion_confirmed"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "System creates Outcome record and updates CallSession status",
+      "actor": "system",
+      "inputs": ["call_session_id", "outcome_type", "disqualification_reason", "qualification_flags", "notes"],
+      "outputs": ["outcome_record_created", "call_session_status_complete"],
+      "conditions": [],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "System triggers appropriate pipeline actions",
+      "actor": "system",
+      "inputs": ["outcome_type"],
+      "outputs": ["pipeline_actions_triggered"],
+      "conditions": [
+        {
+          "condition": "coaching_client",
+          "outcome": "trigger_coaching_onboarding_pipeline"
+        },
+        {
+          "condition": "follow_up",
+          "outcome": "trigger_follow_up_scheduling"
+        },
+        {
+          "condition": "implementation",
+          "outcome": "trigger_implementation_pipeline"
+        }
+      ],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "System triggers AI post-call analysis (SFLOW-003)",
+      "actor": "system",
+      "inputs": ["call_session_id", "recording_reference"],
+      "outputs": ["ai_analysis_job_queued"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "Forced outcome selected from: Coaching client, Follow-up scheduled, Implementation only, Disqualified",
+    "If disqualified: mandatory reason selected",
+    "Qualification flags set: 500+ clients, Financial capacity, Strategic alignment",
+    "Outcome record created",
+    "CallSession marked complete",
+    "Pipeline actions triggered",
+    "AI analysis queued"
+  ],
+  "error_handling": [
+    {
+      "error": "No outcome selected",
+      "response": "Cannot complete call without outcome classification"
+    },
+    {
+      "error": "Disqualified without reason",
+      "response": "Reason field required, cannot proceed without"
+    },
+    {
+      "error": "Pipeline action fails",
+      "response": "Log error, allow retry, alert manager"
+    }
+  ]
+}

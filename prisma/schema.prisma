@@ -1,0 +1,470 @@
+// CallOS - Sales Call Orchestration & Objection Flow App
+// Prisma Schema based on ERD v1.0.0
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================================================
+// ENUMS
+// =============================================================================
+
+enum UserRole {
+  agent
+  manager
+  admin
+}
+
+enum Language {
+  EN
+  DE
+}
+
+enum CallStatus {
+  scheduled
+  in_progress
+  completed
+  cancelled
+}
+
+enum CallMode {
+  strict
+  flexible
+}
+
+enum MilestoneResponseStatus {
+  in_progress
+  completed
+  skipped
+}
+
+enum ObjectionType {
+  Price
+  Timing
+  Capacity_Time
+  Need_to_Think
+  Partner_Team
+  Skepticism
+}
+
+enum ObjectionOutcome {
+  Resolved
+  Deferred
+  Disqualified
+}
+
+enum SlideOutcomeTag {
+  positive
+  neutral
+  negative
+}
+
+enum DeckStatus {
+  draft
+  active
+  deprecated
+}
+
+enum PromptScope {
+  global
+  milestone
+  objection
+  slide_analysis
+  call_synthesis
+}
+
+enum PromptStatus {
+  draft
+  active
+  deprecated
+}
+
+enum CallOutcomeType {
+  Coaching_Client
+  Follow_up_Scheduled
+  Implementation_Only
+  Disqualified
+}
+
+enum DisqualificationReason {
+  Under_500_Clients
+  Cashflow_Mismatch
+  Misaligned_Expectations
+  Capacity_Constraint
+  Authority_Issue
+}
+
+enum RecordingStatus {
+  pending
+  connecting
+  recording
+  processing
+  completed
+  failed
+}
+
+// =============================================================================
+// MODELS
+// =============================================================================
+
+// ENT-001: Organization
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  users           User[]
+  prospects       Prospect[]
+  milestones      Milestone[]
+  callThreads     CallThread[]
+  callSessions    CallSession[]
+  objections      Objection[]
+  slideTemplates  SlideTemplate[]
+  slideDecks      SlideDeck[]
+  promptConfigs   PromptConfig[]
+
+  @@index([name])
+  @@map("organizations")
+}
+
+// ENT-002: User
+model User {
+  id                 String   @id @default(uuid())
+  organizationId     String   @map("organization_id")
+  email              String   @unique
+  name               String?
+  role               UserRole @default(agent)
+  languagePreference Language @default(EN) @map("language_preference")
+  clerkId            String?  @unique @map("clerk_id")
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  // Relations
+  organization Organization  @relation(fields: [organizationId], references: [id])
+  callSessions CallSession[] @relation("AgentCalls")
+
+  @@index([email])
+  @@index([organizationId])
+  @@index([role])
+  @@map("users")
+}
+
+// ENT-003: Prospect
+model Prospect {
+  id                String   @id @default(uuid())
+  organizationId    String   @map("organization_id")
+  name              String
+  ghlContactId      String?  @unique @map("ghl_contact_id")
+  clientCount       Int?     @map("client_count")
+  mainPain          String?  @map("main_pain")
+  revenueVolatility Int?     @map("revenue_volatility")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  // Relations
+  organization   Organization    @relation(fields: [organizationId], references: [id])
+  callThreads    CallThread[]
+  callSessions   CallSession[]
+  slideInstances SlideInstance[]
+
+  @@index([organizationId])
+  @@index([ghlContactId])
+  @@map("prospects")
+}
+
+// ENT-004: Milestone
+model Milestone {
+  id                       String   @id @default(uuid())
+  organizationId           String   @map("organization_id")
+  milestoneNumber          Int      @map("milestone_number")
+  title                    String
+  objective                String   @db.Text
+  requiredQuestions        Json?    @map("required_questions")
+  confirmations            Json?
+  estimatedDurationMinutes Int?     @map("estimated_duration_minutes")
+  orderIndex               Int      @map("order_index")
+  createdAt                DateTime @default(now()) @map("created_at")
+
+  // Relations
+  organization        Organization          @relation(fields: [organizationId], references: [id])
+  milestoneResponses  MilestoneResponse[]
+  objectionResponses  ObjectionResponse[]
+  slideTemplates      SlideTemplate[]
+  promptConfigs       PromptConfig[]        @relation("MilestonePrompts")
+
+  @@index([organizationId])
+  @@index([orderIndex])
+  @@map("milestones")
+}
+
+// ENT-005: CallThread
+model CallThread {
+  id            String   @id @default(uuid())
+  organizationId String  @map("organization_id")
+  prospectId    String   @map("prospect_id")
+  primaryCallId String?  @unique @map("primary_call_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  // Relations
+  organization Organization  @relation(fields: [organizationId], references: [id])
+  prospect     Prospect      @relation(fields: [prospectId], references: [id])
+  primaryCall  CallSession?  @relation("PrimaryCall", fields: [primaryCallId], references: [id])
+  callSessions CallSession[] @relation("ThreadCalls")
+
+  @@index([organizationId])
+  @@index([prospectId])
+  @@map("call_threads")
+}
+
+// ENT-006: CallSession
+model CallSession {
+  id                 String     @id @default(uuid())
+  organizationId     String     @map("organization_id")
+  callThreadId       String     @map("call_thread_id")
+  prospectId         String     @map("prospect_id")
+  agentId            String     @map("agent_id")
+  status             CallStatus @default(scheduled)
+  mode               CallMode   @default(flexible)
+  language           Language   @default(EN)
+  startedAt          DateTime?  @map("started_at")
+  endedAt            DateTime?  @map("ended_at")
+  recordingReference String?    @map("recording_reference")
+  zoomLink           String?    @map("zoom_link")
+  createdAt          DateTime   @default(now()) @map("created_at")
+
+  // Relations
+  organization       Organization        @relation(fields: [organizationId], references: [id])
+  callThread         CallThread          @relation("ThreadCalls", fields: [callThreadId], references: [id])
+  prospect           Prospect            @relation(fields: [prospectId], references: [id])
+  agent              User                @relation("AgentCalls", fields: [agentId], references: [id])
+  primaryThread      CallThread?         @relation("PrimaryCall")
+  milestoneResponses MilestoneResponse[]
+  objectionResponses ObjectionResponse[]
+  slideInstances     SlideInstance[]
+  aiAnalysis         AIAnalysis?
+  callOutcome        CallOutcome?
+
+  @@index([organizationId])
+  @@index([prospectId])
+  @@index([agentId])
+  @@index([status])
+  @@map("call_sessions")
+}
+
+// ENT-007: MilestoneResponse
+model MilestoneResponse {
+  id                   String                  @id @default(uuid())
+  callSessionId        String                  @map("call_session_id")
+  milestoneId          String                  @map("milestone_id")
+  status               MilestoneResponseStatus @default(in_progress)
+  requiredItemsChecked Json?                   @map("required_items_checked")
+  notes                String?                 @db.Text
+  overrideReason       String?                 @db.Text @map("override_reason")
+  startedAt            DateTime                @default(now()) @map("started_at")
+  completedAt          DateTime?               @map("completed_at")
+
+  // Relations
+  callSession CallSession @relation(fields: [callSessionId], references: [id], onDelete: Cascade)
+  milestone   Milestone   @relation(fields: [milestoneId], references: [id])
+
+  @@index([callSessionId])
+  @@index([milestoneId])
+  @@map("milestone_responses")
+}
+
+// ENT-008: Objection
+model Objection {
+  id                  String        @id @default(uuid())
+  organizationId      String        @map("organization_id")
+  objectionType       ObjectionType @map("objection_type")
+  diagnosticQuestions Json          @map("diagnostic_questions")
+  allowedOutcomes     Json          @map("allowed_outcomes")
+  createdAt           DateTime      @default(now()) @map("created_at")
+
+  // Relations
+  organization       Organization        @relation(fields: [organizationId], references: [id])
+  objectionResponses ObjectionResponse[]
+  promptConfigs      PromptConfig[]      @relation("ObjectionPrompts")
+
+  @@index([organizationId])
+  @@index([objectionType])
+  @@map("objections")
+}
+
+// ENT-009: ObjectionResponse
+model ObjectionResponse {
+  id                String           @id @default(uuid())
+  callSessionId     String           @map("call_session_id")
+  objectionId       String           @map("objection_id")
+  milestoneId       String           @map("milestone_id")
+  outcome           ObjectionOutcome
+  diagnosticAnswers Json?            @map("diagnostic_answers")
+  notes             String?          @db.Text
+  createdAt         DateTime         @default(now()) @map("created_at")
+
+  // Relations
+  callSession CallSession @relation(fields: [callSessionId], references: [id], onDelete: Cascade)
+  objection   Objection   @relation(fields: [objectionId], references: [id], onDelete: Restrict)
+  milestone   Milestone   @relation(fields: [milestoneId], references: [id], onDelete: Restrict)
+
+  @@index([callSessionId])
+  @@index([callSessionId, outcome]) // Composite index for filtered objection queries (PERF-004)
+  @@index([objectionId])
+  @@index([outcome])
+  @@map("objection_responses")
+}
+
+// ENT-010: SlideTemplate
+model SlideTemplate {
+  id                    String   @id @default(uuid())
+  organizationId        String   @map("organization_id")
+  milestoneId           String?  @map("milestone_id")
+  titleStatic           String   @map("title_static")
+  coreMessageStatic     String?  @db.Text @map("core_message_static")
+  parameterSlots        Json?    @map("parameter_slots")
+  visualizationTemplate String?  @db.Text @map("visualization_template")
+  orderIndex            Int      @map("order_index")
+  createdAt             DateTime @default(now()) @map("created_at")
+
+  // Relations
+  organization   Organization    @relation(fields: [organizationId], references: [id])
+  milestone      Milestone?      @relation(fields: [milestoneId], references: [id])
+  slideInstances SlideInstance[]
+
+  @@index([organizationId])
+  @@index([milestoneId])
+  @@map("slide_templates")
+}
+
+// ENT-011: SlideDeck
+model SlideDeck {
+  id             String     @id @default(uuid())
+  organizationId String     @map("organization_id")
+  productId      String?    @map("product_id")
+  version        String
+  status         DeckStatus @default(draft)
+  createdAt      DateTime   @default(now()) @map("created_at")
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId])
+  @@index([status])
+  @@map("slide_decks")
+}
+
+// ENT-012: SlideInstance
+model SlideInstance {
+  id              String          @id @default(uuid())
+  callSessionId   String          @map("call_session_id")
+  slideTemplateId String          @map("slide_template_id")
+  prospectId      String          @map("prospect_id")
+  renderedContent Json?           @map("rendered_content")
+  agentNotes      String?         @db.Text @map("agent_notes")
+  outcomeTag      SlideOutcomeTag? @map("outcome_tag")
+  startedAt       DateTime?       @map("started_at")
+  endedAt         DateTime?       @map("ended_at")
+  createdAt       DateTime        @default(now()) @map("created_at")
+
+  // Relations
+  callSession   CallSession   @relation(fields: [callSessionId], references: [id], onDelete: Cascade)
+  slideTemplate SlideTemplate @relation(fields: [slideTemplateId], references: [id])
+  prospect      Prospect      @relation(fields: [prospectId], references: [id])
+
+  @@index([callSessionId])
+  @@index([slideTemplateId])
+  @@index([prospectId])
+  @@map("slide_instances")
+}
+
+// ENT-013: PromptConfig
+model PromptConfig {
+  id             String       @id @default(uuid())
+  organizationId String       @map("organization_id")
+  scope          PromptScope
+  milestoneId    String?      @map("milestone_id")
+  objectionId    String?      @map("objection_id")
+  language       Language     @default(EN)
+  promptText     String       @db.Text @map("prompt_text")
+  variables      Json?
+  version        String       @default("1.0")
+  status         PromptStatus @default(draft)
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id])
+  milestone    Milestone?   @relation("MilestonePrompts", fields: [milestoneId], references: [id])
+  objection    Objection?   @relation("ObjectionPrompts", fields: [objectionId], references: [id])
+
+  @@index([organizationId])
+  @@index([scope])
+  @@index([status])
+  @@map("prompt_configs")
+}
+
+// ENT-014: AIAnalysis
+model AIAnalysis {
+  id                       String   @id @default(uuid())
+  callSessionId            String   @unique @map("call_session_id")
+  summary                  String?  @db.Text
+  objectionClassification  Json?    @map("objection_classification")
+  decisionReadinessScore   Decimal? @map("decision_readiness_score") @db.Decimal(3, 2)
+  riskFlags                Json?    @map("risk_flags")
+  agentExecutionFeedback   String?  @db.Text @map("agent_execution_feedback")
+  slideEffectivenessSignals Json?   @map("slide_effectiveness_signals")
+  followUpEmailDraft       String?  @db.Text @map("follow_up_email_draft")
+  evidenceMarkers          Json?    @map("evidence_markers")
+  createdAt                DateTime @default(now()) @map("created_at")
+
+  // Relations
+  callSession CallSession @relation(fields: [callSessionId], references: [id], onDelete: Cascade)
+
+  @@index([callSessionId])
+  @@map("ai_analyses")
+}
+
+// ENT-015: CallOutcome
+model CallOutcome {
+  id                    String                  @id @default(uuid())
+  callSessionId         String                  @unique @map("call_session_id")
+  outcomeType           CallOutcomeType         @map("outcome_type")
+  disqualificationReason DisqualificationReason? @map("disqualification_reason")
+  qualificationFlags    Json?                   @map("qualification_flags")
+  createdAt             DateTime                @default(now()) @map("created_at")
+
+  // Relations
+  callSession CallSession @relation(fields: [callSessionId], references: [id], onDelete: Cascade)
+
+  @@index([callSessionId])
+  @@index([outcomeType])
+  @@map("call_outcomes")
+}
+
+// ENT-016: RecordingSession
+model RecordingSession {
+  id             String           @id @default(cuid())
+  callSessionId  String           @map("call_session_id")
+  organizationId String           @map("organization_id")
+  meetingId      String           @map("meeting_id")
+  meetingNumber  String?          @map("meeting_number")
+  status         RecordingStatus  @default(pending)
+  zoomLink       String?          @map("zoom_link")
+  recordingUrl   String?          @map("recording_url")
+  transcriptUrl  String?          @map("transcript_url")
+  startedAt      DateTime?        @map("started_at")
+  endedAt        DateTime?        @map("ended_at")
+  duration       Int?             // Duration in seconds
+  error          String?          @db.Text
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+
+  @@index([callSessionId])
+  @@index([organizationId])
+  @@index([meetingId])
+  @@index([status])
+  @@map("recording_sessions")
+}

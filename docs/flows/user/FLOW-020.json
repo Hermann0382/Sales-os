@@ -1,0 +1,180 @@
+{
+  "id": "FLOW-020",
+  "name": "Configure Milestones and Questions",
+  "description": "Admin configures milestone definitions including titles, objectives, required questions, and confirmations.",
+  "feature_id": "FR-015",
+  "story_ids": ["ST-033"],
+  "actor": "admin",
+  "trigger": "Admin navigates to milestone configuration from admin panel",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Admin navigates to Admin Configuration Panel",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["admin_panel_loaded"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "System verifies admin role",
+      "actor": "system",
+      "inputs": ["user_role"],
+      "outputs": ["access_granted"],
+      "conditions": [
+        {
+          "condition": "role != admin",
+          "outcome": "access_denied"
+        }
+      ],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Select Milestones configuration section",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["milestone_config_loaded"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "System displays list of all milestones (M1-M7)",
+      "actor": "system",
+      "inputs": [],
+      "outputs": ["milestone_list_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Select milestone to edit",
+      "actor": "user",
+      "inputs": ["milestone_id"],
+      "outputs": ["milestone_editor_loaded"],
+      "conditions": [],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Edit milestone title",
+      "actor": "user",
+      "inputs": ["milestone_title", "milestone_title_de"],
+      "outputs": ["title_updated"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Edit milestone objective",
+      "actor": "user",
+      "inputs": ["milestone_objective", "milestone_objective_de"],
+      "outputs": ["objective_updated"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Configure required questions",
+      "actor": "user",
+      "inputs": ["question_list"],
+      "outputs": ["questions_updated"],
+      "conditions": [],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Configure confirmation checkboxes",
+      "actor": "user",
+      "inputs": ["confirmation_list"],
+      "outputs": ["confirmations_updated"],
+      "conditions": [],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Set time indicator (suggested duration)",
+      "actor": "user",
+      "inputs": ["time_indicator"],
+      "outputs": ["time_updated"],
+      "conditions": [],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "Preview changes",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["preview_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "Save changes as draft",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["draft_saved"],
+      "conditions": [],
+      "next_steps": ["STEP-013"]
+    },
+    {
+      "id": "STEP-013",
+      "sequence": 13,
+      "action": "Publish changes (with version increment)",
+      "actor": "user",
+      "inputs": ["publish_confirmation"],
+      "outputs": ["new_version_published"],
+      "conditions": [],
+      "next_steps": ["STEP-014"]
+    },
+    {
+      "id": "STEP-014",
+      "sequence": 14,
+      "action": "System logs change with audit trail",
+      "actor": "system",
+      "inputs": ["admin_id", "change_details", "timestamp"],
+      "outputs": ["audit_log_created"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "Admin can access milestone configuration",
+    "All 7 milestones editable",
+    "Title and objective support DE/EN",
+    "Questions and confirmations configurable",
+    "Time indicator settable",
+    "Preview before publish available",
+    "Version control with rollback capability",
+    "Audit trail for all changes"
+  ],
+  "error_handling": [
+    {
+      "error": "Access denied",
+      "response": "Display access denied message, redirect"
+    },
+    {
+      "error": "Validation error on save",
+      "response": "Highlight invalid fields, prevent save until corrected"
+    },
+    {
+      "error": "Publish conflict",
+      "response": "Alert admin, require conflict resolution"
+    }
+  ]
+}

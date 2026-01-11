@@ -1,0 +1,201 @@
+{
+  "id": "FLOW-021",
+  "name": "Manage Objection Types and Subflows",
+  "description": "Admin configures objection types with their diagnostic questions and allowed outcomes.",
+  "feature_id": "FR-015",
+  "story_ids": ["ST-033"],
+  "actor": "admin",
+  "trigger": "Admin navigates to objection configuration from admin panel",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Admin navigates to Admin Configuration Panel",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["admin_panel_loaded"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "System verifies admin role",
+      "actor": "system",
+      "inputs": ["user_role"],
+      "outputs": ["access_granted"],
+      "conditions": [
+        {
+          "condition": "role != admin",
+          "outcome": "access_denied"
+        }
+      ],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Select Objection Flows configuration section",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["objection_config_loaded"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "System displays list of objection types",
+      "actor": "system",
+      "inputs": [],
+      "outputs": ["objection_list_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Select objection type to edit or create new",
+      "actor": "user",
+      "inputs": ["objection_id"],
+      "outputs": ["objection_editor_loaded"],
+      "conditions": [],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Edit objection type name and description",
+      "actor": "user",
+      "inputs": ["objection_type_name", "description", "name_de", "description_de"],
+      "outputs": ["type_updated"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Configure diagnostic questions (max 3)",
+      "actor": "user",
+      "inputs": ["diagnostic_questions"],
+      "outputs": ["questions_updated"],
+      "conditions": [
+        {
+          "condition": "questions > 3",
+          "outcome": "block_validation_error"
+        }
+      ],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Configure question sequence and conditions",
+      "actor": "user",
+      "inputs": ["question_sequence", "conditions"],
+      "outputs": ["sequence_updated"],
+      "conditions": [],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Configure allowed outcomes (Resolved, Deferred, Disqualified)",
+      "actor": "user",
+      "inputs": ["allowed_outcomes"],
+      "outputs": ["outcomes_updated"],
+      "conditions": [],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Configure routing rules per outcome",
+      "actor": "user",
+      "inputs": ["routing_rules"],
+      "outputs": ["routing_updated"],
+      "conditions": [],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "Verify no persuasion or rebuttal content",
+      "actor": "system",
+      "inputs": ["all_question_content"],
+      "outputs": ["guardrail_check_passed"],
+      "conditions": [
+        {
+          "condition": "persuasion_detected",
+          "outcome": "block_with_warning"
+        }
+      ],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "Preview objection subflow",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["preview_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-013"]
+    },
+    {
+      "id": "STEP-013",
+      "sequence": 13,
+      "action": "Activate or deactivate objection type",
+      "actor": "user",
+      "inputs": ["activation_status"],
+      "outputs": ["status_updated"],
+      "conditions": [],
+      "next_steps": ["STEP-014"]
+    },
+    {
+      "id": "STEP-014",
+      "sequence": 14,
+      "action": "Publish changes with version control",
+      "actor": "user",
+      "inputs": ["publish_confirmation"],
+      "outputs": ["new_version_published"],
+      "conditions": [],
+      "next_steps": ["STEP-015"]
+    },
+    {
+      "id": "STEP-015",
+      "sequence": 15,
+      "action": "System logs change with audit trail",
+      "actor": "system",
+      "inputs": ["admin_id", "change_details", "timestamp"],
+      "outputs": ["audit_log_created"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "All 6 objection types manageable",
+    "Diagnostic questions limited to 1-3 per type",
+    "Questions support DE/EN",
+    "Outcomes configurable (Resolved/Deferred/Disqualified)",
+    "Routing rules definable per outcome",
+    "Guardrails prevent persuasion content",
+    "Preview before publish",
+    "Activate/deactivate capability",
+    "Version control and audit trail"
+  ],
+  "error_handling": [
+    {
+      "error": "More than 3 questions configured",
+      "response": "Block save, display limit warning"
+    },
+    {
+      "error": "Persuasion content detected",
+      "response": "Block save, highlight problematic content"
+    },
+    {
+      "error": "Missing required fields",
+      "response": "Highlight required fields, prevent save"
+    }
+  ]
+}

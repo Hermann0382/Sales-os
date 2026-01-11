@@ -1,0 +1,171 @@
+{
+  "id": "FLOW-001",
+  "name": "Start New Call Session",
+  "description": "Sales agent initiates a new call session by selecting a prospect and completing the mandatory pre-call checklist before joining the call.",
+  "feature_id": "FR-004",
+  "story_ids": ["ST-018"],
+  "actor": "user",
+  "trigger": "Agent selects 'New Call' from dashboard or clicks scheduled call in calendar",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Select or confirm prospect for the call",
+      "actor": "user",
+      "inputs": ["prospect_id", "ghl_contact_reference"],
+      "outputs": ["prospect_data_loaded"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "System displays pre-call checklist with prospect qualification data",
+      "actor": "system",
+      "inputs": ["prospect_id"],
+      "outputs": ["checklist_items", "qualification_form_data"],
+      "conditions": [],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Verify qualification form has been reviewed",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["checklist_item_checked"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Confirm client count is 500 or more",
+      "actor": "user",
+      "inputs": ["client_count"],
+      "outputs": ["client_count_confirmed", "coaching_eligible_flag"],
+      "conditions": [
+        {
+          "condition": "client_count < 500",
+          "outcome": "coaching_pitch_blocked"
+        }
+      ],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Confirm business type (financial advisor/broker)",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["business_type_confirmed"],
+      "conditions": [],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Note revenue range",
+      "actor": "user",
+      "inputs": ["revenue_range"],
+      "outputs": ["revenue_range_noted"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Identify main pain point",
+      "actor": "user",
+      "inputs": ["main_pain"],
+      "outputs": ["main_pain_identified"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Note tool stack",
+      "actor": "user",
+      "inputs": ["current_tools"],
+      "outputs": ["tool_stack_noted"],
+      "conditions": [],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Confirm ROI tool is ready",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["roi_tool_ready"],
+      "conditions": [],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Confirm time block is clear",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["time_block_confirmed"],
+      "conditions": [],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "Paste Zoom link to activate recording",
+      "actor": "user",
+      "inputs": ["zoom_link"],
+      "outputs": ["recording_session_initialized"],
+      "conditions": [],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "System validates all checklist items are complete",
+      "actor": "system",
+      "inputs": ["all_checklist_items"],
+      "outputs": ["checklist_validation_result"],
+      "conditions": [
+        {
+          "condition": "any_item_unchecked",
+          "outcome": "block_call_start"
+        }
+      ],
+      "next_steps": ["STEP-013"]
+    },
+    {
+      "id": "STEP-013",
+      "sequence": 13,
+      "action": "Create CallSession record and proceed to M1",
+      "actor": "system",
+      "inputs": ["prospect_id", "agent_id", "zoom_link", "checklist_data"],
+      "outputs": ["call_session_id", "call_status_active"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "All 8 pre-call checklist items verified",
+    "Qualification status (500+ clients) confirmed",
+    "Recording activated via Zoom link",
+    "CallSession created with status 'active'"
+  ],
+  "error_handling": [
+    {
+      "error": "Client count below 500",
+      "response": "System flags call as 'advisory only', blocks coaching pitch flow"
+    },
+    {
+      "error": "Checklist incomplete",
+      "response": "Start Call button disabled, missing items highlighted"
+    },
+    {
+      "error": "Zoom link invalid",
+      "response": "Display error, allow retry with correct link"
+    }
+  ]
+}

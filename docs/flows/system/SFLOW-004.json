@@ -1,0 +1,206 @@
+{
+  "id": "SFLOW-004",
+  "name": "Slide Synchronization via WebSocket",
+  "description": "System flow that maintains real-time synchronization between Rep Control Panel and Client Presentation View.",
+  "components": ["frontend", "websocket_server", "api", "cache"],
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Agent clicks Start Presentation Mode on Control Panel",
+      "component": "frontend",
+      "inputs": ["call_session_id", "slide_deck_id"],
+      "outputs": ["presentation_init_request"],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "API generates unique presentation session token",
+      "component": "api",
+      "inputs": ["call_session_id", "agent_id"],
+      "outputs": ["presentation_token", "presentation_url"],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Cache stores presentation session state",
+      "component": "cache",
+      "inputs": ["presentation_token", "initial_slide_index", "slide_deck_data"],
+      "outputs": ["session_cached"],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Frontend opens Client Presentation View in new tab",
+      "component": "frontend",
+      "inputs": ["presentation_url"],
+      "outputs": ["presentation_tab_opened"],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Control Panel establishes WebSocket connection (master)",
+      "component": "websocket_server",
+      "inputs": ["presentation_token", "client_type_master"],
+      "outputs": ["master_connection_established"],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Presentation View establishes WebSocket connection (slave)",
+      "component": "websocket_server",
+      "inputs": ["presentation_token", "client_type_slave"],
+      "outputs": ["slave_connection_established"],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "WebSocket server links master and slave connections",
+      "component": "websocket_server",
+      "inputs": ["master_connection", "slave_connection"],
+      "outputs": ["sync_channel_established"],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Presentation View receives initial slide state from cache",
+      "component": "cache",
+      "inputs": ["presentation_token"],
+      "outputs": ["initial_slide_state"],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Agent navigates slides on Control Panel",
+      "component": "frontend",
+      "inputs": ["navigation_action", "new_slide_index"],
+      "outputs": ["slide_change_event"],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Control Panel sends slide change via WebSocket",
+      "component": "websocket_server",
+      "inputs": ["slide_change_event", "master_connection"],
+      "outputs": ["event_received"],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "WebSocket server broadcasts to slave connection",
+      "component": "websocket_server",
+      "inputs": ["slide_change_event", "slave_connection"],
+      "outputs": ["event_broadcast"],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "Cache updates current slide state",
+      "component": "cache",
+      "inputs": ["presentation_token", "new_slide_index"],
+      "outputs": ["state_updated"],
+      "next_steps": ["STEP-013"]
+    },
+    {
+      "id": "STEP-013",
+      "sequence": 13,
+      "action": "Presentation View receives slide change event",
+      "component": "frontend",
+      "inputs": ["slide_change_event"],
+      "outputs": ["slide_update_received"],
+      "next_steps": ["STEP-014"]
+    },
+    {
+      "id": "STEP-014",
+      "sequence": 14,
+      "action": "Presentation View renders new slide (under 500ms)",
+      "component": "frontend",
+      "inputs": ["new_slide_index", "slide_data"],
+      "outputs": ["slide_rendered"],
+      "next_steps": ["STEP-015"]
+    },
+    {
+      "id": "STEP-015",
+      "sequence": 15,
+      "action": "Presentation View sends acknowledgment",
+      "component": "websocket_server",
+      "inputs": ["ack_event", "slave_connection"],
+      "outputs": ["sync_confirmed"],
+      "next_steps": ["STEP-016"]
+    },
+    {
+      "id": "STEP-016",
+      "sequence": 16,
+      "action": "Control Panel receives sync confirmation",
+      "component": "frontend",
+      "inputs": ["ack_event"],
+      "outputs": ["sync_status_updated"],
+      "next_steps": []
+    }
+  ],
+  "data_flow": [
+    {
+      "from": "frontend_control",
+      "to": "api",
+      "data": "Presentation session request"
+    },
+    {
+      "from": "api",
+      "to": "cache",
+      "data": "Session state initialization"
+    },
+    {
+      "from": "frontend_control",
+      "to": "websocket_server",
+      "data": "Master connection with token"
+    },
+    {
+      "from": "frontend_presentation",
+      "to": "websocket_server",
+      "data": "Slave connection with token"
+    },
+    {
+      "from": "websocket_server",
+      "to": "frontend_presentation",
+      "data": "Slide change events"
+    },
+    {
+      "from": "websocket_server",
+      "to": "cache",
+      "data": "State updates"
+    }
+  ],
+  "error_handling": [
+    {
+      "error": "WebSocket disconnection (slave)",
+      "response": "Attempt automatic reconnection, fetch current state from cache"
+    },
+    {
+      "error": "WebSocket disconnection (master)",
+      "response": "Attempt reconnection, preserve presentation in last known state"
+    },
+    {
+      "error": "Sync latency exceeds 500ms",
+      "response": "Log performance warning, continue with best effort"
+    },
+    {
+      "error": "Presentation tab closed",
+      "response": "Show reopen button on Control Panel"
+    },
+    {
+      "error": "Cache miss on reconnect",
+      "response": "Fetch full slide deck, resync from beginning"
+    }
+  ]
+}

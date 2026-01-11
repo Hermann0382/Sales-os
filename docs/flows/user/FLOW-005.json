@@ -1,0 +1,142 @@
+{
+  "id": "FLOW-005",
+  "name": "Execute M4 System Reality Check",
+  "description": "Sales agent reveals the hidden cost of manual implementation, helping the prospect understand the 'second job' effect of DIY approaches.",
+  "feature_id": "FR-002",
+  "story_ids": ["ST-006"],
+  "actor": "user",
+  "trigger": "M3 completed, agent proceeds to M4",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "System displays M4 milestone panel with objective",
+      "actor": "system",
+      "inputs": ["call_session_id", "milestone_id"],
+      "outputs": ["milestone_ui_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "Cover time required for manual implementation",
+      "actor": "user",
+      "inputs": ["time_required_discussion"],
+      "outputs": ["time_required_covered"],
+      "conditions": [],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Cover management overhead implications",
+      "actor": "user",
+      "inputs": ["management_overhead_discussion"],
+      "outputs": ["management_overhead_covered"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Cover error probability in DIY approach",
+      "actor": "user",
+      "inputs": ["error_probability_discussion"],
+      "outputs": ["error_probability_covered"],
+      "conditions": [],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Cover burnout risk of manual work",
+      "actor": "user",
+      "inputs": ["burnout_risk_discussion"],
+      "outputs": ["burnout_risk_covered"],
+      "conditions": [],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Confirm prospect understands implementation effort",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["understands_effort_checkbox"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Confirm prospect acknowledges manual workload risk",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["acknowledges_risk_checkbox"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Access key framing guidance if needed",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["framing_guidance_accessed"],
+      "conditions": [],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Agent adds notes if needed",
+      "actor": "user",
+      "inputs": ["milestone_notes"],
+      "outputs": ["notes_saved"],
+      "conditions": [],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "System validates confirmations",
+      "actor": "system",
+      "inputs": ["understands_effort", "acknowledges_risk"],
+      "outputs": ["milestone_validation_result"],
+      "conditions": [
+        {
+          "condition": "confirmations_incomplete",
+          "outcome": "block_or_warn_based_on_mode"
+        }
+      ],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "Agent marks M4 complete and proceeds to M5",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["milestone_status_complete", "next_milestone_activated"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "All 4 coverage areas discussed (time, overhead, errors, burnout)",
+    "Prospect confirms understanding of implementation effort",
+    "Prospect acknowledges manual workload risk",
+    "M4 marked complete"
+  ],
+  "error_handling": [
+    {
+      "error": "Prospect pushback on reality check",
+      "response": "May trigger objection subflow if significant resistance"
+    },
+    {
+      "error": "Confirmations not obtained",
+      "response": "Cannot proceed in strict mode; flexible mode logs override"
+    }
+  ]
+}

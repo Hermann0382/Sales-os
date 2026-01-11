@@ -1,0 +1,197 @@
+{
+  "id": "FLOW-019",
+  "name": "Analyze Call Recordings and AI Insights",
+  "description": "Manager reviews call recordings, transcripts, and AI-generated analysis for coaching and quality assurance.",
+  "feature_id": "FR-011",
+  "story_ids": ["ST-028", "ST-029"],
+  "actor": "user",
+  "trigger": "Manager selects a call for review from dashboard or call list",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Manager selects call for review",
+      "actor": "user",
+      "inputs": ["call_session_id"],
+      "outputs": ["call_review_view_loaded"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "System verifies manager role access",
+      "actor": "system",
+      "inputs": ["user_role"],
+      "outputs": ["access_granted"],
+      "conditions": [
+        {
+          "condition": "role != manager AND role != admin",
+          "outcome": "access_denied"
+        }
+      ],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "System loads call metadata and summary",
+      "actor": "system",
+      "inputs": ["call_session_id"],
+      "outputs": ["call_metadata_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Access call recording player",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["recording_player_loaded"],
+      "conditions": [
+        {
+          "condition": "recording_not_available",
+          "outcome": "show_unavailable_message"
+        }
+      ],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Play recording with speaker detection labels",
+      "actor": "user",
+      "inputs": ["playback_controls"],
+      "outputs": ["recording_playing"],
+      "conditions": [],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "View synchronized transcript",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["transcript_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Navigate using timeline markers (milestones, objections, slides)",
+      "actor": "user",
+      "inputs": ["timeline_marker_selection"],
+      "outputs": ["playback_position_updated"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "View AI-generated call summary",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["ai_summary_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "View objection classification analysis",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["objection_analysis_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "View decision readiness score",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["readiness_score_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "Review AI risk flags (misalignment, overpromise, pressure)",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["risk_flags_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "View agent execution feedback from AI",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["execution_feedback_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-013"]
+    },
+    {
+      "id": "STEP-013",
+      "sequence": 13,
+      "action": "View slide effectiveness signals",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["slide_signals_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-014"]
+    },
+    {
+      "id": "STEP-014",
+      "sequence": 14,
+      "action": "Verify all AI outputs have traceable call evidence",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["evidence_links_verified"],
+      "conditions": [],
+      "next_steps": ["STEP-015"]
+    },
+    {
+      "id": "STEP-015",
+      "sequence": 15,
+      "action": "Add manager notes or coaching feedback",
+      "actor": "user",
+      "inputs": ["manager_notes"],
+      "outputs": ["notes_saved"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "Recording plays with speaker detection",
+    "Transcript synchronized with playback",
+    "Timeline markers for milestones/objections/slides functional",
+    "AI summary is factual and neutral",
+    "Objection classification visible",
+    "Decision readiness score displayed",
+    "Risk flags (misalignment, overpromise, pressure) shown",
+    "Agent execution feedback available",
+    "All AI outputs traceable to call evidence",
+    "Manager can add coaching notes"
+  ],
+  "error_handling": [
+    {
+      "error": "Recording not yet processed",
+      "response": "Show processing status and estimated completion time"
+    },
+    {
+      "error": "AI analysis failed",
+      "response": "Display error, offer manual review option, log for retry"
+    },
+    {
+      "error": "Transcript sync issues",
+      "response": "Allow manual navigation, flag for technical review"
+    }
+  ]
+}

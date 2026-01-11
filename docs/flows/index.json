@@ -1,0 +1,55 @@
+{
+  "artifact_type": "flow_index",
+  "project_name": "CallOS",
+  "version": "1.0.0",
+  "created_at": "2026-01-08T14:30:00Z",
+  "counts": {
+    "user_flows": 24,
+    "system_flows": 6
+  },
+  "paths": {
+    "user_flows": "docs/flows/user/",
+    "system_flows": "docs/flows/system/",
+    "final_flow": "docs/flows/final_flow.json",
+    "integrations": "docs/flows/integrations.json",
+    "assumptions": "docs/flows/assumptions.json"
+  },
+  "user_flows": [
+    {"id": "FLOW-001", "name": "Start New Call Session", "path": "user/FLOW-001.json", "feature_id": "FR-004", "story_ids": ["ST-018"]},
+    {"id": "FLOW-002", "name": "Execute M1 Context and Frame", "path": "user/FLOW-002.json", "feature_id": "FR-002", "story_ids": ["ST-003"]},
+    {"id": "FLOW-003", "name": "Execute M2 Current State Mapping", "path": "user/FLOW-003.json", "feature_id": "FR-002", "story_ids": ["ST-004"]},
+    {"id": "FLOW-004", "name": "Execute M3 Outcome Vision", "path": "user/FLOW-004.json", "feature_id": "FR-002", "story_ids": ["ST-005"]},
+    {"id": "FLOW-005", "name": "Execute M4 System Reality Check", "path": "user/FLOW-005.json", "feature_id": "FR-002", "story_ids": ["ST-006"]},
+    {"id": "FLOW-006", "name": "Execute M5 Solution Mapping", "path": "user/FLOW-006.json", "feature_id": "FR-002", "story_ids": ["ST-007"]},
+    {"id": "FLOW-007", "name": "Execute M6 Offer Presentation", "path": "user/FLOW-007.json", "feature_id": "FR-002", "story_ids": ["ST-008"]},
+    {"id": "FLOW-008", "name": "Execute M7 Decision Point", "path": "user/FLOW-008.json", "feature_id": "FR-002", "story_ids": ["ST-009"]},
+    {"id": "FLOW-009", "name": "Trigger Price Objection Subflow", "path": "user/FLOW-009.json", "feature_id": "FR-003", "story_ids": ["ST-010", "ST-011", "ST-012"]},
+    {"id": "FLOW-010", "name": "Trigger Timing Objection Subflow", "path": "user/FLOW-010.json", "feature_id": "FR-003", "story_ids": ["ST-010", "ST-011", "ST-013"]},
+    {"id": "FLOW-011", "name": "Trigger Capacity Time Objection Subflow", "path": "user/FLOW-011.json", "feature_id": "FR-003", "story_ids": ["ST-010", "ST-011", "ST-014"]},
+    {"id": "FLOW-012", "name": "Trigger Need to Think Objection Subflow", "path": "user/FLOW-012.json", "feature_id": "FR-003", "story_ids": ["ST-010", "ST-011", "ST-015"]},
+    {"id": "FLOW-013", "name": "Trigger Partner Team Objection Subflow", "path": "user/FLOW-013.json", "feature_id": "FR-003", "story_ids": ["ST-010", "ST-011", "ST-016"]},
+    {"id": "FLOW-014", "name": "Trigger Skepticism Objection Subflow", "path": "user/FLOW-014.json", "feature_id": "FR-003", "story_ids": ["ST-010", "ST-011", "ST-017"]},
+    {"id": "FLOW-015", "name": "Complete Call with Outcome Classification", "path": "user/FLOW-015.json", "feature_id": "FR-006", "story_ids": ["ST-020"]},
+    {"id": "FLOW-016", "name": "Review Call History", "path": "user/FLOW-016.json", "feature_id": "FR-007", "story_ids": ["ST-022"]},
+    {"id": "FLOW-017", "name": "Conduct Follow-Up Call", "path": "user/FLOW-017.json", "feature_id": "FR-007", "story_ids": ["ST-021", "ST-022"]},
+    {"id": "FLOW-018", "name": "Review Team Performance Dashboard", "path": "user/FLOW-018.json", "feature_id": "FR-014", "story_ids": ["ST-032"]},
+    {"id": "FLOW-019", "name": "Analyze Call Recordings and AI Insights", "path": "user/FLOW-019.json", "feature_id": "FR-011", "story_ids": ["ST-028", "ST-029"]},
+    {"id": "FLOW-020", "name": "Configure Milestones and Questions", "path": "user/FLOW-020.json", "feature_id": "FR-015", "story_ids": ["ST-033"]},
+    {"id": "FLOW-021", "name": "Manage Objection Types and Subflows", "path": "user/FLOW-021.json", "feature_id": "FR-015", "story_ids": ["ST-033"]},
+    {"id": "FLOW-022", "name": "Configure AI Prompts", "path": "user/FLOW-022.json", "feature_id": "FR-016", "story_ids": ["ST-034"]},
+    {"id": "FLOW-023", "name": "Manage Users and Roles", "path": "user/FLOW-023.json", "feature_id": "FR-013", "story_ids": ["ST-031"]},
+    {"id": "FLOW-024", "name": "Use Dual Interface System", "path": "user/FLOW-024.json", "feature_id": "FR-008", "story_ids": ["ST-023", "ST-024"]}
+  ],
+  "system_flows": [
+    {"id": "SFLOW-001", "name": "Pre-Call Checklist Enforcement", "path": "system/SFLOW-001.json", "components": ["api", "database", "frontend"]},
+    {"id": "SFLOW-002", "name": "Qualification Gate Checks", "path": "system/SFLOW-002.json", "components": ["api", "database", "frontend"]},
+    {"id": "SFLOW-003", "name": "AI Post-Call Analysis Pipeline", "path": "system/SFLOW-003.json", "components": ["api", "database", "queue", "ai_service", "storage"]},
+    {"id": "SFLOW-004", "name": "Slide Synchronization via WebSocket", "path": "system/SFLOW-004.json", "components": ["frontend", "websocket_server", "api", "cache"]},
+    {"id": "SFLOW-005", "name": "Call Recording Pipeline", "path": "system/SFLOW-005.json", "components": ["frontend", "api", "zoom_integration", "storage", "database"]},
+    {"id": "SFLOW-006", "name": "GoHighLevel CRM Sync", "path": "system/SFLOW-006.json", "components": ["api", "database", "ghl_integration", "queue"]}
+  ],
+  "prd_coverage": {
+    "features_covered": ["FR-001", "FR-002", "FR-003", "FR-004", "FR-005", "FR-006", "FR-007", "FR-008", "FR-009", "FR-010", "FR-011", "FR-012", "FR-013", "FR-014", "FR-015", "FR-016", "FR-017", "FR-018", "FR-019", "FR-020"],
+    "stories_covered": ["ST-001", "ST-002", "ST-003", "ST-004", "ST-005", "ST-006", "ST-007", "ST-008", "ST-009", "ST-010", "ST-011", "ST-012", "ST-013", "ST-014", "ST-015", "ST-016", "ST-017", "ST-018", "ST-019", "ST-020", "ST-021", "ST-022", "ST-023", "ST-024", "ST-025", "ST-026", "ST-027", "ST-028", "ST-029", "ST-030", "ST-031", "ST-032", "ST-033", "ST-034", "ST-035", "ST-036", "ST-037", "ST-038"]
+  }
+}

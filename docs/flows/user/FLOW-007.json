@@ -1,0 +1,153 @@
+{
+  "id": "FLOW-007",
+  "name": "Execute M6 Offer Presentation",
+  "description": "Sales agent presents the coaching infrastructure investment with structural framing, not emotional selling. Price stated once, then silence.",
+  "feature_id": "FR-002",
+  "story_ids": ["ST-008"],
+  "actor": "user",
+  "trigger": "M5 completed, qualification gate passed, agent proceeds to M6",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "System checks qualification gate (500+ clients)",
+      "actor": "system",
+      "inputs": ["client_count", "qualification_flags"],
+      "outputs": ["qualification_gate_result"],
+      "conditions": [
+        {
+          "condition": "client_count < 500",
+          "outcome": "block_m6_advisory_only"
+        }
+      ],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "System displays M6 milestone panel with objective",
+      "actor": "system",
+      "inputs": ["call_session_id", "milestone_id"],
+      "outputs": ["milestone_ui_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Frame as 12-month infrastructure install",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["framing_delivered"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "System displays price (auto-populated)",
+      "actor": "system",
+      "inputs": ["product_config"],
+      "outputs": ["price_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Agent states price once and stops talking",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["price_stated_checkbox"],
+      "conditions": [],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "System displays silence guidance (do not fill silence)",
+      "actor": "system",
+      "inputs": [],
+      "outputs": ["silence_guidance_shown"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Wait for prospect response",
+      "actor": "user",
+      "inputs": ["prospect_initial_reaction"],
+      "outputs": ["reaction_noted"],
+      "conditions": [
+        {
+          "condition": "objection_raised",
+          "outcome": "trigger_objection_subflow"
+        }
+      ],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Select payment plan if proceeding",
+      "actor": "user",
+      "inputs": ["payment_plan_selection"],
+      "outputs": ["payment_plan_recorded"],
+      "conditions": [],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Re-anchor ROI if needed (use ROI tool)",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["roi_reanchored"],
+      "conditions": [],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Agent adds notes if needed",
+      "actor": "user",
+      "inputs": ["milestone_notes"],
+      "outputs": ["notes_saved"],
+      "conditions": [],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "Agent marks M6 complete and proceeds to M7",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["milestone_status_complete", "next_milestone_activated"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "Qualification gate passed before M6",
+    "12-month infrastructure framing delivered",
+    "Price stated exactly once",
+    "Agent maintained silence after price",
+    "Payment plan selected if applicable",
+    "M6 marked complete"
+  ],
+  "error_handling": [
+    {
+      "error": "Qualification gate failed",
+      "response": "Block M6, mark call as advisory only"
+    },
+    {
+      "error": "Price objection raised",
+      "response": "Trigger FLOW-009 Price Objection Subflow"
+    },
+    {
+      "error": "Agent fills silence prematurely",
+      "response": "Guidance reminder displayed, logged for coaching"
+    }
+  ]
+}

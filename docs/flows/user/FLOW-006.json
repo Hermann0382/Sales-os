@@ -1,0 +1,133 @@
+{
+  "id": "FLOW-006",
+  "name": "Execute M5 Solution Mapping",
+  "description": "Sales agent presents the LeadTunnel system, helping the prospect see leverage versus manual execution through CRM, pipelines, and automations.",
+  "feature_id": "FR-002",
+  "story_ids": ["ST-007"],
+  "actor": "user",
+  "trigger": "M4 completed, agent proceeds to M5",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "System displays M5 milestone panel with objective",
+      "actor": "system",
+      "inputs": ["call_session_id", "milestone_id"],
+      "outputs": ["milestone_ui_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "Present CRM capabilities and integration",
+      "actor": "user",
+      "inputs": ["crm_presentation_notes"],
+      "outputs": ["crm_covered"],
+      "conditions": [],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Present pipeline automation features",
+      "actor": "user",
+      "inputs": ["pipeline_presentation_notes"],
+      "outputs": ["pipelines_covered"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Present automation capabilities",
+      "actor": "user",
+      "inputs": ["automation_presentation_notes"],
+      "outputs": ["automations_covered"],
+      "conditions": [],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Frame as one system versus tool chaos",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["framing_delivered"],
+      "conditions": [],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Confirm prospect sees system leverage",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["sees_leverage_checkbox"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Confirm prospect understands scope",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["understands_scope_checkbox"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Agent adds notes if needed",
+      "actor": "user",
+      "inputs": ["milestone_notes"],
+      "outputs": ["notes_saved"],
+      "conditions": [],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "System validates confirmations",
+      "actor": "system",
+      "inputs": ["sees_leverage", "understands_scope"],
+      "outputs": ["milestone_validation_result"],
+      "conditions": [
+        {
+          "condition": "confirmations_incomplete",
+          "outcome": "block_or_warn_based_on_mode"
+        }
+      ],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Agent marks M5 complete and proceeds to M6",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["milestone_status_complete", "next_milestone_activated"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "CRM, pipelines, and automations presented",
+    "One system vs tool chaos message delivered",
+    "Prospect confirms seeing system leverage",
+    "Prospect confirms understanding scope",
+    "M5 marked complete"
+  ],
+  "error_handling": [
+    {
+      "error": "Prospect does not see leverage",
+      "response": "May need to revisit M4 reality check or trigger objection flow"
+    },
+    {
+      "error": "Scope confusion",
+      "response": "Clarify before proceeding, do not oversell"
+    }
+  ]
+}

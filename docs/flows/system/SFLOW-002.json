@@ -1,0 +1,181 @@
+{
+  "id": "SFLOW-002",
+  "name": "Qualification Gate Checks",
+  "description": "System flow that enforces qualification requirements before allowing progression to M6 Offer Presentation.",
+  "components": ["api", "database", "frontend"],
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "User attempts to proceed to M6 milestone",
+      "component": "frontend",
+      "inputs": ["call_session_id", "current_milestone"],
+      "outputs": ["m6_navigation_request"],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "API receives milestone progression request",
+      "component": "api",
+      "inputs": ["m6_navigation_request"],
+      "outputs": ["progression_request_received"],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Database retrieves call session qualification data",
+      "component": "database",
+      "inputs": ["call_session_id"],
+      "outputs": ["qualification_flags", "m2_client_count", "coaching_eligible_flag"],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "API checks primary gate: 500+ clients",
+      "component": "api",
+      "inputs": ["m2_client_count"],
+      "outputs": ["client_gate_result"],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "API checks willingness to change systems confirmation",
+      "component": "api",
+      "inputs": ["qualification_flags"],
+      "outputs": ["systems_change_result"],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "API checks time capacity confirmation",
+      "component": "api",
+      "inputs": ["qualification_flags"],
+      "outputs": ["time_capacity_result"],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "API checks not looking for leads confirmation",
+      "component": "api",
+      "inputs": ["qualification_flags"],
+      "outputs": ["not_lead_seeking_result"],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "API aggregates all gate check results",
+      "component": "api",
+      "inputs": ["all_gate_results"],
+      "outputs": ["overall_qualification_result"],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Decision: All gates passed?",
+      "component": "api",
+      "inputs": ["overall_qualification_result"],
+      "outputs": ["gate_decision"],
+      "next_steps": ["STEP-010", "STEP-011"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "If passed: Allow M6 progression",
+      "component": "api",
+      "inputs": ["gate_decision"],
+      "outputs": ["m6_allowed_response"],
+      "conditions": [{"condition": "all_gates_passed", "outcome": "allow_m6"}],
+      "next_steps": ["STEP-012"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "If failed: Block M6, mark as advisory only",
+      "component": "api",
+      "inputs": ["gate_decision", "failed_gates"],
+      "outputs": ["m6_blocked_response", "advisory_only_flag"],
+      "conditions": [{"condition": "any_gate_failed", "outcome": "block_m6"}],
+      "next_steps": ["STEP-013"]
+    },
+    {
+      "id": "STEP-012",
+      "sequence": 12,
+      "action": "Frontend loads M6 Offer Presentation milestone",
+      "component": "frontend",
+      "inputs": ["m6_allowed_response"],
+      "outputs": ["m6_ui_loaded"],
+      "next_steps": []
+    },
+    {
+      "id": "STEP-013",
+      "sequence": 13,
+      "action": "Frontend displays advisory-only mode, skips M6-M7",
+      "component": "frontend",
+      "inputs": ["m6_blocked_response", "failed_gates"],
+      "outputs": ["advisory_mode_ui_displayed"],
+      "next_steps": ["STEP-014"]
+    },
+    {
+      "id": "STEP-014",
+      "sequence": 14,
+      "action": "Database updates call session with advisory_only flag",
+      "component": "database",
+      "inputs": ["call_session_id", "advisory_only_flag"],
+      "outputs": ["session_updated"],
+      "next_steps": []
+    }
+  ],
+  "data_flow": [
+    {
+      "from": "frontend",
+      "to": "api",
+      "data": "M6 progression request"
+    },
+    {
+      "from": "api",
+      "to": "database",
+      "data": "Qualification data query"
+    },
+    {
+      "from": "database",
+      "to": "api",
+      "data": "Qualification flags and client count"
+    },
+    {
+      "from": "api",
+      "to": "frontend",
+      "data": "Gate check result (allowed/blocked)"
+    },
+    {
+      "from": "api",
+      "to": "database",
+      "data": "Advisory-only flag update (if blocked)"
+    }
+  ],
+  "error_handling": [
+    {
+      "error": "Client count not captured in M2",
+      "response": "Return to M2 to capture client count"
+    },
+    {
+      "error": "Qualification flags missing",
+      "response": "Display warning, require flag confirmation before proceeding"
+    },
+    {
+      "error": "Primary gate failed (under 500 clients)",
+      "response": "Hard block on M6, no override allowed"
+    },
+    {
+      "error": "Secondary gate failed",
+      "response": "Soft block with manager override option (logged)"
+    }
+  ]
+}

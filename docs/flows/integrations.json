@@ -1,0 +1,101 @@
+{
+  "integrations": [
+    {
+      "id": "INT-001",
+      "name": "GoHighLevel CRM",
+      "type": "CRM",
+      "priority": "Phase 2",
+      "description": "Primary CRM for lead management and calendar integration",
+      "capabilities": [
+        "Contact sync (bidirectional)",
+        "Pipeline stage updates based on call outcomes",
+        "Calendar sync for follow-up appointments",
+        "Activity notes for call history"
+      ],
+      "data_exchanged": {
+        "outbound": ["call_outcome", "qualification_flags", "follow_up_datetime", "call_notes"],
+        "inbound": ["contact_data", "qualification_form_data", "calendar_availability"]
+      },
+      "authentication": "OAuth 2.0",
+      "related_flows": ["SFLOW-006", "FLOW-017", "FLOW-021"]
+    },
+    {
+      "id": "INT-002",
+      "name": "Zoom Recording API",
+      "type": "Video/Recording",
+      "priority": "Phase 1",
+      "description": "Call recording via silent bot that joins Zoom meetings",
+      "capabilities": [
+        "Bot join via meeting link detection",
+        "Audio recording with speaker detection",
+        "Transcript generation",
+        "Timeline marker attachment"
+      ],
+      "data_exchanged": {
+        "outbound": ["meeting_id", "bot_config"],
+        "inbound": ["audio_file", "speaker_labels", "meeting_events"]
+      },
+      "authentication": "JWT + OAuth 2.0",
+      "related_flows": ["SFLOW-005", "FLOW-001", "FLOW-019"]
+    },
+    {
+      "id": "INT-003",
+      "name": "LLM API (Claude/GPT)",
+      "type": "AI Service",
+      "priority": "Phase 1",
+      "description": "AI-powered post-call analysis and summarization",
+      "capabilities": [
+        "Call summary generation",
+        "Objection classification",
+        "Decision readiness scoring",
+        "Risk flag identification",
+        "Slide effectiveness analysis",
+        "Follow-up email drafting"
+      ],
+      "data_exchanged": {
+        "outbound": ["transcript", "call_data", "prompts"],
+        "inbound": ["summary", "classifications", "scores", "recommendations"]
+      },
+      "authentication": "API Key",
+      "related_flows": ["SFLOW-003", "FLOW-019", "FLOW-022"]
+    },
+    {
+      "id": "INT-004",
+      "name": "Nano Banana Pro",
+      "type": "Visualization",
+      "priority": "Phase 2",
+      "description": "Dynamic slide visualization engine for presentation mode",
+      "capabilities": [
+        "Flow diagram generation",
+        "Comparison table rendering",
+        "Simple infographics",
+        "Before/after schematics"
+      ],
+      "data_exchanged": {
+        "outbound": ["visualization_config", "call_parameters"],
+        "inbound": ["rendered_visualization"]
+      },
+      "authentication": "API Key",
+      "related_flows": ["FLOW-024", "SFLOW-004"]
+    },
+    {
+      "id": "INT-005",
+      "name": "WebSocket Server",
+      "type": "Real-time Communication",
+      "priority": "Phase 1",
+      "description": "Real-time synchronization between Rep Control Panel and Client Presentation View",
+      "capabilities": [
+        "Bidirectional real-time messaging",
+        "Connection state management",
+        "Broadcast to linked clients",
+        "Sub-500ms latency guarantee"
+      ],
+      "data_exchanged": {
+        "outbound": ["slide_change_events", "sync_commands"],
+        "inbound": ["acknowledgments", "connection_status"]
+      },
+      "authentication": "Session token",
+      "related_flows": ["SFLOW-004", "FLOW-024"]
+    }
+  ]
+}

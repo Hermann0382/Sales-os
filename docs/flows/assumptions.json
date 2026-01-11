@@ -1,0 +1,84 @@
+{
+  "assumptions": [
+    {
+      "id": "ASMP-001",
+      "category": "Technical",
+      "assumption": "Sales agents have stable internet connection for Zoom calls",
+      "impact": "Recording quality and WebSocket sync reliability",
+      "mitigation": "Implement graceful degradation and reconnection logic",
+      "related_flows": ["SFLOW-004", "SFLOW-005"]
+    },
+    {
+      "id": "ASMP-002",
+      "category": "Business",
+      "assumption": "Prospects are pre-qualified through EUR 495 payment gate",
+      "impact": "Reduces unqualified prospect volume in the system",
+      "mitigation": "System still enforces 500+ client qualification gate",
+      "related_flows": ["FLOW-001", "SFLOW-002"]
+    },
+    {
+      "id": "ASMP-003",
+      "category": "Business",
+      "assumption": "Financial advisors/brokers understand German business context",
+      "impact": "Content and terminology appropriate for target market",
+      "mitigation": "Bilingual support (DE/EN) for localization",
+      "related_flows": ["FLOW-002", "FLOW-003", "FLOW-004", "FLOW-005", "FLOW-006", "FLOW-007", "FLOW-008"]
+    },
+    {
+      "id": "ASMP-004",
+      "category": "Technical",
+      "assumption": "GoHighLevel is the primary CRM for lead management",
+      "impact": "All CRM sync flows designed for GHL API",
+      "mitigation": "Abstraction layer allows future CRM integrations",
+      "related_flows": ["SFLOW-006", "FLOW-017"]
+    },
+    {
+      "id": "ASMP-005",
+      "category": "Legal",
+      "assumption": "Recording consent is obtained before call starts",
+      "impact": "Legal compliance for call recording",
+      "mitigation": "Pre-call checklist includes consent verification step",
+      "related_flows": ["FLOW-001", "SFLOW-005"]
+    },
+    {
+      "id": "ASMP-006",
+      "category": "Technical",
+      "assumption": "Zoom API provides reliable bot join functionality",
+      "impact": "Recording pipeline depends on successful bot join",
+      "mitigation": "Retry logic with fallback to manual recording",
+      "related_flows": ["SFLOW-005"]
+    },
+    {
+      "id": "ASMP-007",
+      "category": "Technical",
+      "assumption": "AI analysis can complete within 2 minutes post-call",
+      "impact": "User experience for viewing call insights",
+      "mitigation": "Async processing with notification when complete",
+      "related_flows": ["SFLOW-003"]
+    },
+    {
+      "id": "ASMP-008",
+      "category": "Business",
+      "assumption": "Agents follow the diagnostic approach without persuasion",
+      "impact": "Brand integrity and conversion quality",
+      "mitigation": "Guardrails system blocks persuasion content at config level",
+      "related_flows": ["FLOW-009", "FLOW-010", "FLOW-011", "FLOW-012", "FLOW-013", "FLOW-014", "FLOW-021"]
+    },
+    {
+      "id": "ASMP-009",
+      "category": "Technical",
+      "assumption": "Modern browser support (Chrome, Firefox, Safari, Edge - latest 2 versions)",
+      "impact": "WebSocket and modern JavaScript feature availability",
+      "mitigation": "Browser compatibility checks on load",
+      "related_flows": ["SFLOW-004", "FLOW-024"]
+    },
+    {
+      "id": "ASMP-010",
+      "category": "Business",
+      "assumption": "500+ client threshold is non-negotiable for coaching eligibility",
+      "impact": "Hard gate prevents override at any level",
+      "mitigation": "System-enforced, no manager override possible",
+      "related_flows": ["SFLOW-002", "FLOW-007"]
+    }
+  ]
+}

@@ -1,0 +1,1461 @@
+{
+  "artifact_type": "journey",
+  "status": "complete",
+  "validation": "passed",
+  "approval_required": true,
+  "approvers": ["Cynthia", "Hassan"],
+  "next_phase": "task_planning",
+  "data": {
+    "project_name": "CallOS",
+    "version": "1.0.0",
+    "created_at": "2026-01-08T15:00:00Z",
+    "personas": [
+      {
+        "id": "PERSONA-001",
+        "name": "Marcus (Sales Agent)",
+        "role": "Sales Agent",
+        "description": "High-performing closer conducting 3-5 calls per day. Experienced with direct sales but new to structured call methodology. Motivated by close rates and commission.",
+        "goals": [
+          "Execute consistent, high-quality calls with minimal variance",
+          "Close more qualified deals with better-aligned prospects",
+          "Build confidence in objection handling through diagnostic approach",
+          "Speed up call preparation and execution",
+          "Get immediate feedback on call quality"
+        ],
+        "pain_points": [
+          "Current improvisation approach feels unpredictable",
+          "Objection handling often becomes defensive argumentation",
+          "Lack of structured guidance during calls causes uncertainty",
+          "Post-call insights take too long to access",
+          "Inconsistent close rates across different prospect types",
+          "Fear of forgetting important qualification checks"
+        ],
+        "context": "Works from home office, uses Zoom for all calls, multi-tasking between CRM and notes. Needs quick, intuitive interface. Values speed and immediate guidance.",
+        "proficiency": "high"
+      },
+      {
+        "id": "PERSONA-002",
+        "name": "Sabine (Sales Manager)",
+        "role": "Manager",
+        "description": "Team lead responsible for 4-6 sales agents. Focused on coaching, variance reduction, and forecast accuracy. Needs visibility into team performance and individual development opportunities.",
+        "goals": [
+          "Reduce variance in call execution across team",
+          "Identify individual agent coaching opportunities",
+          "Spot patterns in objection handling and prospect fit",
+          "Track pipeline progression and conversion rates",
+          "Validate that system-guided calls improve outcomes",
+          "Coach agents using actual call data"
+        ],
+        "pain_points": [
+          "Difficult to identify root causes of call failures",
+          "Limited visibility into what happens during calls",
+          "Manual analysis of call quality is time-consuming",
+          "Hard to coach objection handling without recordings",
+          "Can't easily compare agent performance fairly",
+          "Unclear which prospects need different approaches"
+        ],
+        "context": "Weekly 1-1 coaching sessions with agents. Reviews calls async on mobile device. Needs quick insights and drill-down capability.",
+        "proficiency": "medium"
+      },
+      {
+        "id": "PERSONA-003",
+        "name": "Thomas (Admin)",
+        "role": "Admin",
+        "description": "System administrator responsible for platform configuration, milestone tuning, and AI prompt management. Technical background with strong attention to process optimization.",
+        "goals": [
+          "Set up and tune milestone sequences for optimal flow",
+          "Configure objection diagnostic questions based on coaching philosophy",
+          "Manage AI prompt evolution as patterns emerge",
+          "Ensure guardrails prevent persuasion tactics",
+          "Enable A/B testing of slide decks and messaging",
+          "Maintain version control of all system configurations"
+        ],
+        "pain_points": [
+          "Complex prompt engineering without proper tools",
+          "Manual version tracking of configurations",
+          "Difficulty testing changes before rolling out",
+          "No clear way to measure effectiveness of variations",
+          "Risk of breaking existing flows with changes",
+          "Hard to roll back if changes have unintended effects"
+        ],
+        "context": "Works during standard business hours, needs to coordinate with coaches. Uses desktop for complex config tasks. Values stability and traceability.",
+        "proficiency": "high"
+      }
+    ],
+    "journeys": [
+      {
+        "id": "JRN-001",
+        "name": "First Call Journey (Marcus - Sales Agent)",
+        "description": "Complete first sales call experience from preparation through post-call analysis. Includes onboarding, pre-call setup, milestone execution, objection handling, and AI feedback.",
+        "persona_id": "PERSONA-001",
+        "flow_ids": ["FLOW-001", "FLOW-002", "FLOW-003", "FLOW-004", "FLOW-005", "FLOW-006", "FLOW-007", "FLOW-008", "FLOW-009", "FLOW-015", "FLOW-019"],
+        "story_ids": ["ST-018", "ST-001", "ST-003", "ST-004", "ST-005", "ST-006", "ST-007", "ST-008", "ST-009", "ST-010", "ST-011", "ST-012", "ST-020", "ST-029"],
+        "phases": [
+          {
+            "id": "PHASE-001",
+            "name": "Pre-Call Preparation",
+            "description": "Marcus reviews qualification requirements and completes mandatory pre-call checklist to ensure readiness.",
+            "duration_estimate": "10 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-001",
+                "name": "Dashboard - New Call Button",
+                "type": "web",
+                "description": "Agent clicks 'New Call' from dashboard or selects scheduled call from calendar",
+                "flow_step_id": "FLOW-001|STEP-001",
+                "data_entities": ["ENT-003", "ENT-006"],
+                "user_actions": ["select_prospect", "initiate_session"],
+                "system_actions": ["load_prospect_data", "display_checklist"],
+                "emotional_state": "focused",
+                "pain_points": ["Need to remember all qualification checks", "Fear of missing requirements"],
+                "opportunities": ["Show checklist immediately", "Highlight completion status clearly", "Auto-populate known data"]
+              },
+              {
+                "id": "TP-002",
+                "name": "Pre-Call Checklist",
+                "type": "web",
+                "description": "System displays mandatory 8-item checklist: qualification review, client count, business type, revenue, main pain, tool stack, ROI tool, time block",
+                "flow_step_id": "FLOW-001|STEP-002",
+                "data_entities": ["ENT-003", "ENT-006", "ENT-004"],
+                "user_actions": ["review_data", "check_items", "paste_zoom_link"],
+                "system_actions": ["validate_checklist", "block_unchecked_starts"],
+                "emotional_state": "anxious_then_confident",
+                "pain_points": ["Checklist feels like compliance overhead", "Worry about missing critical qualification signals"],
+                "opportunities": ["Explain WHY each item matters", "Show real example of missed qualification", "Make it collaborative, not punitive"]
+              },
+              {
+                "id": "TP-003",
+                "name": "Qualification Gate Validation",
+                "type": "web",
+                "description": "System confirms client count >= 500 and blocks coaching pitch if not met. Coaching pitch allowed only for qualified prospects.",
+                "flow_step_id": "FLOW-001|STEP-004",
+                "data_entities": ["ENT-003", "ENT-006"],
+                "user_actions": ["confirm_qualification"],
+                "system_actions": ["enforce_gate", "set_eligibility_flag"],
+                "emotional_state": "determined",
+                "pain_points": ["Frustration when prospect doesn't meet gate", "Pressure to 'just pitch anyway'"],
+                "opportunities": ["Show why gate exists (retention data)", "Position as 'advisory call' positively", "Route to implementation-only approach"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-002",
+            "name": "M1 Context & Frame (5 min)",
+            "description": "Marcus establishes diagnostic frame with prospect, setting expectations for call structure and outcome.",
+            "duration_estimate": "5 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-004",
+                "name": "Milestone Objective Display",
+                "type": "web",
+                "description": "Clear objective for M1: 'Establish shared understanding of call scope and diagnostic intent'",
+                "flow_step_id": "FLOW-002|STEP-001",
+                "data_entities": ["ENT-004", "ENT-006"],
+                "user_actions": ["review_objective"],
+                "system_actions": ["display_milestone_panel", "start_timer"],
+                "emotional_state": "clear",
+                "pain_points": ["Uncertainty about what to say", "Fear of sounding salesy"],
+                "opportunities": ["Provide script guidance for 3 possible outcomes", "Show framing language", "Include prospect relaxation signal tracking"]
+              },
+              {
+                "id": "TP-005",
+                "name": "Control Panel Notes",
+                "type": "web",
+                "description": "Marcus takes notes on reason for call, confirmed expectations, and any prospect signals during framing",
+                "flow_step_id": "FLOW-002|STEP-005",
+                "data_entities": ["ENT-007", "ENT-006"],
+                "user_actions": ["take_notes", "track_signals"],
+                "system_actions": ["save_milestone_response"],
+                "emotional_state": "engaged",
+                "pain_points": ["Hard to type while speaking to prospect", "Notes get disorganized"],
+                "opportunities": ["Bullet-point templates for quick entry", "Mobile-friendly note capture", "Auto-save at intervals"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-003",
+            "name": "M2 Current State Mapping (15-20 min)",
+            "description": "Marcus maps prospect's operational reality, capturing client count, revenue volatility, pain points, and psychological load.",
+            "duration_estimate": "15 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-006",
+                "name": "Current State Data Capture",
+                "type": "web",
+                "description": "Marcus captures client count (numeric), revenue volatility (1-5 scale), main pain points (multi-select), and notes across 4 coverage areas",
+                "flow_step_id": "FLOW-003|STEP-002",
+                "data_entities": ["ENT-003", "ENT-007"],
+                "user_actions": ["input_numbers", "select_options", "type_notes"],
+                "system_actions": ["validate_data", "track_coverage"],
+                "emotional_state": "curious",
+                "pain_points": ["Complex prospect situations don't fit categories", "Fear of missing nuances", "Notes become scattered"],
+                "opportunities": ["Show coverage progress visually", "Provide follow-up prompts for each area", "Summarize back to validate understanding"]
+              },
+              {
+                "id": "TP-007",
+                "name": "Auto-Generated Summary",
+                "type": "web",
+                "description": "System generates factual summary of current state for Marcus to verbalize back to prospect",
+                "flow_step_id": "FLOW-003|STEP-009",
+                "data_entities": ["ENT-007"],
+                "user_actions": ["read_summary", "verbalize_back"],
+                "system_actions": ["generate_summary", "display_verbalization_prompt"],
+                "emotional_state": "confident",
+                "pain_points": ["Hard to synthesize all data on the fly", "Prospect might feel data was missed"],
+                "opportunities": ["Accurate data readback builds trust", "Shows system is tracking correctly", "Prospect feels heard"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-004",
+            "name": "M3-M5 Outcome & Solution (40 min)",
+            "description": "Marcus guides prospect through vision capture (M3), system reality check (M4), and solution mapping (M5).",
+            "duration_estimate": "40 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-008",
+                "name": "Outcome Vision Capture",
+                "type": "web",
+                "description": "Marcus captures desired future state and cost of inaction for 12-month horizon",
+                "flow_step_id": "FLOW-004|STEP-001",
+                "data_entities": ["ENT-007", "ENT-006"],
+                "user_actions": ["capture_vision", "note_cost_of_inaction"],
+                "system_actions": ["validate_vision_capture"],
+                "emotional_state": "inspired",
+                "pain_points": ["Prospects give vague answers about future", "Hard to distinguish real vs fantasy"],
+                "opportunities": ["Guide conversation toward specificity", "Link vision to earlier pain points", "Validate vision alignment"]
+              },
+              {
+                "id": "TP-009",
+                "name": "System Reality Check",
+                "type": "web",
+                "description": "Marcus covers hidden cost of manual implementation: time required, management overhead, error probability, burnout risk",
+                "flow_step_id": "FLOW-005|STEP-002",
+                "data_entities": ["ENT-007", "ENT-006"],
+                "user_actions": ["cover_coverage_areas", "get_confirmations"],
+                "system_actions": ["guide_discussion", "validate_understanding"],
+                "emotional_state": "realistic",
+                "pain_points": ["Prospect gets defensive about current setup", "Hard to discuss burnout without offending", "Confirmation checkboxes feel mechanical"],
+                "opportunities": ["Framing as 'second job' normalizes concern", "Show data on manual implementation costs", "Confirmations feel natural after discussion"]
+              },
+              {
+                "id": "TP-010",
+                "name": "Solution Mapping",
+                "type": "web",
+                "description": "Marcus presents system leverage vs manual execution, CRM integration, automations, and one-system positioning",
+                "flow_step_id": "FLOW-006|STEP-001",
+                "data_entities": ["ENT-007", "ENT-006"],
+                "user_actions": ["present_solution", "map_features"],
+                "system_actions": ["display_solution_slides"],
+                "emotional_state": "hopeful",
+                "pain_points": ["Feature overload confuses prospect", "Hard to connect features to their specific pains"],
+                "opportunities": ["Reference earlier captured pains", "Show before/after for similar prospect", "Emphasize system integration benefit"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-005",
+            "name": "M6 Offer Presentation (10 min)",
+            "description": "Marcus presents coaching infrastructure investment with structural framing, emphasizing 12-month implementation and ROI.",
+            "duration_estimate": "10 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-011",
+                "name": "Price Presentation",
+                "type": "web",
+                "description": "Price shown once, stop talking. Structural framing as 12-month infrastructure install, not coaching course.",
+                "flow_step_id": "FLOW-007|STEP-001",
+                "data_entities": ["ENT-007", "ENT-006"],
+                "user_actions": ["state_price", "silence"],
+                "system_actions": ["display_price_slide", "timer_for_silence"],
+                "emotional_state": "calm",
+                "pain_points": ["Instinct to justify price after silence", "Price objection terror", "Fear of being perceived as expensive"],
+                "opportunities": ["Guard rail prevents talking", "Price already positioned as infrastructure", "Trust in diagnostic approach"]
+              },
+              {
+                "id": "TP-012",
+                "name": "ROI Anchoring",
+                "type": "web",
+                "description": "Optional ROI tool access to re-anchor pricing if needed, showing 6-month payback and 12-month value",
+                "flow_step_id": "FLOW-007|STEP-005",
+                "data_entities": ["ENT-007", "ENT-006"],
+                "user_actions": ["reference_roi", "show_payback"],
+                "system_actions": ["calculate_roi_projection"],
+                "emotional_state": "confident",
+                "pain_points": ["Math-heavy ROI feels salesy", "Prospect calculates differently", "Data accuracy matters"],
+                "opportunities": ["Pre-populated with prospect data", "Shows year-over-year trajectory", "Conservative numbers build trust"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-006",
+            "name": "M7 Decision Point (5 min)",
+            "description": "Marcus requests explicit decision with three clear options: Proceed, Pause, Decline. Guides using silence.",
+            "duration_estimate": "5 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-013",
+                "name": "Decision Request",
+                "type": "web",
+                "description": "Forced choice: Proceed (coaching client), Pause (follow-up needed), Decline (disqualified)",
+                "flow_step_id": "FLOW-008|STEP-001",
+                "data_entities": ["ENT-006", "ENT-015"],
+                "user_actions": ["request_decision", "wait_silently"],
+                "system_actions": ["display_choice_buttons", "track_silence_duration"],
+                "emotional_state": "patient",
+                "pain_points": ["Instinct to fill silence is overwhelming", "Prospect needs think time", "Fear of lost deal"],
+                "opportunities": ["Interface prevents accidental talking", "Silence timer normalizes wait", "Clean decision eliminates ambiguity"]
+              },
+              {
+                "id": "TP-014",
+                "name": "Outcome Classification",
+                "type": "web",
+                "description": "Marcus selects outcome type. If disqualified, mandatory reason selection (500+ clients, cashflow, misalignment, capacity, authority)",
+                "flow_step_id": "FLOW-008|STEP-002",
+                "data_entities": ["ENT-015", "ENT-006"],
+                "user_actions": ["classify_outcome"],
+                "system_actions": ["record_outcome", "trigger_routing"],
+                "emotional_state": "relieved",
+                "pain_points": ["Hard to accept disqualification", "Temptation to 'keep the door open'", "Unclear what happens next"],
+                "opportunities": ["Clear outcome enables next steps", "Disqualification data helps pattern recognition", "System shows follow-up or closure"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-007",
+            "name": "Objection Handling (Variable)",
+            "description": "When prospect raises concern at any milestone, Marcus triggers diagnostic objection subflow based on type (Price, Timing, Capacity, Think, Partner, Skepticism).",
+            "duration_estimate": "5-15 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-015",
+                "name": "Objection Type Selection",
+                "type": "web",
+                "description": "Marcus selects objection type from 6-option menu: Price, Timing, Capacity/Time, Need to Think, Partner/Team, Skepticism",
+                "flow_step_id": "FLOW-009|STEP-001",
+                "data_entities": ["ENT-008", "ENT-009"],
+                "user_actions": ["select_objection_type"],
+                "system_actions": ["load_diagnostic_panel"],
+                "emotional_state": "engaged",
+                "pain_points": ["Objection feels like rejection", "Instinct to defend/argue", "Not sure which type applies"],
+                "opportunities": ["System provides structure", "Diagnostic approach depersonalizes", "Clear questions calm the nervous system"]
+              },
+              {
+                "id": "TP-016",
+                "name": "Price Objection Diagnostic",
+                "type": "web",
+                "description": "Step 1: 'Compared to what?', Step 2: Classify comparison (software/coaching/income/fear), Step 3: 6-month payback structural check",
+                "flow_step_id": "FLOW-009|STEP-003",
+                "data_entities": ["ENT-008", "ENT-009"],
+                "user_actions": ["ask_diagnostic_questions", "classify_comparison"],
+                "system_actions": ["guide_conversation"],
+                "emotional_state": "curious",
+                "pain_points": ["Hard to stay neutral when defensive", "Temptation to provide solution immediately", "Silence after question is uncomfortable"],
+                "opportunities": ["Questions are non-negotiable (system enforces)", "No rebuttal options available", "Data classification leads to clarity"]
+              },
+              {
+                "id": "TP-017",
+                "name": "Objection Outcome",
+                "type": "web",
+                "description": "Forced outcome selection: Resolved, Deferred, Disqualified. Cannot close objection panel without choice.",
+                "flow_step_id": "FLOW-009|STEP-009",
+                "data_entities": ["ENT-009", "ENT-006"],
+                "user_actions": ["select_outcome"],
+                "system_actions": ["record_objection_response", "route_accordingly"],
+                "emotional_state": "clear",
+                "pain_points": ["Deferred feels like failure", "Disqualified on one objection is hard to accept"],
+                "opportunities": ["Deferred objections tracked for follow-up", "Data shows patterns across team", "Disqualification data enables learning"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-008",
+            "name": "Post-Call AI Analysis",
+            "description": "After call ends, AI generates comprehensive analysis with summary, objection classification, decision readiness, risk flags, and follow-up email draft.",
+            "duration_estimate": "2 minutes (automatic)",
+            "touchpoints": [
+              {
+                "id": "TP-018",
+                "name": "Call Recording Review",
+                "type": "web",
+                "description": "System shows call recording link with transcript, timeline markers for milestones/objections/slides",
+                "flow_step_id": "FLOW-019|STEP-001",
+                "data_entities": ["ENT-006", "ENT-014"],
+                "user_actions": ["review_recording"],
+                "system_actions": ["display_recording", "show_timeline"],
+                "emotional_state": "reflective",
+                "pain_points": ["Hard to watch yourself", "Too much data to process", "Unclear what to improve"],
+                "opportunities": ["Markers jump to key moments", "Transcript searchable", "AI highlights key signals"]
+              },
+              {
+                "id": "TP-019",
+                "name": "AI Summary & Analysis",
+                "type": "web",
+                "description": "Factual call summary, objection classification breakdown, decision readiness score (0-100), risk flags, agent execution feedback, slide effectiveness signals",
+                "flow_step_id": "FLOW-019|STEP-002",
+                "data_entities": ["ENT-014", "ENT-006"],
+                "user_actions": ["review_ai_analysis"],
+                "system_actions": ["generate_analysis"],
+                "emotional_state": "learning",
+                "pain_points": ["AI feedback might feel critical", "Hard to know if analysis is accurate", "Unclear action items"],
+                "opportunities": ["Neutral tone, evidence-based", "Tied to specific call moments", "Actionable coaching suggestions"]
+              },
+              {
+                "id": "TP-020",
+                "name": "AI-Generated Follow-Up Email",
+                "type": "web",
+                "description": "Editable email draft based on call facts: recap of agreed points, confirmed next steps, no persuasion or urgency language",
+                "flow_step_id": "FLOW-019|STEP-003",
+                "data_entities": ["ENT-014", "ENT-006"],
+                "user_actions": ["review_email", "edit_if_needed", "send"],
+                "system_actions": ["generate_email_draft"],
+                "emotional_state": "efficient",
+                "pain_points": ["Post-call writing is tedious", "Easy to oversell in email", "Forgetting key details"],
+                "opportunities": ["Saves 5-10 min per call", "Language matches actual call", "Professional, trustworthy tone"]
+              }
+            ]
+          }
+        ],
+        "success_metrics": [
+          {
+            "metric": "call_completion_rate",
+            "target": "100%",
+            "measurement": "All 7 milestones completed with required confirmations"
+          },
+          {
+            "metric": "call_variance",
+            "target": "< 15%",
+            "measurement": "Standard deviation of milestone completion times across agents"
+          },
+          {
+            "metric": "objection_handling_consistency",
+            "target": "100%",
+            "measurement": "All objections classified with outcome recorded"
+          },
+          {
+            "metric": "agent_confidence",
+            "target": "> 85%",
+            "measurement": "Post-call survey rating of call structure helpfulness"
+          }
+        ]
+      },
+      {
+        "id": "JRN-002",
+        "name": "Objection Mastery Journey (Marcus - Sales Agent)",
+        "description": "Focused journey on objection handling skill development. Marcus encounters objection, diagnoses it, and learns from AI feedback on approach effectiveness.",
+        "persona_id": "PERSONA-001",
+        "flow_ids": ["FLOW-009", "FLOW-010", "FLOW-011", "FLOW-012", "FLOW-013", "FLOW-014", "FLOW-019"],
+        "story_ids": ["ST-010", "ST-011", "ST-012", "ST-013", "ST-014", "ST-015", "ST-016", "ST-017"],
+        "phases": [
+          {
+            "id": "PHASE-001",
+            "name": "Objection Encounter",
+            "description": "Prospect raises concern at any point in call. Marcus recognizes objection and pauses milestone execution.",
+            "duration_estimate": "< 1 minute",
+            "touchpoints": [
+              {
+                "id": "TP-021",
+                "name": "Objection Recognition",
+                "type": "web",
+                "description": "Marcus hears concern and realizes objection handling is needed. System objection button always visible.",
+                "flow_step_id": "FLOW-009|STEP-001",
+                "data_entities": ["ENT-008"],
+                "user_actions": ["click_objection_button"],
+                "system_actions": ["display_objection_selector"],
+                "emotional_state": "alert",
+                "pain_points": ["Moment of panic when hearing objection", "Instinct to defend immediately", "Fear of losing momentum"],
+                "opportunities": ["Button is always accessible", "Visually distinct to focus attention", "Permission to pause main flow"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-002",
+            "name": "Diagnostic Flow Execution",
+            "description": "Based on objection type, Marcus executes structured diagnostic questions. No persuasion options available.",
+            "duration_estimate": "5-10 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-022",
+                "name": "Objection Type Selection",
+                "type": "web",
+                "description": "Marcus selects from 6 types: Price, Timing, Capacity/Time, Need to Think, Partner/Team, Skepticism",
+                "flow_step_id": "FLOW-009|STEP-001",
+                "data_entities": ["ENT-008"],
+                "user_actions": ["select_type"],
+                "system_actions": ["load_diagnostic_flow"],
+                "emotional_state": "focused",
+                "pain_points": ["Might misclassify objection type", "Some concerns span multiple types", "Want to jump to solution"],
+                "opportunities": ["Types are clearly defined with examples", "Can clarify with prospect during conversation", "System guides correct type selection"]
+              },
+              {
+                "id": "TP-023",
+                "name": "Step-by-Step Diagnostics",
+                "type": "web",
+                "description": "System displays diagnostic questions one at a time. Marcus asks each question, records response. Only diagnostic questions available (no persuasion).",
+                "flow_step_id": "FLOW-009|STEP-003",
+                "data_entities": ["ENT-008", "ENT-009"],
+                "user_actions": ["ask_question", "record_response"],
+                "system_actions": ["display_next_question", "guide_conversation"],
+                "emotional_state": "scientific",
+                "pain_points": ["Questions might feel robotic", "Prospect senses automation", "Hard to be natural with script"],
+                "opportunities": ["Questions are genuine diagnostic, not sales tactic", "Prospect feels heard", "Data clarity enables better next steps"]
+              },
+              {
+                "id": "TP-024",
+                "name": "Guardrails Enforcement",
+                "type": "web",
+                "description": "System prevents access to rebuttal or persuasion content. Only diagnostic questions, confirmations, and outcome choices available.",
+                "flow_step_id": "FLOW-009|STEP-003",
+                "data_entities": ["ENT-008"],
+                "user_actions": ["stay_diagnostic"],
+                "system_actions": ["block_persuasion_options"],
+                "emotional_state": "protected",
+                "pain_points": ["Feeling constrained", "Fear of losing control", "Instinct to sell harder"],
+                "opportunities": ["Structure removes temptation", "Natural conversation flow emerges", "Prospect respects diagnostic approach"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-003",
+            "name": "Outcome Classification",
+            "description": "Marcus must classify objection outcome before returning to milestone. Forces explicit decision: Resolved, Deferred, or Disqualified.",
+            "duration_estimate": "< 1 minute",
+            "touchpoints": [
+              {
+                "id": "TP-025",
+                "name": "Forced Outcome Selection",
+                "type": "web",
+                "description": "Cannot proceed without selecting outcome. Deferred objections tracked for follow-up calls.",
+                "flow_step_id": "FLOW-009|STEP-009",
+                "data_entities": ["ENT-009", "ENT-006"],
+                "user_actions": ["select_outcome"],
+                "system_actions": ["record_objection_response"],
+                "emotional_state": "decisive",
+                "pain_points": ["Deferred feels like wishy-washy", "Disqualified on objection is hard to accept", "Want to leave options open"],
+                "opportunities": ["Deferred objections explicitly tracked", "Data shows resolution patterns", "Disqualification data prevents false hope"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-004",
+            "name": "Learn from AI Feedback",
+            "description": "Post-call AI provides feedback on objection handling quality, effectiveness, and patterns. Marcus reviews and identifies improvement areas.",
+            "duration_estimate": "5 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-026",
+                "name": "Objection Handling Scorecard",
+                "type": "web",
+                "description": "AI rates objection handling on diagnostic clarity, question quality, prospect engagement, outcome appropriateness",
+                "flow_step_id": "FLOW-019|STEP-002",
+                "data_entities": ["ENT-014", "ENT-009"],
+                "user_actions": ["review_feedback"],
+                "system_actions": ["generate_objection_scorecard"],
+                "emotional_state": "reflective",
+                "pain_points": ["Feedback might feel critical", "Hard to improve without specifics", "Unclear if approach is working"],
+                "opportunities": ["Neutral, evidence-based feedback", "Specific call moment examples", "Comparative to team average"]
+              },
+              {
+                "id": "TP-027",
+                "name": "Pattern Recognition Dashboard",
+                "type": "web",
+                "description": "Aggregate view of Marcus's objection patterns: frequency by type, resolution rates, deferred conversion, decision readiness after objection",
+                "flow_step_id": "FLOW-019|STEP-002",
+                "data_entities": ["ENT-014", "ENT-009"],
+                "user_actions": ["review_patterns"],
+                "system_actions": ["aggregate_data"],
+                "emotional_state": "learning",
+                "pain_points": ["Need to see patterns to improve", "Hard to identify own blind spots", "Feels like performance judgment"],
+                "opportunities": ["Own data, shared with manager only", "Shows growth trajectory", "Identifies specific objection type to focus on"]
+              }
+            ]
+          }
+        ],
+        "success_metrics": [
+          {
+            "metric": "objection_handling_consistency",
+            "target": "100%",
+            "measurement": "All objections classified with outcome recorded"
+          },
+          {
+            "metric": "diagnostic_question_adherence",
+            "target": "> 95%",
+            "measurement": "Percentage of calls where diagnostic questions used vs persuasion attempts"
+          },
+          {
+            "metric": "deferred_resolution_rate",
+            "target": "> 60%",
+            "measurement": "Percentage of deferred objections that resolve in follow-up calls"
+          },
+          {
+            "metric": "objection_pattern_awareness",
+            "target": "100%",
+            "measurement": "Agent can identify top 3 objection types they face"
+          }
+        ]
+      },
+      {
+        "id": "JRN-003",
+        "name": "Follow-Up Success Journey (Marcus - Sales Agent)",
+        "description": "Continuation journey for follow-up calls. Marcus resumes with full previous context, handles unresolved objections, and moves toward close or disqualification.",
+        "persona_id": "PERSONA-001",
+        "flow_ids": ["FLOW-016", "FLOW-017", "FLOW-009", "FLOW-010", "FLOW-011", "FLOW-012", "FLOW-013", "FLOW-014", "FLOW-015", "FLOW-019"],
+        "story_ids": ["ST-021", "ST-022"],
+        "phases": [
+          {
+            "id": "PHASE-001",
+            "name": "Context Review",
+            "description": "Marcus selects follow-up call and reviews previous call summary, last milestone, unresolved objections, and decision variables.",
+            "duration_estimate": "5 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-028",
+                "name": "Follow-Up Call Selection",
+                "type": "web",
+                "description": "Marcus clicks follow-up from calendar or prospect record. System loads previous call context automatically.",
+                "flow_step_id": "FLOW-017|STEP-001",
+                "data_entities": ["ENT-005", "ENT-006"],
+                "user_actions": ["select_followup"],
+                "system_actions": ["load_context"],
+                "emotional_state": "prepared",
+                "pain_points": ["Manual context reconstruction is error-prone", "Fear of forgetting key details", "Wasted time re-explaining"],
+                "opportunities": ["All previous data instantly available", "No guessing about what was said", "Prospect appreciates continuity"]
+              },
+              {
+                "id": "TP-029",
+                "name": "Previous Summary Review",
+                "type": "web",
+                "description": "Previous call summary displayed: key facts discussed, prospect's pain points, vision, and current state mapping",
+                "flow_step_id": "FLOW-017|STEP-002",
+                "data_entities": ["ENT-014", "ENT-006"],
+                "user_actions": ["review_summary"],
+                "system_actions": ["display_summary"],
+                "emotional_state": "grounded",
+                "pain_points": ["Summary might miss important nuances", "Prospect might have changed mind on points"],
+                "opportunities": ["Quick refresh before call", "Establishes continuity with prospect", "Data-backed instead of memory"]
+              },
+              {
+                "id": "TP-030",
+                "name": "Unresolved Objections List",
+                "type": "web",
+                "description": "System displays all deferred objections from previous call: type, content, and current resolution status",
+                "flow_step_id": "FLOW-017|STEP-004",
+                "data_entities": ["ENT-009"],
+                "user_actions": ["review_objections"],
+                "system_actions": ["display_unresolved"],
+                "emotional_state": "strategic",
+                "pain_points": ["Deferred objections might be resolved independently", "Prospect thinking might have changed", "Hard to predict which to address"],
+                "opportunities": ["Explicit agenda for follow-up", "Shows what matters most to prospect", "Enables targeted preparation"]
+              },
+              {
+                "id": "TP-031",
+                "name": "Resume Point Selection",
+                "type": "web",
+                "description": "Marcus chooses: resume at last milestone (continue progressive flow) OR jump to M7 (decision point only)",
+                "flow_step_id": "FLOW-017|STEP-008",
+                "data_entities": ["ENT-006", "ENT-004"],
+                "user_actions": ["select_resume_point"],
+                "system_actions": ["load_selected_milestone"],
+                "emotional_state": "deliberate",
+                "pain_points": ["Time pressure might rush resume point", "Uncertainty about what to cover", "Risk of repeating previous material"],
+                "opportunities": ["Explicit choice forces strategic thinking", "Resume point impacts call duration", "Data shows which approach closes better"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-002",
+            "name": "Objection Re-Engagement",
+            "description": "If previous objections resurface or new ones emerge, Marcus executes diagnostic subflows. Track whether deferred objections resolve or escalate.",
+            "duration_estimate": "5-10 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-032",
+                "name": "Objection Status Update",
+                "type": "web",
+                "description": "For each unresolved objection, Marcus records update: resolved in the interim, evolved, new information, still unresolved",
+                "flow_step_id": "FLOW-017|STEP-013",
+                "data_entities": ["ENT-009"],
+                "user_actions": ["update_objection_status"],
+                "system_actions": ["track_evolution"],
+                "emotional_state": "analytical",
+                "pain_points": ["Prospect changes mind between calls", "Hard to know what changed", "Concern about repeating same conversation"],
+                "opportunities": ["Evolution data shows decision progress", "Patterns reveal which objection types are true blockers", "Enables targeted approach on follow-up"]
+              },
+              {
+                "id": "TP-033",
+                "name": "Re-Diagnostic If Needed",
+                "type": "web",
+                "description": "If objection persists or evolved, Marcus can re-run diagnostic subflow with deeper probe questions",
+                "flow_step_id": "FLOW-009|STEP-003",
+                "data_entities": ["ENT-008", "ENT-009"],
+                "user_actions": ["run_diagnostic"],
+                "system_actions": ["enable_follow_up_questions"],
+                "emotional_state": "persistent",
+                "pain_points": ["Repetitive questioning might feel annoying to prospect", "Need new angle on same objection", "Decision to disqualify vs continue is tough"],
+                "opportunities": ["Deeper questions get to root cause", "Data shows if issue is real blocker or just hesitation", "Disqualification decision becomes clear"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-003",
+            "name": "Approach Adaptation",
+            "description": "Based on objection evolution and new information, Marcus may adapt messaging or adjust the flow. Flexible vs strict mode impacts this.",
+            "duration_estimate": "5 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-034",
+                "name": "Milestone Content Refresh",
+                "type": "web",
+                "description": "Option to refresh milestone content with new data: updated current state, revised vision, new pain points discovered",
+                "flow_step_id": "FLOW-017|STEP-012",
+                "data_entities": ["ENT-007"],
+                "user_actions": ["update_milestone_data"],
+                "system_actions": ["refresh_content"],
+                "emotional_state": "adaptive",
+                "pain_points": ["Changing conditions mid-process feels disruptive", "Fear of losing structure with too much flexibility"],
+                "opportunities": ["Milestone structure stays, content updates", "Preserves consistency while enabling adaptation", "Data shows which updates improve outcomes"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-004",
+            "name": "Close or Disqualify Decision",
+            "description": "Marcus reaches M7 and requests explicit decision. Follow-up calls have higher success metrics as prospect has had time to consider.",
+            "duration_estimate": "5 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-035",
+                "name": "Final Decision Request",
+                "type": "web",
+                "description": "Same M7 framework: Proceed, Pause, Decline. Outcome classification with disqualification reason if applicable.",
+                "flow_step_id": "FLOW-008|STEP-001",
+                "data_entities": ["ENT-015"],
+                "user_actions": ["request_decision"],
+                "system_actions": ["record_outcome"],
+                "emotional_state": "resolved",
+                "pain_points": ["Long delay between calls increases anxiety", "Prospect might have been disqualified after first call"],
+                "opportunities": ["Follow-up conversion rates are trackable", "Data shows which prospects come back", "Clear outcomes enable resource allocation"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-005",
+            "name": "Follow-Up Call AI Analysis",
+            "description": "Post-follow-up AI analysis includes comparison to previous call, progression indicators, and final outcome clarity.",
+            "duration_estimate": "2 minutes (automatic)",
+            "touchpoints": [
+              {
+                "id": "TP-036",
+                "name": "Follow-Up Progression Report",
+                "type": "web",
+                "description": "AI compares follow-up to previous: objections resolved, new objections introduced, decision readiness progression, prospect engagement trend",
+                "flow_step_id": "FLOW-019|STEP-002",
+                "data_entities": ["ENT-014", "ENT-006"],
+                "user_actions": ["review_progression"],
+                "system_actions": ["generate_comparison"],
+                "emotional_state": "learning",
+                "pain_points": ["Unclear if follow-up helped or hurt", "Disqualification after follow-up feels like failure"],
+                "opportunities": ["Data shows objection resolution trajectory", "Disqualification data reveals true blockers", "Insights improve follow-up strategy"]
+              }
+            ]
+          }
+        ],
+        "success_metrics": [
+          {
+            "metric": "follow_up_close_rate",
+            "target": "> 70%",
+            "measurement": "Percentage of follow-up calls resulting in coaching client or deferred to implementation"
+          },
+          {
+            "metric": "objection_resolution_across_calls",
+            "target": "> 60%",
+            "measurement": "Percentage of deferred objections that resolve in follow-up"
+          },
+          {
+            "metric": "follow_up_call_efficiency",
+            "target": "< 30 min",
+            "measurement": "Average duration of follow-up calls (shorter indicates clarity)"
+          },
+          {
+            "metric": "decision_clarity",
+            "target": "100%",
+            "measurement": "Every follow-up call ends with explicit outcome classification"
+          }
+        ]
+      },
+      {
+        "id": "JRN-004",
+        "name": "Team Performance Review Journey (Sabine - Manager)",
+        "description": "Weekly coaching-focused journey where Sabine accesses team dashboard, identifies patterns, coaches individual agents, and plans iteration.",
+        "persona_id": "PERSONA-002",
+        "flow_ids": ["FLOW-018", "FLOW-019"],
+        "story_ids": ["ST-032", "ST-029"],
+        "phases": [
+          {
+            "id": "PHASE-001",
+            "name": "Dashboard Access & Overview",
+            "description": "Sabine navigates to performance dashboard and reviews team-wide metrics: calls per agent, objection patterns, close rates, milestone variance.",
+            "duration_estimate": "5 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-037",
+                "name": "Performance Dashboard Load",
+                "type": "web",
+                "description": "Default view shows last week's data: 6 agents, total calls, conversion metrics, risk flags summary",
+                "flow_step_id": "FLOW-018|STEP-003",
+                "data_entities": ["ENT-002", "ENT-006", "ENT-014"],
+                "user_actions": ["navigate_dashboard"],
+                "system_actions": ["render_widgets", "aggregate_metrics"],
+                "emotional_state": "analytical",
+                "pain_points": ["Too much data at once", "Hard to spot what's important", "Mobile view is limited"],
+                "opportunities": ["Customizable widget layout", "Mobile-optimized for quick checks", "Highlights anomalies automatically"]
+              },
+              {
+                "id": "TP-038",
+                "name": "Team Metrics Overview",
+                "type": "web",
+                "description": "Calls per agent (showing distribution), objection frequency breakdown (by type), close rate by qualification level, average milestone duration variance",
+                "flow_step_id": "FLOW-018|STEP-004",
+                "data_entities": ["ENT-006", "ENT-009", "ENT-004"],
+                "user_actions": ["view_metrics"],
+                "system_actions": ["display_charts"],
+                "emotional_state": "observant",
+                "pain_points": ["Raw numbers don't show patterns", "Hard to compare agents fairly", "Context matters (call difficulty varies)"],
+                "opportunities": ["Visualization makes patterns obvious", "Fair comparison accounting for prospect quality", "Benchmarks show outliers"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-002",
+            "name": "Pattern Identification",
+            "description": "Sabine filters by agent, time period, or call outcome to identify coaching opportunities, performance gaps, and success patterns.",
+            "duration_estimate": "10 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-039",
+                "name": "Agent Performance Drill-Down",
+                "type": "web",
+                "description": "Click on specific agent to see: call volume trend, close rate vs team average, objection type distribution, milestone variance, risk flags",
+                "flow_step_id": "FLOW-018|STEP-012",
+                "data_entities": ["ENT-002", "ENT-006", "ENT-014"],
+                "user_actions": ["select_agent"],
+                "system_actions": ["filter_data"],
+                "emotional_state": "focused",
+                "pain_points": ["Data volume can be overwhelming", "Need context on call difficulty", "Want to see progression over time"],
+                "opportunities": ["Time series shows trend", "Call difficulty adjustments included", "Individual progression vs peers visible"]
+              },
+              {
+                "id": "TP-040",
+                "name": "Objection Pattern Analysis",
+                "type": "web",
+                "description": "By agent: frequency of each objection type, resolution rates, deferred-to-close conversion, decision readiness after objection",
+                "flow_step_id": "FLOW-018|STEP-005",
+                "data_entities": ["ENT-009", "ENT-006"],
+                "user_actions": ["analyze_objections"],
+                "system_actions": ["aggregate_objection_data"],
+                "emotional_state": "diagnostic",
+                "pain_points": ["Different objections require different skills", "Hard to know where coaching will help most"],
+                "opportunities": ["Identifies specific objection type where agent struggles", "Shows if issue is diagnostic or emotional management", "Coaching focus becomes clear"]
+              },
+              {
+                "id": "TP-041",
+                "name": "Variance Analysis",
+                "type": "web",
+                "description": "Milestone duration variance by agent: who is fastest, who takes extra time, is variance correlated with outcome quality",
+                "flow_step_id": "FLOW-018|STEP-007",
+                "data_entities": ["ENT-007", "ENT-004"],
+                "user_actions": ["analyze_variance"],
+                "system_actions": ["calculate_variance"],
+                "emotional_state": "questioning",
+                "pain_points": ["Speed doesn't equal quality", "Some variation is prospect-driven", "Risk of pressuring agents to rush"],
+                "opportunities": ["Data shows if fast closer has worse outcomes", "Variance vs quality correlation visible", "Coaching targets inefficiency, not speed"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-003",
+            "name": "Call Review & AI Insights",
+            "description": "Sabine selects specific calls to review: listens to key moments, reads transcript, reviews AI analysis with risk flags and agent feedback.",
+            "duration_estimate": "10 minutes per call",
+            "touchpoints": [
+              {
+                "id": "TP-042",
+                "name": "Call Recording Access",
+                "type": "web",
+                "description": "Select call from agent's list, access recording with timeline markers for milestones, objections, decision point",
+                "flow_step_id": "FLOW-019|STEP-001",
+                "data_entities": ["ENT-006", "ENT-014"],
+                "user_actions": ["select_call", "review_recording"],
+                "system_actions": ["display_recording"],
+                "emotional_state": "observant",
+                "pain_points": ["Full call is long to review", "Hard to know where to focus", "Transcript helps but hard to skim"],
+                "opportunities": ["Jump to timeline markers", "Transcript searchable", "AI highlights key moments"]
+              },
+              {
+                "id": "TP-043",
+                "name": "AI Call Analysis Review",
+                "type": "web",
+                "description": "Summary, objection classification, decision readiness score, risk flags (overpromise, pressure, misalignment), agent execution feedback, evidence markers",
+                "flow_step_id": "FLOW-019|STEP-002",
+                "data_entities": ["ENT-014", "ENT-006"],
+                "user_actions": ["review_analysis"],
+                "system_actions": ["display_analysis"],
+                "emotional_state": "coaching",
+                "pain_points": ["AI feedback might miss context", "Hard to translate insights to coaching", "Worried about seeming critical"],
+                "opportunities": ["Neutral, evidence-based observations", "Risk flags are objective indicators", "Coaching suggestions included"]
+              },
+              {
+                "id": "TP-044",
+                "name": "Evidence-Backed Coaching Notes",
+                "type": "web",
+                "description": "Sabine can add her own notes linked to specific call moments. Creates coaching conversation preparation.",
+                "flow_step_id": "FLOW-019|STEP-001",
+                "data_entities": ["ENT-014"],
+                "user_actions": ["add_notes"],
+                "system_actions": ["save_coaching_notes"],
+                "emotional_state": "prepared",
+                "pain_points": ["Generic feedback doesn't resonate", "Agent might not remember call details"],
+                "opportunities": ["Specific moment examples", "Data-backed observations", "Agent can review before 1-1"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-004",
+            "name": "Individual Coaching Session",
+            "description": "Sabine meets 1-1 with agent (Marcus) to discuss patterns, review specific calls, and plan skill development focus.",
+            "duration_estimate": "30 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-045",
+                "name": "1-1 Call Agenda",
+                "type": "web",
+                "description": "System prepares coaching agenda: top 3 insights from data, objection pattern focus, specific calls to review",
+                "flow_step_id": "FLOW-018|STEP-012",
+                "data_entities": ["ENT-014", "ENT-006"],
+                "user_actions": ["prepare_agenda"],
+                "system_actions": ["generate_coaching_agenda"],
+                "emotional_state": "supportive",
+                "pain_points": ["Unstructured 1-1s feel scattered", "Hard to focus feedback on highest impact areas"],
+                "opportunities": ["Data-driven agenda", "Agent sees data beforehand", "Collaborative problem-solving"]
+              },
+              {
+                "id": "TP-046",
+                "name": "Performance Trend Discussion",
+                "type": "web",
+                "description": "Sabine shares: close rate trend (improving/declining), objection type where agent excels vs struggles, variance improvement, decision readiness progression",
+                "flow_step_id": "FLOW-018|STEP-012",
+                "data_entities": ["ENT-006", "ENT-014"],
+                "user_actions": ["discuss_trends"],
+                "system_actions": ["display_trend_charts"],
+                "emotional_state": "reflective",
+                "pain_points": ["Trending can highlight weakness that feels personal", "Improvement is slow and hard to see"],
+                "opportunities": ["Positive trend recognition builds confidence", "Data is objective, not subjective critique", "Agent sees own growth trajectory"]
+              },
+              {
+                "id": "TP-047",
+                "name": "Call Replay & Feedback",
+                "type": "web",
+                "description": "Watch 2-3 key call moments together. Discuss agent's thinking, alternate approaches, what worked, what to practice.",
+                "flow_step_id": "FLOW-019|STEP-001",
+                "data_entities": ["ENT-006", "ENT-014"],
+                "user_actions": ["watch_together", "discuss"],
+                "system_actions": ["display_video"],
+                "emotional_state": "collaborative",
+                "pain_points": ["Watching yourself is uncomfortable", "Feedback can feel harsh", "Hard to see own mistakes"],
+                "opportunities": ["Positive intent discussion first", "Agent often self-critiques harder than manager", "Conversation becomes problem-solving vs judgment"]
+              },
+              {
+                "id": "TP-048",
+                "name": "Coaching Focus & Practice Plan",
+                "type": "web",
+                "description": "Agree on 1 skill focus for next week: objection type to master, milestone to refine, or variance to reduce. Plan 2-3 practice calls.",
+                "flow_step_id": "FLOW-018|STEP-013",
+                "data_entities": ["ENT-006"],
+                "user_actions": ["set_focus", "plan_practice"],
+                "system_actions": ["record_coaching_plan"],
+                "emotional_state": "motivated",
+                "pain_points": ["Too many improvement areas at once", "Hard to sustain practice discipline"],
+                "opportunities": ["Single focus is achievable", "Practice calls get extra coaching attention", "Progress tracked visibly"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-005",
+            "name": "Team Iteration Planning",
+            "description": "Monthly cycle: Sabine reviews aggregate patterns, identifies if system adjustments (prompts, milestone content, objection flows) would help.",
+            "duration_estimate": "30 minutes",
+            "touchpoints": [
+              {
+                "id": "TP-049",
+                "name": "Team Pattern Summary",
+                "type": "web",
+                "description": "Aggregate insights: most common objection type, milestone where most agents struggle, close rate by prospect type, AI risk flag frequency",
+                "flow_step_id": "FLOW-018|STEP-002",
+                "data_entities": ["ENT-014", "ENT-006", "ENT-009"],
+                "user_actions": ["review_patterns"],
+                "system_actions": ["aggregate_insights"],
+                "emotional_state": "strategic",
+                "pain_points": ["Individual variance obscures team patterns", "Hard to know if pattern is skill vs system issue"],
+                "opportunities": ["Statistical analysis shows trends", "Skill variance filtered out", "System improvement becomes clear"]
+              },
+              {
+                "id": "TP-050",
+                "name": "System Improvement Recommendations",
+                "type": "web",
+                "description": "Based on patterns: recommend milestone content update, objection question refinement, slide deck change, or AI prompt adjustment",
+                "flow_step_id": "FLOW-018|STEP-013",
+                "data_entities": ["ENT-004", "ENT-008", "ENT-010"],
+                "user_actions": ["propose_changes"],
+                "system_actions": ["capture_recommendations"],
+                "emotional_state": "collaborative",
+                "pain_points": ["Too many changes at once confuse team", "Risk of breaking what's working", "Hard to A/B test on small team"],
+                "opportunities": ["Manager and admin collaborate", "Single change per month", "Before/after metrics clear"]
+              }
+            ]
+          }
+        ],
+        "success_metrics": [
+          {
+            "metric": "team_variance_reduction",
+            "target": "< 15%",
+            "measurement": "Standard deviation of milestone duration across 6-agent team"
+          },
+          {
+            "metric": "coaching_impact",
+            "target": "> 20%",
+            "measurement": "Agent close rate improvement 4 weeks post-coaching"
+          },
+          {
+            "metric": "dashboard_adoption",
+            "target": "100%",
+            "measurement": "Manager accesses dashboard at least once per week"
+          },
+          {
+            "metric": "risk_flag_response_time",
+            "target": "< 24 hours",
+            "measurement": "Manager addresses high-risk calls within 1 business day"
+          }
+        ]
+      },
+      {
+        "id": "JRN-005",
+        "name": "System Configuration Journey (Thomas - Admin)",
+        "description": "Admin setup and ongoing tuning journey. Thomas configures milestones, objection flows, slide decks, and AI prompts. Tests changes before rollout.",
+        "persona_id": "PERSONA-003",
+        "flow_ids": ["FLOW-020", "FLOW-021", "FLOW-022"],
+        "story_ids": ["ST-033", "ST-034"],
+        "phases": [
+          {
+            "id": "PHASE-001",
+            "name": "Initial Milestone Configuration",
+            "description": "Thomas sets up 7-milestone sequence: defines titles, objectives, required questions, confirmations, time estimates, and coverage areas.",
+            "duration_estimate": "2 hours",
+            "touchpoints": [
+              {
+                "id": "TP-051",
+                "name": "Milestone Creation Interface",
+                "type": "web",
+                "description": "Admin panel with form for each milestone: title, objective statement, required_questions (JSON), confirmations (JSON), time estimate, order",
+                "flow_step_id": "FLOW-020|STEP-001",
+                "data_entities": ["ENT-004"],
+                "user_actions": ["create_milestones"],
+                "system_actions": ["validate_structure", "save_milestones"],
+                "emotional_state": "structured",
+                "pain_points": ["JSON syntax errors cause validation fails", "Hard to preview how this looks to agents", "Testing requires creating test calls"],
+                "opportunities": ["Form builder hides JSON complexity", "Preview shows agent view", "Test mode allows experimentation"]
+              },
+              {
+                "id": "TP-052",
+                "name": "Milestone Preview",
+                "type": "web",
+                "description": "Admin sees exactly how milestone will appear to agent: layout, field types, progress indicators, time estimate display",
+                "flow_step_id": "FLOW-020|STEP-002",
+                "data_entities": ["ENT-004"],
+                "user_actions": ["preview_milestone"],
+                "system_actions": ["render_agent_view"],
+                "emotional_state": "confident",
+                "pain_points": ["Form view vs agent view differs", "Hard to catch UX issues in config", "Mobile layout might break"],
+                "opportunities": ["What-you-see-is-what-you-get", "Mobile preview included", "Can iterate rapidly"]
+              },
+              {
+                "id": "TP-053",
+                "name": "Milestone Sequencing",
+                "type": "web",
+                "description": "Define order index (1-7), validate dependencies, ensure logical flow from context through decision point",
+                "flow_step_id": "FLOW-020|STEP-003",
+                "data_entities": ["ENT-004"],
+                "user_actions": ["order_milestones"],
+                "system_actions": ["validate_sequence"],
+                "emotional_state": "careful",
+                "pain_points": ["Sequence errors break call flow", "Hard to reorder later without side effects", "Skipped milestones cause issues"],
+                "opportunities": ["Drag-and-drop ordering", "System prevents invalid sequences", "Validation explicit"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-002",
+            "name": "Objection Flow Configuration",
+            "description": "Thomas configures 6 objection types with diagnostic questions, allowed outcomes, and any prompt overrides.",
+            "duration_estimate": "1.5 hours",
+            "touchpoints": [
+              {
+                "id": "TP-054",
+                "name": "Objection Type Setup",
+                "type": "web",
+                "description": "For each of 6 types (Price, Timing, Capacity, Think, Partner, Skepticism): define diagnostic_questions array, allowed_outcomes, scope of applicability",
+                "flow_step_id": "FLOW-021|STEP-001",
+                "data_entities": ["ENT-008"],
+                "user_actions": ["configure_objections"],
+                "system_actions": ["validate_structure"],
+                "emotional_state": "methodical",
+                "pain_points": ["Question phrasing needs to be neutral", "Easy to revert to persuasion-based questions", "Testing with real prospects is risky"],
+                "opportunities": ["Question library with guardrails", "Prompt suggestions include neutral phrasing", "A/B test capability planned"]
+              },
+              {
+                "id": "TP-055",
+                "name": "Question Validation",
+                "type": "web",
+                "description": "System checks objection questions for: neutrality (no leading language), diagnostic intent (not persuasive), clarity, and order logic",
+                "flow_step_id": "FLOW-021|STEP-002",
+                "data_entities": ["ENT-008"],
+                "user_actions": ["validate_questions"],
+                "system_actions": ["check_neutrality"],
+                "emotional_state": "assured",
+                "pain_points": ["Need guardrails but not too restrictive", "Some 'innocent' phrases are subtly leading"],
+                "opportunities": ["AI suggests when language is potentially problematic", "Admin can override with explanation", "Changes logged for audit"]
+              },
+              {
+                "id": "TP-056",
+                "name": "Outcome Routing",
+                "type": "web",
+                "description": "Define what happens after each outcome: Resolved (return to milestone), Deferred (flag for follow-up), Disqualified (end call)",
+                "flow_step_id": "FLOW-021|STEP-003",
+                "data_entities": ["ENT-008"],
+                "user_actions": ["define_routing"],
+                "system_actions": ["validate_routing"],
+                "emotional_state": "logical",
+                "pain_points": ["Some objections might need custom routing", "Deferred escalation process unclear"],
+                "opportunities": ["Standard routing + custom override option", "Clear what deferred means", "Disqualification flow defined"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-003",
+            "name": "AI Prompt Configuration",
+            "description": "Thomas manages 5-layer prompt system: global (all calls), milestone-specific, objection-specific, slide analysis, and call synthesis prompts.",
+            "duration_estimate": "2 hours",
+            "touchpoints": [
+              {
+                "id": "TP-057",
+                "name": "Prompt Registry Access",
+                "type": "web",
+                "description": "Admin interface showing all prompts organized by scope: global, milestone, objection, slide, synthesis. Each prompt has version, status, language variants",
+                "flow_step_id": "FLOW-022|STEP-001",
+                "data_entities": ["ENT-013"],
+                "user_actions": ["access_prompts"],
+                "system_actions": ["display_registry"],
+                "emotional_state": "cautious",
+                "pain_points": ["Prompt complexity is high", "Small changes can have big impacts", "Hard to test prompts safely"],
+                "opportunities": ["Organized interface reduces cognitive load", "Version control built-in", "Test environment available"]
+              },
+              {
+                "id": "TP-058",
+                "name": "Prompt Editing & Variables",
+                "type": "web",
+                "description": "Edit prompt text with variable placeholders (e.g., {prospect_name}, {client_count}, {main_pain}). System shows where variables are used.",
+                "flow_step_id": "FLOW-022|STEP-002",
+                "data_entities": ["ENT-013"],
+                "user_actions": ["edit_prompt"],
+                "system_actions": ["validate_variables", "check_placeholders"],
+                "emotional_state": "creative",
+                "pain_points": ["AI prompt engineering is hard", "Variables might not be available", "Side effects of change unclear"],
+                "opportunities": ["Variable selector available (autocomplete)", "Variable availability checked", "Impact analysis shown"]
+              },
+              {
+                "id": "TP-059",
+                "name": "Prompt Testing",
+                "type": "web",
+                "description": "Run test with sample call data to see AI output. Compare old vs new prompt. Preview what managers will see.",
+                "flow_step_id": "FLOW-022|STEP-003",
+                "data_entities": ["ENT-013", "ENT-006"],
+                "user_actions": ["test_prompt"],
+                "system_actions": ["run_test"],
+                "emotional_state": "experimental",
+                "pain_points": ["Testing requires test data", "Hard to predict real-world behavior", "Changes might be too subtle to notice"],
+                "opportunities": ["Sandbox testing available", "Sample data from real calls included", "Before/after comparison"]
+              },
+              {
+                "id": "TP-060",
+                "name": "Prompt Versioning & Rollback",
+                "type": "web",
+                "description": "All prompts are versioned. Admin can activate/deprecate versions. Rollback to previous version if new one causes issues.",
+                "flow_step_id": "FLOW-022|STEP-004",
+                "data_entities": ["ENT-013"],
+                "user_actions": ["manage_versions"],
+                "system_actions": ["track_versions", "enable_rollback"],
+                "emotional_state": "safe",
+                "pain_points": ["Prompt changes affect all future calls", "Can't undo live if bad", "No way to test A/B on current calls"],
+                "opportunities": ["Version control gives confidence", "Rollback is fast", "History shows all changes"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-004",
+            "name": "Slide Deck Management",
+            "description": "Thomas creates canonical slide deck for the product. Defines template, sets parameter slots, manages versions.",
+            "duration_estimate": "3 hours",
+            "touchpoints": [
+              {
+                "id": "TP-061",
+                "name": "Slide Template Creation",
+                "type": "web",
+                "description": "Create slide templates bound to milestones. Define static title/message, identify parameter slots (e.g., {client_count}, {main_pain}), visualization structure",
+                "flow_step_id": "FLOW-020|STEP-001",
+                "data_entities": ["ENT-010", "ENT-004"],
+                "user_actions": ["create_slide_templates"],
+                "system_actions": ["validate_structure"],
+                "emotional_state": "creative",
+                "pain_points": ["Slide design complexity", "Parameter placement affects readability", "Hard to test with live data"],
+                "opportunities": ["Template editor with preview", "Drag-drop parameter placement", "Mobile preview included"]
+              },
+              {
+                "id": "TP-062",
+                "name": "Parameter Slot Configuration",
+                "type": "web",
+                "description": "Define parameter slots: which data field maps to which slot, default values, formatting rules (e.g., number to currency, list to bullet points)",
+                "flow_step_id": "FLOW-020|STEP-002",
+                "data_entities": ["ENT-010"],
+                "user_actions": ["define_parameters"],
+                "system_actions": ["validate_mapping"],
+                "emotional_state": "precise",
+                "pain_points": ["Data type mismatches cause rendering issues", "Parameter unavailability breaks slide", "Hard to handle null values"],
+                "opportunities": ["Type checking built-in", "Availability validation shown", "Fallback values configurable"]
+              },
+              {
+                "id": "TP-063",
+                "name": "Slide Deck Versioning",
+                "type": "web",
+                "description": "Bundle slides into versioned decks (v1.0, v2.0). Set deck status: draft, active, deprecated. Old versions retained for call analysis.",
+                "flow_step_id": "FLOW-020|STEP-003",
+                "data_entities": ["ENT-011"],
+                "user_actions": ["version_deck"],
+                "system_actions": ["record_version"],
+                "emotional_state": "organized",
+                "pain_points": ["Multiple active versions confuse agents", "Hard to migrate calls to new version mid-month"],
+                "opportunities": ["Only one active version at a time", "Scheduled deck migrations planned", "A/B testing of future versions"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-005",
+            "name": "Testing & Rollout",
+            "description": "Thomas creates test calls to validate all configurations work together. Rolls out to agents with monitoring.",
+            "duration_estimate": "1 hour",
+            "touchpoints": [
+              {
+                "id": "TP-064",
+                "name": "Test Call Execution",
+                "type": "web",
+                "description": "Create test call with sample prospect data. Execute all 7 milestones, trigger sample objections, review AI output",
+                "flow_step_id": "FLOW-001|STEP-001",
+                "data_entities": ["ENT-006", "ENT-003"],
+                "user_actions": ["run_test_call"],
+                "system_actions": ["execute_flow"],
+                "emotional_state": "thorough",
+                "pain_points": ["Test data might not represent real complexity", "Tedious to manually test every path", "Edge cases easy to miss"],
+                "opportunities": ["Automated test suite available", "Randomized test data generation", "Coverage report shows untested paths"]
+              },
+              {
+                "id": "TP-065",
+                "name": "Configuration Validation Report",
+                "type": "web",
+                "description": "System generates report: milestones complete, objections configured, prompts active, slide deck ready, no orphaned steps",
+                "flow_step_id": "FLOW-020|STEP-001",
+                "data_entities": ["ENT-004", "ENT-008", "ENT-013", "ENT-010"],
+                "user_actions": ["review_report"],
+                "system_actions": ["generate_validation"],
+                "emotional_state": "assured",
+                "pain_points": ["Hard to spot missing configuration", "Cascade failures when parts are incomplete"],
+                "opportunities": ["Checklist prevents shipping broken configs", "Report shows what's missing", "Prevents agent frustration"]
+              },
+              {
+                "id": "TP-066",
+                "name": "Rollout & Monitoring",
+                "type": "web",
+                "description": "Activate configuration for team. Monitor first 5 calls for errors, broken flows, or unexpected behavior. Rollback if critical issue.",
+                "flow_step_id": "FLOW-001|STEP-001",
+                "data_entities": ["ENT-006"],
+                "user_actions": ["activate_config", "monitor"],
+                "system_actions": ["enable_flow", "track_errors"],
+                "emotional_state": "vigilant",
+                "pain_points": ["First real calls often reveal issues", "Agents might not report problems", "Need fast rollback capability"],
+                "opportunities": ["Error logging catches issues", "Alert system for anomalies", "Fast rollback to previous config"]
+              }
+            ]
+          },
+          {
+            "id": "PHASE-006",
+            "name": "Ongoing Iteration & Learning",
+            "description": "Monthly review of call data with Sabine (manager) to identify if system adjustments would improve outcomes. A/B test candidate changes.",
+            "duration_estimate": "1 hour monthly",
+            "touchpoints": [
+              {
+                "id": "TP-067",
+                "name": "Performance Data Review",
+                "type": "web",
+                "description": "Monthly aggregate review: team close rates, objection patterns, milestone completion rates, AI risk flags, agent feedback themes",
+                "flow_step_id": "FLOW-018|STEP-002",
+                "data_entities": ["ENT-006", "ENT-014", "ENT-009"],
+                "user_actions": ["review_data"],
+                "system_actions": ["aggregate_metrics"],
+                "emotional_state": "analytical",
+                "pain_points": ["Too much data to see patterns", "Hard to attribute change to cause"],
+                "opportunities": ["Statistical analysis highlights significant changes", "Correlation analysis suggests root cause", "Manager + admin alignment on improvements"]
+              },
+              {
+                "id": "TP-068",
+                "name": "System Improvement Hypothesis",
+                "type": "web",
+                "description": "If data shows pattern (e.g., objection type increasing, milestone taking longer), propose hypothesis for cause and test change",
+                "flow_step_id": "FLOW-020|STEP-001",
+                "data_entities": ["ENT-004", "ENT-008", "ENT-013"],
+                "user_actions": ["propose_change"],
+                "system_actions": ["capture_hypothesis"],
+                "emotional_state": "scientific",
+                "pain_points": ["Too many improvement ideas", "Hard to know if change will help"],
+                "opportunities": ["Data-driven hypotheses", "Limited to one change per month", "A/B testing enables validation"]
+              },
+              {
+                "id": "TP-069",
+                "name": "A/B Test Setup",
+                "type": "web",
+                "description": "Create test variant: new milestone phrasing, modified objection question, updated slide, or AI prompt change. Run with subset of team for 2 weeks.",
+                "flow_step_id": "FLOW-020|STEP-001",
+                "data_entities": ["ENT-004", "ENT-008", "ENT-010", "ENT-013"],
+                "user_actions": ["setup_test"],
+                "system_actions": ["create_variant"],
+                "emotional_state": "experimental",
+                "pain_points": ["Test group might feel like guinea pigs", "Sample size limits statistical power", "Need to track test separately"],
+                "opportunities": ["Clear communication about testing", "Opt-in test group willing to experiment", "Built-in A/B test framework"]
+              }
+            ]
+          }
+        ],
+        "success_metrics": [
+          {
+            "metric": "configuration_error_rate",
+            "target": "0%",
+            "measurement": "Percentage of calls with configuration-related errors"
+          },
+          {
+            "metric": "iteration_cycle_time",
+            "target": "2 weeks",
+            "measurement": "Time from hypothesis to test completion"
+          },
+          {
+            "metric": "test_statistical_significance",
+            "target": "> 95%",
+            "measurement": "P-value threshold for A/B test results"
+          },
+          {
+            "metric": "admin_satisfaction",
+            "target": "> 4/5",
+            "measurement": "Admin rating of config tools usability"
+          }
+        ]
+      }
+    ],
+    "optimization_opportunities": [
+      {
+        "id": "OPP-001",
+        "title": "Streamline Pre-Call Checklist to 5 Items",
+        "description": "Current 8-item checklist takes 10 minutes. Analysis shows items 6-8 (tool stack, ROI tool, time block) rarely prevent call issues. Reduce to critical 5: qualification review, client count, business type, revenue range, main pain.",
+        "impact": "high",
+        "effort": "low",
+        "touchpoint_ids": ["TP-002", "TP-003"],
+        "expected_improvement": "2-3 minutes faster call start, maintained qualification integrity. Test with 2 agents first."
+      },
+      {
+        "id": "OPP-002",
+        "title": "Add Prospect Context Sidebar During Calls",
+        "description": "Agent often refers to pre-call notes but can't access them easily while screen-sharing. Add persistent sidebar in control panel showing: key facts, qualifying data, previous objections.",
+        "impact": "high",
+        "effort": "medium",
+        "touchpoint_ids": ["TP-006", "TP-008", "TP-009"],
+        "expected_improvement": "Reduced need to pause call for information lookup. Smoother milestone execution. Better continuity in follow-ups."
+      },
+      {
+        "id": "OPP-003",
+        "title": "Implement Milestone Time Alerts",
+        "description": "Data shows M2 often runs 25+ minutes. Add yellow alert at 15 min, red alert at 20 min to help agents recognize when milestone is overrunning.",
+        "impact": "medium",
+        "effort": "low",
+        "touchpoint_ids": ["TP-004"],
+        "expected_improvement": "Milestone variance reduced 10-15%. Agents remain in control of pacing. Better time management across team."
+      },
+      {
+        "id": "OPP-004",
+        "title": "Create Objection Handling Confidence Scoring",
+        "description": "Post-call AI currently rates objection handling on 0-100 scale. Add Marcus-specific guidance showing which objection types (Price, Timing, etc.) he handles best vs where coaching would help.",
+        "impact": "medium",
+        "effort": "medium",
+        "touchpoint_ids": ["TP-026", "TP-027"],
+        "expected_improvement": "Agents can self-identify coaching needs. Coaching more targeted. Deferred-to-close rates improve."
+      },
+      {
+        "id": "OPP-005",
+        "title": "Add Mobile Dashboard for Managers",
+        "description": "Sabine currently reviews dashboard on desktop. Mobile-optimized version would enable quick check-ins during day, faster response to risk flags.",
+        "impact": "medium",
+        "effort": "medium",
+        "touchpoint_ids": ["TP-037", "TP-038"],
+        "expected_improvement": "Manager can address risk flags within hours instead of next day. Team feels more supported. Better coaching timeliness."
+      },
+      {
+        "id": "OPP-006",
+        "title": "Introduce Slide Effectiveness A/B Testing",
+        "description": "Currently all agents use same slide deck. Thomas could test variant messaging on subset of calls to identify which slides drive higher decision readiness.",
+        "impact": "medium",
+        "effort": "high",
+        "touchpoint_ids": ["TP-061", "TP-062", "TP-069"],
+        "expected_improvement": "Slide deck version 2.0 built on data. Close rates improve. Variant testing becomes standard practice."
+      },
+      {
+        "id": "OPP-007",
+        "title": "Implement Call Outcome Predictive Scoring",
+        "description": "AI could analyze call progress (milestone completion, objection patterns, decision readiness trend) and predict likely outcome before M7.",
+        "impact": "medium",
+        "effort": "high",
+        "touchpoint_ids": ["TP-019"],
+        "expected_improvement": "Agents can adjust approach mid-call if prediction shows low close likelihood. Prevents wasted calls. Improves conversion."
+      },
+      {
+        "id": "OPP-008",
+        "title": "Create Team Objection Mastery Leaderboard",
+        "description": "Monthly ranking of agents by objection handling effectiveness: resolution rate by type, decision readiness after objection, deferred-to-close conversion.",
+        "impact": "low",
+        "effort": "low",
+        "touchpoint_ids": ["TP-027", "TP-039"],
+        "expected_improvement": "Healthy competition. Peer learning. Agents reference top performer's calls. Team variance decreases faster."
+      },
+      {
+        "id": "OPP-009",
+        "title": "Add 'Disqualification Coaching' Feature",
+        "description": "When agent disqualifies prospect, system prompts: 'Is this truly unrecoverable or comfort-based disqualification?' Coaching reminder on accurate qualification.",
+        "impact": "low",
+        "effort": "low",
+        "touchpoint_ids": ["TP-014", "TP-035"],
+        "expected_improvement": "Reduces false disqualifications. Preserves pipeline quality. Prevents losing viable prospects."
+      },
+      {
+        "id": "OPP-010",
+        "title": "Build Follow-Up Call Success Playbook",
+        "description": "Analyze which first-call outcomes convert to coaching clients on follow-up. Create playbook: 'If first call ends with Pause + Price objection, use X approach on follow-up.'",
+        "impact": "high",
+        "effort": "high",
+        "touchpoint_ids": ["TP-028", "TP-029", "TP-030"],
+        "expected_improvement": "Follow-up close rates improve 15-25%. Agents know what to expect. Playbook becomes standard methodology."
+      }
+    ]
+  }
+}

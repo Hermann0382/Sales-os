@@ -1,0 +1,171 @@
+{
+  "id": "FLOW-014",
+  "name": "Trigger Skepticism Objection Subflow",
+  "description": "Diagnostic subflow for skepticism objections to understand past experience patterns and distinguish strategy from execution issues.",
+  "feature_id": "FR-003",
+  "story_ids": ["ST-010", "ST-011", "ST-017"],
+  "actor": "user",
+  "trigger": "Prospect expresses skepticism based on past experiences at any milestone",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Agent selects 'Skepticism' from objection selector",
+      "actor": "user",
+      "inputs": ["objection_type_selection"],
+      "outputs": ["skepticism_objection_activated"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "System displays skepticism objection diagnostic panel",
+      "actor": "system",
+      "inputs": ["objection_id"],
+      "outputs": ["diagnostic_panel_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Step 1: Validate experience - ask what did not work",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["validation_question_asked"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Capture past experience details",
+      "actor": "user",
+      "inputs": ["past_experience_response"],
+      "outputs": ["experience_captured"],
+      "conditions": [],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Step 2: Pattern recognition - strategy vs execution issue",
+      "actor": "user",
+      "inputs": ["pattern_classification"],
+      "outputs": ["pattern_recorded"],
+      "conditions": [
+        {
+          "condition": "issue == strategy",
+          "outcome": "explore_strategy_mismatch"
+        },
+        {
+          "condition": "issue == execution",
+          "outcome": "explore_execution_failure"
+        }
+      ],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Capture pattern analysis",
+      "actor": "user",
+      "inputs": ["pattern_analysis_notes"],
+      "outputs": ["analysis_captured"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Step 3: Articulate structural difference",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["structural_difference_explained"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Check if distinction understood",
+      "actor": "user",
+      "inputs": ["distinction_understood"],
+      "outputs": ["understanding_captured"],
+      "conditions": [
+        {
+          "condition": "distinction_understood",
+          "outcome": "proceed_possible"
+        },
+        {
+          "condition": "still_tactic_focused",
+          "outcome": "consider_disqualification"
+        }
+      ],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Agent adds diagnostic notes",
+      "actor": "user",
+      "inputs": ["objection_notes"],
+      "outputs": ["notes_saved"],
+      "conditions": [],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Select forced outcome",
+      "actor": "user",
+      "inputs": ["objection_outcome"],
+      "outputs": ["outcome_recorded"],
+      "conditions": [
+        {
+          "condition": "outcome == resolved AND distinction_understood",
+          "outcome": "return_to_milestone"
+        },
+        {
+          "condition": "outcome == deferred",
+          "outcome": "flag_for_follow_up"
+        },
+        {
+          "condition": "outcome == disqualified OR tactic_focused",
+          "outcome": "route_to_disqualification"
+        }
+      ],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "System records ObjectionResponse and routes accordingly",
+      "actor": "system",
+      "inputs": ["call_session_id", "objection_id", "milestone_id", "outcome", "notes"],
+      "outputs": ["objection_response_saved", "routing_determined"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "Past experience validated without dismissal",
+    "Pattern recognized (strategy vs execution)",
+    "Structural difference articulated",
+    "Distinction understood check performed",
+    "Disqualification if tactic-focused mindset persists",
+    "Forced outcome selected",
+    "ObjectionResponse recorded"
+  ],
+  "error_handling": [
+    {
+      "error": "Agent dismisses past experience",
+      "response": "Guardrails ensure validation approach"
+    },
+    {
+      "error": "Prospect remains tactic-focused",
+      "response": "Recommend disqualification to protect quality"
+    }
+  ]
+}

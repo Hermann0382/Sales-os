@@ -1,0 +1,158 @@
+{
+  "id": "FLOW-009",
+  "name": "Trigger Price Objection Subflow",
+  "description": "Diagnostic subflow for price objections to identify value mismatch, cashflow concerns, or risk perception without arguing.",
+  "feature_id": "FR-003",
+  "story_ids": ["ST-010", "ST-011", "ST-012"],
+  "actor": "user",
+  "trigger": "Prospect raises price-related concern at any milestone",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Agent selects 'Price' from objection selector",
+      "actor": "user",
+      "inputs": ["objection_type_selection"],
+      "outputs": ["price_objection_activated"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "System displays price objection diagnostic panel",
+      "actor": "system",
+      "inputs": ["objection_id"],
+      "outputs": ["diagnostic_panel_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Ask Step 1: 'Compared to what?' (neutral, wait for answer)",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["question_asked_checkbox"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Wait for prospect response in silence",
+      "actor": "user",
+      "inputs": ["prospect_comparison_response"],
+      "outputs": ["comparison_captured"],
+      "conditions": [],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Step 2: Classify the comparison",
+      "actor": "user",
+      "inputs": ["comparison_classification"],
+      "outputs": ["classification_recorded"],
+      "conditions": [
+        {
+          "condition": "classification == software",
+          "outcome": "record_software_comparison"
+        },
+        {
+          "condition": "classification == coaching",
+          "outcome": "record_coaching_comparison"
+        },
+        {
+          "condition": "classification == income",
+          "outcome": "record_income_comparison"
+        },
+        {
+          "condition": "classification == fear",
+          "outcome": "record_fear_based"
+        }
+      ],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Step 3: Structural check - ask 6-month payback question",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["structural_question_asked"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Capture prospect response to payback question",
+      "actor": "user",
+      "inputs": ["payback_response"],
+      "outputs": ["payback_response_recorded"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Agent adds diagnostic notes",
+      "actor": "user",
+      "inputs": ["objection_notes"],
+      "outputs": ["notes_saved"],
+      "conditions": [],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Select forced outcome (cannot proceed without)",
+      "actor": "user",
+      "inputs": ["objection_outcome"],
+      "outputs": ["outcome_recorded"],
+      "conditions": [
+        {
+          "condition": "outcome == resolved",
+          "outcome": "return_to_milestone"
+        },
+        {
+          "condition": "outcome == deferred",
+          "outcome": "flag_for_follow_up"
+        },
+        {
+          "condition": "outcome == disqualified",
+          "outcome": "route_to_disqualification"
+        }
+      ],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "System records ObjectionResponse and routes accordingly",
+      "actor": "system",
+      "inputs": ["call_session_id", "objection_id", "milestone_id", "outcome", "notes"],
+      "outputs": ["objection_response_saved", "routing_determined"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "'Compared to what?' asked neutrally",
+    "Comparison classified (software/coaching/income/fear)",
+    "6-month payback structural question asked",
+    "Forced outcome selected: Resolved, Deferred, or Disqualified",
+    "ObjectionResponse recorded with all data"
+  ],
+  "error_handling": [
+    {
+      "error": "Agent argues with price concern",
+      "response": "Guardrails prevent rebuttal scripts, only diagnostic questions available"
+    },
+    {
+      "error": "No outcome selected",
+      "response": "Cannot close objection panel without forced outcome"
+    }
+  ]
+}

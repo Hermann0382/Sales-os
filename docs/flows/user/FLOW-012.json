@@ -1,0 +1,182 @@
+{
+  "id": "FLOW-012",
+  "name": "Trigger Need to Think Objection Subflow",
+  "description": "Diagnostic subflow for thinking objections to isolate the specific variable causing hesitation.",
+  "feature_id": "FR-003",
+  "story_ids": ["ST-010", "ST-011", "ST-015"],
+  "actor": "user",
+  "trigger": "Prospect says they need to think about it at any milestone",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Agent selects 'Need to Think' from objection selector",
+      "actor": "user",
+      "inputs": ["objection_type_selection"],
+      "outputs": ["think_objection_activated"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "System displays think objection diagnostic panel",
+      "actor": "system",
+      "inputs": ["objection_id"],
+      "outputs": ["diagnostic_panel_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Ask Step 1: 'What specifically do you want to think through?'",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["specificity_question_asked"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Capture prospect response",
+      "actor": "user",
+      "inputs": ["think_about_response"],
+      "outputs": ["response_captured"],
+      "conditions": [],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Step 2: Isolate the variable",
+      "actor": "user",
+      "inputs": ["variable_classification"],
+      "outputs": ["variable_recorded"],
+      "conditions": [
+        {
+          "condition": "variable == price",
+          "outcome": "route_to_price_subflow"
+        },
+        {
+          "condition": "variable == risk",
+          "outcome": "explore_risk_concern"
+        },
+        {
+          "condition": "variable == trust",
+          "outcome": "explore_trust_concern"
+        },
+        {
+          "condition": "variable == partner",
+          "outcome": "route_to_partner_subflow"
+        },
+        {
+          "condition": "variable == self_doubt",
+          "outcome": "explore_self_doubt"
+        }
+      ],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Step 3: Ask containment question for the isolated variable",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["containment_question_asked"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Capture containment response",
+      "actor": "user",
+      "inputs": ["containment_response"],
+      "outputs": ["containment_captured"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Route to relevant subflow if variable matches another objection type",
+      "actor": "system",
+      "inputs": ["variable_classification"],
+      "outputs": ["subflow_routing"],
+      "conditions": [
+        {
+          "condition": "variable == price",
+          "outcome": "trigger_FLOW_009"
+        },
+        {
+          "condition": "variable == partner",
+          "outcome": "trigger_FLOW_013"
+        }
+      ],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Agent adds diagnostic notes",
+      "actor": "user",
+      "inputs": ["objection_notes"],
+      "outputs": ["notes_saved"],
+      "conditions": [],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Select forced outcome",
+      "actor": "user",
+      "inputs": ["objection_outcome"],
+      "outputs": ["outcome_recorded"],
+      "conditions": [
+        {
+          "condition": "outcome == resolved",
+          "outcome": "return_to_milestone"
+        },
+        {
+          "condition": "outcome == deferred",
+          "outcome": "flag_for_follow_up"
+        },
+        {
+          "condition": "outcome == disqualified",
+          "outcome": "route_to_disqualification"
+        }
+      ],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "System records ObjectionResponse and routes accordingly",
+      "actor": "system",
+      "inputs": ["call_session_id", "objection_id", "milestone_id", "outcome", "notes"],
+      "outputs": ["objection_response_saved", "routing_determined"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "'What specifically?' question asked",
+    "Variable isolated (price/risk/trust/partner/self-doubt)",
+    "Containment question asked",
+    "Routed to appropriate subflow if applicable",
+    "Forced outcome selected",
+    "ObjectionResponse recorded"
+  ],
+  "error_handling": [
+    {
+      "error": "Prospect cannot articulate variable",
+      "response": "Agent uses prompts to help isolate, notes uncertainty"
+    },
+    {
+      "error": "Agent pressures for immediate decision",
+      "response": "Guardrails block pressure tactics"
+    }
+  ]
+}

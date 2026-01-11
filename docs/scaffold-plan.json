@@ -1,0 +1,977 @@
+{
+  "artifact_type": "scaffold_plan",
+  "status": "complete",
+  "validation": "passed",
+  "approval_required": true,
+  "approvers": ["Cynthia", "Usama"],
+  "next_phase": "scaffold_apply",
+  "data": {
+    "project_name": "CallOS",
+    "subtitle": "Sales Call Orchestration & Objection Flow App",
+    "version": "1.0.0",
+    "created_at": "2026-01-08T17:00:00Z",
+    "mode": "plan",
+    "architecture_style": "modular_monolith",
+
+    "domain_mapping": {
+      "domains": [
+        {
+          "name": "organization",
+          "description": "Tenant/organization management and multi-tenant isolation",
+          "root_entity": "ENT-001",
+          "entities": ["ENT-001"],
+          "feature_ids": [],
+          "dependencies": []
+        },
+        {
+          "name": "identity",
+          "description": "User authentication, roles, and access control",
+          "root_entity": "ENT-002",
+          "entities": ["ENT-002"],
+          "feature_ids": ["FR-013"],
+          "dependencies": ["organization"]
+        },
+        {
+          "name": "prospect",
+          "description": "Prospect/client management and qualification tracking",
+          "root_entity": "ENT-003",
+          "entities": ["ENT-003"],
+          "feature_ids": ["FR-004", "FR-005"],
+          "dependencies": ["organization"]
+        },
+        {
+          "name": "call-engine",
+          "description": "Core call session and milestone execution engine",
+          "root_entity": "ENT-006",
+          "entities": ["ENT-005", "ENT-006", "ENT-007"],
+          "feature_ids": ["FR-001", "FR-002"],
+          "dependencies": ["organization", "prospect", "identity"]
+        },
+        {
+          "name": "milestone-configuration",
+          "description": "Milestone definitions and structured configurations",
+          "root_entity": "ENT-004",
+          "entities": ["ENT-004"],
+          "feature_ids": ["FR-002"],
+          "dependencies": ["organization"]
+        },
+        {
+          "name": "objection-handling",
+          "description": "Objection types, diagnostic flows, and outcome tracking",
+          "root_entity": "ENT-008",
+          "entities": ["ENT-008", "ENT-009"],
+          "feature_ids": ["FR-003"],
+          "dependencies": ["organization", "call-engine"]
+        },
+        {
+          "name": "slide-system",
+          "description": "Slide decks, templates, instances, and presentation rendering",
+          "root_entity": "ENT-011",
+          "entities": ["ENT-010", "ENT-011", "ENT-012"],
+          "feature_ids": ["FR-008", "FR-009", "FR-010"],
+          "dependencies": ["organization", "call-engine"]
+        },
+        {
+          "name": "ai-system",
+          "description": "AI prompts, configurations, and post-call analysis",
+          "root_entity": "ENT-013",
+          "entities": ["ENT-013", "ENT-014"],
+          "feature_ids": ["FR-012", "FR-016"],
+          "dependencies": ["organization", "call-engine"]
+        },
+        {
+          "name": "outcomes",
+          "description": "Call outcome classification and post-call decision tracking",
+          "root_entity": "ENT-015",
+          "entities": ["ENT-015"],
+          "feature_ids": ["FR-006"],
+          "dependencies": ["call-engine"]
+        }
+      ],
+      "shared_entities": [],
+      "dependency_graph": {
+        "organization": [],
+        "identity": ["organization"],
+        "prospect": ["organization"],
+        "call-engine": ["organization", "prospect", "identity", "milestone-configuration"],
+        "milestone-configuration": ["organization"],
+        "objection-handling": ["organization", "call-engine"],
+        "slide-system": ["organization", "call-engine"],
+        "ai-system": ["organization", "call-engine"],
+        "outcomes": ["call-engine"]
+      }
+    },
+
+    "design_brief": {
+      "preset": "corporate",
+      "rationale": "Enterprise B2B SaaS platform for sales call orchestration - requires professional, trustworthy appearance that conveys reliability, structure, and integrity. Aviation checklist aesthetic for control panel.",
+      "colors": {
+        "primary": "#14b8a6",
+        "secondary": "#0d9488",
+        "accent": ["#0891b2"],
+        "background": "#ffffff",
+        "surface": "#f0fdfa",
+        "text_primary": "#134e4a",
+        "text_secondary": "#64748b",
+        "success": "#10b981",
+        "warning": "#f59e0b",
+        "error": "#ef4444"
+      },
+      "glassmorphism": {
+        "enabled": true,
+        "blur_intensity": "md",
+        "opacity": 0.6,
+        "border_opacity": 0.2,
+        "shadow_color_opacity": 0.05,
+        "floating_orbs": false
+      },
+      "typography": {
+        "font_family_heading": "Inter",
+        "font_family_body": "Inter",
+        "font_family_mono": "JetBrains Mono",
+        "base_size": "16px",
+        "scale_ratio": 1.25
+      },
+      "dark_mode_support": false,
+      "component_style": "rounded",
+      "design_notes": [
+        "Minimal, utility-focused interface",
+        "Clear visual hierarchy for milestone progression",
+        "Aviation checklist aesthetic for control panel (professional, systematic)",
+        "Presentation slides should be neutral and analytical, not marketing-oriented",
+        "No persuasion language in any UI copy",
+        "WCAG 2.1 AA compliance for control panel"
+      ]
+    },
+
+    "technology_stack": {
+      "frontend": {
+        "framework": "Next.js 14",
+        "router": "App Router",
+        "language": "TypeScript",
+        "state_management": "Zustand",
+        "styling": "Tailwind CSS",
+        "ui_library": "shadcn/ui",
+        "real_time": "Socket.io client"
+      },
+      "backend": {
+        "framework": "Next.js 14 API Routes",
+        "language": "TypeScript",
+        "database": "PostgreSQL (Supabase)",
+        "orm": "Prisma",
+        "api": "tRPC",
+        "real_time": "Socket.io server",
+        "auth": "Clerk"
+      },
+      "infrastructure": {
+        "hosting": "Vercel",
+        "database_hosting": "Supabase",
+        "cdn": "Vercel Edge",
+        "file_storage": "S3 (for recordings)"
+      },
+      "integrations": [
+        "Zoom API (recording bot)",
+        "GoHighLevel API (CRM sync, calendar)",
+        "Anthropic Claude API (AI analysis)",
+        "AWS S3 (call recording storage)"
+      ]
+    },
+
+    "feature_selections": {
+      "auth": "clerk",
+      "db": "postgres",
+      "storage": "s3",
+      "realtime": true,
+      "ci": true,
+      "docs": true,
+      "framework": "nextjs",
+      "language": "typescript"
+    },
+
+    "project_structure": {
+      "root_directories": {
+        "app/": "Next.js App Router - pages and routes",
+        "src/": "Source code for business logic, components, and utilities",
+        "public/": "Static assets (images, icons, fonts)",
+        "scripts/": "Database migrations, seed scripts, utility scripts",
+        "docs/": "Architecture documentation and deployment guides",
+        ".env.example": "Environment variables template",
+        ".claude/": "AI agent context and rules"
+      },
+      "src_structure": {
+        "components/": {
+          "ui/": "shadcn/ui primitives and design system components",
+          "layout/": "Page layout components (header, sidebar, main)",
+          "call-control/": "Sales control panel components (milestone display, objection handler, notes)",
+          "presentation/": "Client presentation view components (read-only slides)",
+          "dashboard/": "Manager analytics dashboard components",
+          "admin/": "Admin configuration panel components",
+          "common/": "Shared UI components (modals, buttons, forms, cards)"
+        },
+        "app/": "Next.js routes mirror domain structure",
+        "lib/": {
+          "auth/": "Clerk authentication utilities",
+          "db/": "Prisma client setup and query utilities",
+          "api/": "API helper functions and middleware",
+          "realtime/": "Socket.io client/server utilities",
+          "types/": "TypeScript type definitions (mirrors domains)",
+          "utils/": "Helper functions (formatting, validation, time tracking)"
+        },
+        "stores/": "Zustand stores by domain (callStore, milestoneStore, objectionStore, etc.)",
+        "services/": {
+          "call-service/": "Call session management logic",
+          "milestone-service/": "Milestone execution logic",
+          "objection-service/": "Objection handling logic",
+          "ai-service/": "AI analysis and prompt execution",
+          "zoom-service/": "Zoom integration (recording bot)",
+          "ghl-service/": "GoHighLevel CRM sync"
+        },
+        "hooks/": "Custom React hooks (useCall, useMilestone, useObjection, useRealtime)",
+        "middleware/": "Express middleware for authentication, logging, error handling"
+      }
+    },
+
+    "database_schema": {
+      "description": "Based on ERD (ENT-001 through ENT-015)",
+      "tables": {
+        "organizations": "ENT-001 - Tenant isolation for multi-tenant support",
+        "users": "ENT-002 - Sales agents, managers, admins with role-based access",
+        "prospects": "ENT-003 - Prospect data with qualification tracking",
+        "milestones": "ENT-004 - M1-M7 milestone definitions with objectives",
+        "call_threads": "ENT-005 - Groups primary calls with follow-ups",
+        "call_sessions": "ENT-006 - Individual call instances with session state",
+        "milestone_responses": "ENT-007 - Agent responses and checkoffs per milestone",
+        "objections": "ENT-008 - 6 objection type definitions",
+        "objection_responses": "ENT-009 - Objection instances with outcomes",
+        "slide_templates": "ENT-010 - Slide definitions with parameter slots",
+        "slide_decks": "ENT-011 - Versioned slide decks per product",
+        "slide_instances": "ENT-012 - Rendered slides shown during calls",
+        "prompt_configs": "ENT-013 - AI prompts with 5 scopes (global, milestone, objection, slide, synthesis)",
+        "ai_analyses": "ENT-014 - Post-call AI analysis (summary, risk flags, recommendations)",
+        "call_outcomes": "ENT-015 - Final call outcome classification with disqualification reasons"
+      }
+    },
+
+    "pages_and_routes": {
+      "public": [
+        "/ - Landing page (login redirect if authenticated)",
+        "/auth/sign-in - Clerk sign-in page",
+        "/auth/sign-up - Clerk sign-up page"
+      ],
+      "agent": [
+        "/dashboard - Agent home (call history, upcoming calls, AI feedback)",
+        "/call/new - Start new call with prospect selector",
+        "/call/[callId] - Call control panel (milestones, objections, notes)",
+        "/call/[callId]/presentation - Client presentation view (read-only slides)",
+        "/call/[callId]/analysis - Post-call AI analysis and follow-up options",
+        "/calls/history - Call history with filtering and search",
+        "/profile - User profile and language/timezone settings"
+      ],
+      "manager": [
+        "/manager/dashboard - Team performance overview (calls, objections, variance)",
+        "/manager/agents/[agentId] - Individual agent metrics and call history",
+        "/manager/calls/[callId] - Call review with recording, transcript, AI analysis",
+        "/manager/analytics - Advanced analytics (trends, patterns, forecasting)"
+      ],
+      "admin": [
+        "/admin/dashboard - Configuration overview",
+        "/admin/milestones - Milestone editor (M1-M7 configurations)",
+        "/admin/objections - Objection type editor (6 types with diagnostics)",
+        "/admin/slides - Slide template and deck management",
+        "/admin/prompts - AI prompt registry (5 scopes with versioning)",
+        "/admin/users - User and role management",
+        "/admin/organizations - Organization settings and white-label config"
+      ]
+    },
+
+    "api_routes": {
+      "auth": [
+        "POST /api/auth/callback/clerk - Clerk webhook for user sync"
+      ],
+      "calls": [
+        "POST /api/calls - Create new call session",
+        "GET /api/calls/[callId] - Get call session details",
+        "PATCH /api/calls/[callId] - Update call status",
+        "POST /api/calls/[callId]/start - Start call (initialize recording, WebSocket)",
+        "POST /api/calls/[callId]/end - End call (trigger AI analysis)",
+        "GET /api/calls - List calls (filtered by agent/manager role)"
+      ],
+      "milestones": [
+        "GET /api/milestones - List milestones for organization",
+        "POST /api/milestones - Create milestone (admin only)",
+        "PATCH /api/milestones/[milestoneId] - Update milestone (admin only)",
+        "POST /api/calls/[callId]/milestones/[milestoneId]/start - Start milestone",
+        "PATCH /api/calls/[callId]/milestones/[milestoneId]/respond - Submit milestone response"
+      ],
+      "objections": [
+        "GET /api/objections - List objection types",
+        "POST /api/objections - Create objection type (admin only)",
+        "PATCH /api/objections/[objectionId] - Update objection (admin only)",
+        "POST /api/calls/[callId]/objections - Trigger objection subflow",
+        "PATCH /api/calls/[callId]/objections/[objectionId]/respond - Submit objection response"
+      ],
+      "slides": [
+        "GET /api/slides/decks - List slide decks",
+        "POST /api/slides/decks - Create deck (admin only)",
+        "PATCH /api/slides/decks/[deckId] - Update deck version (admin only)",
+        "GET /api/calls/[callId]/slides - Get slides for call",
+        "POST /api/calls/[callId]/slides/[slideId]/render - Render slide with parameters"
+      ],
+      "ai": [
+        "POST /api/ai/analysis - Trigger call analysis (after call ends)",
+        "GET /api/ai/analysis/[callId] - Get AI analysis results",
+        "POST /api/ai/prompts - List/search prompts (admin only)",
+        "PATCH /api/ai/prompts/[promptId] - Update prompt (admin only)"
+      ],
+      "zoom": [
+        "POST /api/zoom/recording - Webhook for Zoom recording completion",
+        "GET /api/zoom/transcript/[recordingId] - Get call transcript"
+      ],
+      "ghl": [
+        "POST /api/ghl/sync - Sync prospect data from GoHighLevel",
+        "POST /api/ghl/calendar/followup - Schedule follow-up in GoHighLevel calendar"
+      ],
+      "analytics": [
+        "GET /api/analytics/team - Team-level metrics (manager only)",
+        "GET /api/analytics/agent/[agentId] - Agent-level metrics",
+        "GET /api/analytics/patterns - Objection patterns and trends (manager only)"
+      ]
+    },
+
+    "zustand_stores": {
+      "callStore": "Current call session state (callId, prospectId, status, startTime, mode)",
+      "milestoneStore": "Current milestone execution state (currentMilestoneId, responses, progress)",
+      "objectionStore": "Objection panel state (active objection, diagnostic questions, selected type)",
+      "slideStore": "Slide presentation state (current slide, rendered content, sync status)",
+      "userStore": "User context (userId, role, organizationId, language)",
+      "uiStore": "UI state (notifications, modals, sidebar open, dark mode if added)"
+    },
+
+    "custom_hooks": {
+      "useCall": "Hook to manage current call session and state syncing",
+      "useMilestone": "Hook to manage milestone progression and responses",
+      "useObjection": "Hook to manage objection subflow and diagnostics",
+      "usePresentation": "Hook for presentation mode synchronization via WebSocket",
+      "useRealtime": "Hook for WebSocket connection and event handling",
+      "useAuth": "Hook for Clerk authentication state",
+      "useUserRole": "Hook to check user role and permissions"
+    },
+
+    "environment_variables": [
+      {
+        "name": "DATABASE_URL",
+        "description": "PostgreSQL connection string (Supabase)",
+        "example": "postgresql://user:password@db.supabase.co:5432/postgres"
+      },
+      {
+        "name": "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "description": "Clerk publishable key for frontend authentication",
+        "example": "pk_test_xxxx"
+      },
+      {
+        "name": "CLERK_SECRET_KEY",
+        "description": "Clerk secret key for backend authentication",
+        "example": "sk_test_xxxx"
+      },
+      {
+        "name": "NEXT_PUBLIC_API_URL",
+        "description": "Frontend API base URL",
+        "example": "http://localhost:3000 or https://callos.app"
+      },
+      {
+        "name": "ZOOM_CLIENT_ID",
+        "description": "Zoom API client ID for recording bot",
+        "example": "zoom_client_id_here"
+      },
+      {
+        "name": "ZOOM_CLIENT_SECRET",
+        "description": "Zoom API client secret",
+        "example": "zoom_client_secret_here"
+      },
+      {
+        "name": "ZOOM_BOT_JID",
+        "description": "Zoom recording bot JID",
+        "example": "zzz123"
+      },
+      {
+        "name": "GHL_API_KEY",
+        "description": "GoHighLevel API key for CRM sync",
+        "example": "ghl_api_key_here"
+      },
+      {
+        "name": "AWS_S3_BUCKET",
+        "description": "AWS S3 bucket for call recording storage",
+        "example": "callos-recordings-prod"
+      },
+      {
+        "name": "AWS_ACCESS_KEY_ID",
+        "description": "AWS IAM access key",
+        "example": "AKIA..."
+      },
+      {
+        "name": "AWS_SECRET_ACCESS_KEY",
+        "description": "AWS IAM secret key",
+        "example": "aws_secret..."
+      },
+      {
+        "name": "ANTHROPIC_API_KEY",
+        "description": "Anthropic Claude API key for AI analysis",
+        "example": "sk-ant-..."
+      },
+      {
+        "name": "SOCKET_IO_PORT",
+        "description": "Port for Socket.io real-time communication",
+        "example": "3001"
+      }
+    ],
+
+    "dependencies": {
+      "production": [
+        "next@14.0.0",
+        "react@18.2.0",
+        "react-dom@18.2.0",
+        "typescript@5.2.0",
+        "@clerk/nextjs@latest",
+        "@prisma/client@5.7.0",
+        "prisma@5.7.0",
+        "@trpc/client@latest",
+        "@trpc/server@latest",
+        "@trpc/next@latest",
+        "zustand@4.4.0",
+        "tailwindcss@3.3.0",
+        "socket.io@4.7.0",
+        "socket.io-client@4.7.0",
+        "axios@1.6.0",
+        "zod@3.22.0",
+        "date-fns@2.30.0"
+      ],
+      "development": [
+        "@types/react@18.2.0",
+        "@types/react-dom@18.2.0",
+        "@types/node@20.0.0",
+        "eslint@8.50.0",
+        "eslint-config-next@14.0.0",
+        "@typescript-eslint/eslint-plugin@6.0.0",
+        "@typescript-eslint/parser@6.0.0",
+        "prettier@3.0.0",
+        "tailwindcss@3.3.0",
+        "autoprefixer@10.4.0",
+        "postcss@8.4.0",
+        "jest@29.0.0",
+        "@testing-library/react@14.0.0",
+        "@testing-library/jest-dom@6.0.0",
+        "husky@8.0.0",
+        "lint-staged@15.0.0"
+      ]
+    },
+
+    "configuration_files": {
+      "next.config.js": {
+        "purpose": "Next.js configuration with Image optimization, API routes, environment variables",
+        "key_settings": [
+          "images.domains: [S3 bucket domain]",
+          "serverActions: true",
+          "typescript.tsconfigPath: ./tsconfig.json"
+        ]
+      },
+      "tsconfig.json": {
+        "purpose": "TypeScript configuration for strict type checking",
+        "key_settings": [
+          "strict: true",
+          "paths: alias mapping for imports (@/components, @/lib, etc.)",
+          "moduleResolution: node"
+        ]
+      },
+      "tailwind.config.js": {
+        "purpose": "Tailwind CSS configuration with design system colors and custom components",
+        "key_settings": [
+          "colors: custom palette (primary, secondary, accent)",
+          "extend.fontFamily: typography settings",
+          "plugins: glassmorphism support"
+        ]
+      },
+      ".env.example": {
+        "purpose": "Template for environment variables",
+        "content": "All env vars listed above as template"
+      },
+      ".eslintrc.json": {
+        "purpose": "ESLint configuration for code quality",
+        "rules": [
+          "kebab-case for filenames",
+          "barrel imports enforcement",
+          "no-console warnings",
+          "import organization"
+        ]
+      },
+      "prisma.schema": {
+        "purpose": "Prisma ORM schema definition",
+        "datasource": "PostgreSQL (Supabase)",
+        "includes": "All 15 entities with relationships and indexes"
+      }
+    },
+
+    "migration_strategy": {
+      "phase": "Database initialization and seed data",
+      "steps": [
+        "1. Run Prisma migrations: npx prisma migrate dev --name init",
+        "2. Seed default milestones (M1-M7) into milestones table",
+        "3. Seed 6 objection types with diagnostic questions",
+        "4. Create default organization for initial setup",
+        "5. Generate Prisma client: npx prisma generate"
+      ],
+      "seed_data": {
+        "milestones": "7 milestones (M1-M7) with titles, objectives, required questions, time estimates",
+        "objections": "6 objection types (Price, Timing, Capacity/Time, Need to Think, Partner/Team, Skepticism) with diagnostic questions and allowed outcomes",
+        "default_organization": "Created during setup with default settings"
+      }
+    },
+
+    "ai_context_files": [
+      {
+        "path": ".claude/rules/backend-architecture.md",
+        "purpose": "Backend patterns for API routes, database queries, business logic",
+        "includes": "Domain-driven design, tRPC patterns, middleware conventions, error handling"
+      },
+      {
+        "path": ".claude/rules/frontend-architecture.md",
+        "purpose": "Frontend component patterns, state management, hooks, layouts",
+        "includes": "Component organization, Zustand patterns, custom hooks, presentation layer guidelines"
+      },
+      {
+        "path": ".claude/rules/design-system.md",
+        "purpose": "Design system documentation and component guidelines",
+        "includes": "Color palette, typography, component API, accessibility requirements"
+      },
+      {
+        "path": "CLAUDE.md",
+        "purpose": "Quick reference for project context and architecture",
+        "includes": "Project overview, key domains, important conventions, helpful commands"
+      },
+      {
+        "path": ".cursorrules",
+        "purpose": "Cursor IDE specific rules for this project",
+        "includes": "File organization rules, code style enforcement, helpful templates"
+      },
+      {
+        "path": "PROJECT_CONTEXT.md",
+        "purpose": "Business context and feature overview",
+        "includes": "CallOS purpose, key features, user personas, success metrics"
+      }
+    ],
+
+    "quality_tooling": [
+      {
+        "tool": ".eslintrc.json",
+        "purpose": "Linting and code quality",
+        "config": "TypeScript strict, barrel imports, kebab-case enforcement"
+      },
+      {
+        "tool": ".prettierrc",
+        "purpose": "Code formatting consistency",
+        "config": "2-space indentation, single quotes, trailing commas"
+      },
+      {
+        "tool": ".husky/pre-commit",
+        "purpose": "Git hooks for pre-commit checks",
+        "checks": "lint-staged, TypeScript type check, no console.log in production code"
+      },
+      {
+        "tool": "lint-staged",
+        "purpose": "Run linters only on staged files",
+        "config": "*.ts *.tsx: eslint, prettier"
+      }
+    ],
+
+    "progress_tracking": [
+      {
+        "file": "docs/work-log.json",
+        "purpose": "Work session tracking for crash recovery and progress monitoring",
+        "format": "artifact_type: work_log with sessions array and task status"
+      },
+      {
+        "file": "CHANGELOG.md",
+        "purpose": "Human-readable change history following Keep a Changelog format",
+        "format": "Markdown with [Unreleased], [Version] sections"
+      }
+    ],
+
+    "templates_to_apply": [
+      {
+        "id": "SCAFFOLD-001",
+        "name": "AI Context & Architecture Rules",
+        "source_path": "templates/ai-context/",
+        "target_path": ".claude/",
+        "description": "AI agent instruction files for consistent development patterns",
+        "files_to_generate": [
+          "rules/backend-architecture.md",
+          "rules/frontend-architecture.md",
+          "rules/design-system.md"
+        ]
+      },
+      {
+        "id": "SCAFFOLD-002",
+        "name": "Project Foundation & Configuration",
+        "source_path": "templates/foundation/",
+        "target_path": "./",
+        "description": "Root-level configuration files and project setup",
+        "files_to_generate": [
+          "tsconfig.json",
+          "next.config.js",
+          "tailwind.config.js",
+          ".eslintrc.json",
+          ".prettierrc",
+          ".gitignore",
+          "package.json",
+          ".env.example"
+        ]
+      },
+      {
+        "id": "SCAFFOLD-003",
+        "name": "Git Hooks & Quality Tooling",
+        "source_path": "templates/tooling/",
+        "target_path": "./",
+        "description": "Husky hooks, lint-staged, and code quality configuration",
+        "files_to_generate": [
+          ".husky/pre-commit",
+          ".husky/pre-push",
+          ".husky/_/.gitignore",
+          ".lintstagedrc.json"
+        ]
+      },
+      {
+        "id": "SCAFFOLD-004",
+        "name": "Database Schema & Migrations",
+        "source_path": "templates/database/",
+        "target_path": "./",
+        "description": "Prisma schema and initial migration setup",
+        "files_to_generate": [
+          "prisma/schema.prisma",
+          "prisma/migrations/001_initial_schema/migration.sql",
+          "scripts/seed.ts"
+        ]
+      },
+      {
+        "id": "SCAFFOLD-005",
+        "name": "Directory Structure",
+        "source_path": "templates/structure/",
+        "target_path": "src/",
+        "description": "Core source code directory structure",
+        "files_to_generate": [
+          "components/ui/.gitkeep",
+          "components/layout/.gitkeep",
+          "components/call-control/.gitkeep",
+          "components/presentation/.gitkeep",
+          "components/dashboard/.gitkeep",
+          "components/admin/.gitkeep",
+          "lib/auth/.gitkeep",
+          "lib/db/.gitkeep",
+          "lib/api/.gitkeep",
+          "lib/realtime/.gitkeep",
+          "lib/types/.gitkeep",
+          "lib/utils/.gitkeep",
+          "stores/.gitkeep",
+          "services/call-service/.gitkeep",
+          "services/milestone-service/.gitkeep",
+          "services/objection-service/.gitkeep",
+          "services/ai-service/.gitkeep",
+          "services/zoom-service/.gitkeep",
+          "services/ghl-service/.gitkeep",
+          "hooks/.gitkeep",
+          "middleware/.gitkeep"
+        ]
+      },
+      {
+        "id": "SCAFFOLD-006",
+        "name": "Next.js App Router Structure",
+        "source_path": "templates/nextjs/",
+        "target_path": "app/",
+        "description": "Next.js 14 App Router page templates",
+        "files_to_generate": [
+          "layout.tsx",
+          "page.tsx",
+          "(auth)/layout.tsx",
+          "(auth)/sign-in/page.tsx",
+          "(auth)/sign-up/page.tsx",
+          "(agent)/layout.tsx",
+          "(agent)/dashboard/page.tsx",
+          "(agent)/call/new/page.tsx",
+          "(agent)/call/[callId]/page.tsx",
+          "(agent)/call/[callId]/presentation/page.tsx",
+          "(manager)/layout.tsx",
+          "(manager)/dashboard/page.tsx",
+          "(admin)/layout.tsx",
+          "(admin)/dashboard/page.tsx",
+          "api/auth/route.ts",
+          "api/calls/route.ts",
+          "api/milestones/route.ts"
+        ]
+      },
+      {
+        "id": "SCAFFOLD-007",
+        "name": "Type Definitions & Schemas",
+        "source_path": "templates/types/",
+        "target_path": "src/lib/types/",
+        "description": "TypeScript type definitions for all domains",
+        "files_to_generate": [
+          "organization.ts",
+          "user.ts",
+          "prospect.ts",
+          "call.ts",
+          "milestone.ts",
+          "objection.ts",
+          "slide.ts",
+          "ai.ts",
+          "common.ts"
+        ]
+      },
+      {
+        "id": "SCAFFOLD-008",
+        "name": "UI Component Stubs",
+        "source_path": "templates/components/",
+        "target_path": "src/components/",
+        "description": "Stub components for all major UI sections",
+        "files_to_generate": [
+          "ui/Button.tsx",
+          "ui/Card.tsx",
+          "ui/Modal.tsx",
+          "ui/Checkbox.tsx",
+          "ui/Select.tsx",
+          "ui/Input.tsx",
+          "layout/Header.tsx",
+          "layout/Sidebar.tsx",
+          "layout/MainLayout.tsx",
+          "call-control/MilestonePanel.tsx",
+          "call-control/ObjectionPanel.tsx",
+          "call-control/NotesPanel.tsx",
+          "call-control/ControlPanel.tsx",
+          "presentation/SlideViewer.tsx",
+          "presentation/PresentationPage.tsx",
+          "dashboard/CallMetrics.tsx",
+          "dashboard/ObjectionChart.tsx",
+          "dashboard/AgentPerformance.tsx",
+          "admin/MilestoneEditor.tsx",
+          "admin/ObjectionEditor.tsx",
+          "admin/PromptRegistry.tsx"
+        ]
+      },
+      {
+        "id": "SCAFFOLD-009",
+        "name": "Zustand Store Stubs",
+        "source_path": "templates/stores/",
+        "target_path": "src/stores/",
+        "description": "Zustand store implementations for state management",
+        "files_to_generate": [
+          "callStore.ts",
+          "milestoneStore.ts",
+          "objectionStore.ts",
+          "slideStore.ts",
+          "userStore.ts",
+          "uiStore.ts"
+        ]
+      },
+      {
+        "id": "SCAFFOLD-010",
+        "name": "Custom Hooks",
+        "source_path": "templates/hooks/",
+        "target_path": "src/hooks/",
+        "description": "Custom React hooks for common patterns",
+        "files_to_generate": [
+          "useCall.ts",
+          "useMilestone.ts",
+          "useObjection.ts",
+          "usePresentation.ts",
+          "useRealtime.ts",
+          "useAuth.ts",
+          "useUserRole.ts"
+        ]
+      },
+      {
+        "id": "SCAFFOLD-011",
+        "name": "Service Layer Stubs",
+        "source_path": "templates/services/",
+        "target_path": "src/services/",
+        "description": "Business logic service implementations",
+        "files_to_generate": [
+          "call-service/callService.ts",
+          "call-service/index.ts",
+          "milestone-service/milestoneService.ts",
+          "milestone-service/index.ts",
+          "objection-service/objectionService.ts",
+          "objection-service/index.ts",
+          "ai-service/aiService.ts",
+          "ai-service/index.ts",
+          "zoom-service/zoomService.ts",
+          "zoom-service/index.ts",
+          "ghl-service/ghlService.ts",
+          "ghl-service/index.ts"
+        ]
+      },
+      {
+        "id": "SCAFFOLD-012",
+        "name": "API Route Handlers",
+        "source_path": "templates/api/",
+        "target_path": "app/api/",
+        "description": "tRPC and Next.js API route handlers",
+        "files_to_generate": [
+          "trpc/[trpc]/route.ts",
+          "trpc/router.ts",
+          "calls/route.ts",
+          "calls/[callId]/route.ts",
+          "milestones/route.ts",
+          "objections/route.ts",
+          "slides/route.ts",
+          "ai/route.ts",
+          "zoom/route.ts",
+          "ghl/route.ts",
+          "middleware.ts"
+        ]
+      },
+      {
+        "id": "SCAFFOLD-013",
+        "name": "Documentation & Reference",
+        "source_path": "templates/docs/",
+        "target_path": "./",
+        "description": "Project documentation and quick reference guides",
+        "files_to_generate": [
+          "CLAUDE.md",
+          ".cursorrules",
+          "PROJECT_CONTEXT.md",
+          "DEVELOPMENT.md",
+          "API_REFERENCE.md",
+          "DATABASE.md"
+        ]
+      },
+      {
+        "id": "SCAFFOLD-014",
+        "name": "Progress Tracking Files",
+        "source_path": "templates/progress/",
+        "target_path": "docs/",
+        "description": "Work log and changelog initialization",
+        "files_to_generate": [
+          "work-log.json",
+          "../CHANGELOG.md"
+        ]
+      }
+    ],
+
+    "directory_structure_detailed": {
+      "CallOS/": {
+        "app/": "Next.js App Router (pages, routes, API endpoints)",
+        "src/": "Source code root",
+        "src/components/": "React components organized by domain/feature",
+        "src/components/ui/": "Design system components (Button, Card, Modal, etc.)",
+        "src/components/layout/": "Page layout wrappers (Header, Sidebar, MainLayout)",
+        "src/components/call-control/": "Sales control panel (MilestonePanel, ObjectionPanel, NotesPanel)",
+        "src/components/presentation/": "Client presentation view (read-only SlideViewer)",
+        "src/components/dashboard/": "Manager analytics dashboard components",
+        "src/components/admin/": "Admin configuration panel components",
+        "src/lib/": "Utilities and business logic",
+        "src/lib/auth/": "Clerk authentication utilities",
+        "src/lib/db/": "Prisma client and query helpers",
+        "src/lib/api/": "API client and request helpers",
+        "src/lib/realtime/": "Socket.io utilities for WebSocket",
+        "src/lib/types/": "TypeScript type definitions (mirrors domain structure)",
+        "src/lib/utils/": "Helper functions (formatting, validation, time, etc.)",
+        "src/stores/": "Zustand state management stores",
+        "src/services/": "Business logic service classes",
+        "src/services/call-service/": "Call session management",
+        "src/services/milestone-service/": "Milestone execution logic",
+        "src/services/objection-service/": "Objection handling logic",
+        "src/services/ai-service/": "AI analysis and prompt execution",
+        "src/services/zoom-service/": "Zoom recording integration",
+        "src/services/ghl-service/": "GoHighLevel CRM sync",
+        "src/hooks/": "Custom React hooks",
+        "src/middleware/": "Express middleware (auth, logging, error handling)",
+        "prisma/": "Prisma ORM schema and migrations",
+        "prisma/schema.prisma": "Database schema definition",
+        "prisma/migrations/": "Database migration files",
+        "scripts/": "Utility scripts (database seed, migrations, maintenance)",
+        "public/": "Static assets (images, fonts, favicons)",
+        "docs/": "Architecture documentation, guides, and work logs",
+        "docs/adr/": "Architecture Decision Records",
+        "docs/api/": "API documentation",
+        "docs/work-log.json": "Work session tracking for crash recovery",
+        ".claude/": "AI agent context and rules",
+        ".claude/rules/": "Architecture rules and patterns",
+        ".claude/rules/backend-architecture.md": "Backend patterns",
+        ".claude/rules/frontend-architecture.md": "Frontend patterns",
+        ".claude/rules/design-system.md": "Design system guidelines",
+        "CLAUDE.md": "AI agent quick reference",
+        ".cursorrules": "Cursor IDE configuration",
+        "PROJECT_CONTEXT.md": "Business context and feature overview",
+        "DEVELOPMENT.md": "Development setup and workflow",
+        "CHANGELOG.md": "Release notes and change history",
+        ".env.example": "Environment variables template",
+        "tsconfig.json": "TypeScript configuration",
+        "next.config.js": "Next.js configuration",
+        "tailwind.config.js": "Tailwind CSS configuration",
+        ".eslintrc.json": "ESLint configuration",
+        ".prettierrc": "Prettier code formatting",
+        ".gitignore": "Git ignore rules",
+        ".husky/": "Husky git hooks",
+        ".lintstagedrc.json": "Lint-staged configuration",
+        "package.json": "Dependencies and scripts",
+        "package-lock.json": "Locked dependency versions"
+      }
+    },
+
+    "development_workflow": {
+      "setup_steps": [
+        "1. Clone repository",
+        "2. Install dependencies: npm install",
+        "3. Copy .env.example to .env.local and fill in values",
+        "4. Run database migrations: npx prisma migrate dev",
+        "5. Generate Prisma client: npx prisma generate",
+        "6. Start development server: npm run dev",
+        "7. Open http://localhost:3000"
+      ],
+      "useful_commands": [
+        "npm run dev - Start development server (Next.js on :3000)",
+        "npm run build - Build for production",
+        "npm run lint - Run ESLint",
+        "npm run format - Format code with Prettier",
+        "npm run type-check - Run TypeScript type checking",
+        "npx prisma studio - Open Prisma Studio (database GUI)",
+        "npx prisma migrate dev - Create and apply migrations",
+        "npm run db:seed - Seed database with initial data"
+      ]
+    },
+
+    "next_steps": [
+      "1. Review domain mapping and bounded contexts - Confirm structure aligns with CallOS requirements",
+      "2. Review technology stack and ADR decisions - Ensure Next.js, TypeScript, Clerk, PostgreSQL selections are approved",
+      "3. Approve scaffold plan - Get sign-off from Cynthia (Product) and Usama (Technical)",
+      "4. Create GitHub repository structure",
+      "5. Run scaffold_apply to generate all project files and structure",
+      "6. Configure environment variables for Clerk, Zoom, GoHighLevel, AWS S3",
+      "7. Initialize Prisma migrations and seed milestone/objection data",
+      "8. Begin Sprint 1: Core Call Flow Engine (FR-001, FR-002, FR-004, FR-005)"
+    ],
+
+    "estimated_setup_time": "45 minutes (scaffold apply + env config + initial setup)",
+    "estimated_total_development_time": "12 weeks (285 story points across 5 sprints)",
+
+    "quality_gates": {
+      "before_scaffold_apply": [
+        "Domain mapping approved by product owner",
+        "Technology stack confirmed with tech lead",
+        "Database schema validated against ERD",
+        "API routes aligned with feature requirements"
+      ],
+      "before_sprint_1": [
+        "Development environment setup verified",
+        "Database migrations run successfully",
+        "Clerk authentication configured",
+        "Socket.io connection test successful"
+      ],
+      "before_launch": [
+        "All 7 milestones functional with required fields",
+        "Objection handling for all 6 types implemented",
+        "AI analysis integration tested",
+        "Manager dashboard metrics accurate",
+        "WCAG 2.1 AA compliance verified",
+        "Load testing for 50+ concurrent users passed"
+      ]
+    }
+  }
+}

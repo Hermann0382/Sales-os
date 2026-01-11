@@ -1,0 +1,145 @@
+{
+  "id": "FLOW-008",
+  "name": "Execute M7 Decision Point",
+  "description": "Sales agent requests an explicit decision from the prospect. Every call ends with a clean outcome: Proceed, Pause, or Decline.",
+  "feature_id": "FR-002",
+  "story_ids": ["ST-009"],
+  "actor": "user",
+  "trigger": "M6 completed, agent proceeds to M7",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "System displays M7 milestone panel with objective",
+      "actor": "system",
+      "inputs": ["call_session_id", "milestone_id"],
+      "outputs": ["milestone_ui_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "Agent requests explicit decision",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["decision_requested"],
+      "conditions": [],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "System displays silence guidance (do not fill silence)",
+      "actor": "system",
+      "inputs": [],
+      "outputs": ["silence_guidance_shown"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Wait for prospect decision",
+      "actor": "user",
+      "inputs": ["prospect_response"],
+      "outputs": ["response_captured"],
+      "conditions": [
+        {
+          "condition": "objection_raised",
+          "outcome": "trigger_objection_subflow"
+        },
+        {
+          "condition": "clarification_question_asked",
+          "outcome": "allow_clarification_only"
+        }
+      ],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "Handle clarification questions only (no selling)",
+      "actor": "user",
+      "inputs": ["clarification_response"],
+      "outputs": ["clarification_provided"],
+      "conditions": [],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "Record forced choice outcome",
+      "actor": "user",
+      "inputs": ["decision_outcome"],
+      "outputs": ["proceed_or_pause_or_decline"],
+      "conditions": [
+        {
+          "condition": "outcome == proceed",
+          "outcome": "route_to_coaching_onboarding"
+        },
+        {
+          "condition": "outcome == pause",
+          "outcome": "route_to_follow_up_scheduling"
+        },
+        {
+          "condition": "outcome == decline",
+          "outcome": "route_to_disqualification"
+        }
+      ],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "Agent adds final notes",
+      "actor": "user",
+      "inputs": ["milestone_notes"],
+      "outputs": ["notes_saved"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "Agent marks M7 complete",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["milestone_status_complete"],
+      "conditions": [],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "Proceed to call outcome classification (FLOW-015)",
+      "actor": "system",
+      "inputs": ["decision_outcome"],
+      "outputs": ["route_to_outcome_flow"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "Explicit decision requested",
+    "Agent maintained silence until prospect responded",
+    "Only clarification questions answered (no selling)",
+    "Forced choice recorded: Proceed, Pause, or Decline",
+    "M7 marked complete",
+    "Call routed to outcome classification"
+  ],
+  "error_handling": [
+    {
+      "error": "Prospect avoids decision",
+      "response": "May trigger 'Need to Think' objection subflow"
+    },
+    {
+      "error": "Agent attempts to persuade",
+      "response": "Guardrails block persuasion scripts, logged for coaching"
+    },
+    {
+      "error": "No clear outcome",
+      "response": "Cannot complete M7 without forced choice selection"
+    }
+  ]
+}

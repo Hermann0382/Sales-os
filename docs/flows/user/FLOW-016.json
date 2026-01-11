@@ -1,0 +1,146 @@
+{
+  "id": "FLOW-016",
+  "name": "Review Call History",
+  "description": "Sales agent reviews their call history including past sessions, outcomes, notes, and AI-generated insights.",
+  "feature_id": "FR-007",
+  "story_ids": ["ST-022"],
+  "actor": "user",
+  "trigger": "Agent navigates to call history from dashboard",
+  "steps": [
+    {
+      "id": "STEP-001",
+      "sequence": 1,
+      "action": "Agent navigates to Call History section",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["call_history_view_loaded"],
+      "conditions": [],
+      "next_steps": ["STEP-002"]
+    },
+    {
+      "id": "STEP-002",
+      "sequence": 2,
+      "action": "System displays list of past calls with filters",
+      "actor": "system",
+      "inputs": ["agent_id", "date_range", "outcome_filter"],
+      "outputs": ["call_list_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-003"]
+    },
+    {
+      "id": "STEP-003",
+      "sequence": 3,
+      "action": "Agent applies filters (date, outcome type, prospect)",
+      "actor": "user",
+      "inputs": ["filter_criteria"],
+      "outputs": ["filtered_list_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-004"]
+    },
+    {
+      "id": "STEP-004",
+      "sequence": 4,
+      "action": "Agent selects a specific call to review",
+      "actor": "user",
+      "inputs": ["call_session_id"],
+      "outputs": ["call_detail_view_loaded"],
+      "conditions": [],
+      "next_steps": ["STEP-005"]
+    },
+    {
+      "id": "STEP-005",
+      "sequence": 5,
+      "action": "System displays call summary and metadata",
+      "actor": "system",
+      "inputs": ["call_session_id"],
+      "outputs": ["call_summary_rendered"],
+      "conditions": [],
+      "next_steps": ["STEP-006"]
+    },
+    {
+      "id": "STEP-006",
+      "sequence": 6,
+      "action": "View milestone completion timeline",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["milestone_timeline_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-007"]
+    },
+    {
+      "id": "STEP-007",
+      "sequence": 7,
+      "action": "View objection history and outcomes",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["objection_history_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-008"]
+    },
+    {
+      "id": "STEP-008",
+      "sequence": 8,
+      "action": "View notes captured during call",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["notes_displayed"],
+      "conditions": [],
+      "next_steps": ["STEP-009"]
+    },
+    {
+      "id": "STEP-009",
+      "sequence": 9,
+      "action": "View AI-generated analysis (if available)",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["ai_analysis_displayed"],
+      "conditions": [
+        {
+          "condition": "ai_analysis_not_ready",
+          "outcome": "show_pending_status"
+        }
+      ],
+      "next_steps": ["STEP-010"]
+    },
+    {
+      "id": "STEP-010",
+      "sequence": 10,
+      "action": "Access recording and transcript (if available)",
+      "actor": "user",
+      "inputs": [],
+      "outputs": ["recording_access_granted"],
+      "conditions": [],
+      "next_steps": ["STEP-011"]
+    },
+    {
+      "id": "STEP-011",
+      "sequence": 11,
+      "action": "View follow-up call chain if part of thread",
+      "actor": "user",
+      "inputs": ["call_thread_id"],
+      "outputs": ["call_thread_displayed"],
+      "conditions": [],
+      "next_steps": []
+    }
+  ],
+  "success_criteria": [
+    "Call history loads with all past sessions",
+    "Filters work correctly (date, outcome, prospect)",
+    "Call detail shows complete summary",
+    "Milestone timeline accurately reflects call progression",
+    "Objection history with outcomes visible",
+    "Notes accessible",
+    "AI analysis viewable when complete",
+    "Recording/transcript accessible"
+  ],
+  "error_handling": [
+    {
+      "error": "Recording not available",
+      "response": "Display message explaining recording status"
+    },
+    {
+      "error": "AI analysis still processing",
+      "response": "Show processing indicator with estimated time"
+    }
+  ]
+}

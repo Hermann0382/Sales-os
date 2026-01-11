@@ -1,0 +1,123 @@
+{
+  "validation_result": "passed",
+  "validated_at": "2026-01-08T14:35:00Z",
+  "artifact": "flow",
+  "version": "1.0.0",
+  "checks": [
+    {
+      "check": "flow_id_format",
+      "status": "passed",
+      "details": "All 24 user flows have valid IDs (FLOW-001 through FLOW-024)"
+    },
+    {
+      "check": "system_flow_id_format",
+      "status": "passed",
+      "details": "All 6 system flows have valid IDs (SFLOW-001 through SFLOW-006)"
+    },
+    {
+      "check": "step_id_format",
+      "status": "passed",
+      "details": "All steps across flows use STEP-XXX format with sequential numbering"
+    },
+    {
+      "check": "prd_feature_coverage",
+      "status": "passed",
+      "details": "All 20 PRD features (FR-001 through FR-020) mapped to at least one flow"
+    },
+    {
+      "check": "prd_story_coverage",
+      "status": "passed",
+      "details": "All 38 PRD user stories (ST-001 through ST-038) mapped to at least one flow"
+    },
+    {
+      "check": "feature_id_references",
+      "status": "passed",
+      "details": "All feature_id references in flows are valid PRD entries"
+    },
+    {
+      "check": "story_id_references",
+      "status": "passed",
+      "details": "All story_ids references in flows are valid PRD entries"
+    },
+    {
+      "check": "decision_points_conditions",
+      "status": "passed",
+      "details": "All decision points include explicit conditions with outcomes"
+    },
+    {
+      "check": "error_handling_coverage",
+      "status": "passed",
+      "details": "All flows include error_handling definitions for critical paths"
+    },
+    {
+      "check": "acceptance_criteria_alignment",
+      "status": "passed",
+      "details": "Flow steps align with PRD acceptance criteria"
+    },
+    {
+      "check": "system_flow_components",
+      "status": "passed",
+      "details": "All system flows define valid component list (api, database, frontend, etc.)"
+    },
+    {
+      "check": "system_flow_data_flow",
+      "status": "passed",
+      "details": "All system flows include data_flow definitions"
+    },
+    {
+      "check": "integration_references",
+      "status": "passed",
+      "details": "5 integrations defined matching PRD integration requirements"
+    },
+    {
+      "check": "assumption_documentation",
+      "status": "passed",
+      "details": "10 assumptions documented with impact and mitigation"
+    }
+  ],
+  "coverage_summary": {
+    "user_flows_count": 24,
+    "system_flows_count": 6,
+    "total_steps_user_flows": 287,
+    "total_steps_system_flows": 97,
+    "features_covered": 20,
+    "stories_covered": 38,
+    "integrations_defined": 5,
+    "assumptions_documented": 10
+  },
+  "flow_categories": {
+    "sales_agent_flows": [
+      "FLOW-001 (Start New Call Session)",
+      "FLOW-002 through FLOW-008 (Milestone Execution M1-M7)",
+      "FLOW-009 through FLOW-014 (Objection Subflows)",
+      "FLOW-015 (Outcome Classification)",
+      "FLOW-016 (Review Call History)",
+      "FLOW-017 (Follow-Up Calls)",
+      "FLOW-024 (Dual Interface)"
+    ],
+    "manager_flows": [
+      "FLOW-018 (Team Performance Dashboard)",
+      "FLOW-019 (Call Recording Analysis)"
+    ],
+    "admin_flows": [
+      "FLOW-020 (Milestone Configuration)",
+      "FLOW-021 (Objection Management)",
+      "FLOW-022 (AI Prompt Configuration)",
+      "FLOW-023 (User/Role Management)"
+    ],
+    "system_flows": [
+      "SFLOW-001 (Pre-Call Checklist Enforcement)",
+      "SFLOW-002 (Qualification Gate Checks)",
+      "SFLOW-003 (AI Post-Call Analysis Pipeline)",
+      "SFLOW-004 (WebSocket Slide Sync)",
+      "SFLOW-005 (Call Recording Pipeline)",
+      "SFLOW-006 (GoHighLevel CRM Sync)"
+    ]
+  },
+  "notes": [
+    "FlowModel from app/models.py was not available; validation performed against agent schema",
+    "All flows trace back to PRD features and user stories",
+    "System flows cover all critical backend operations",
+    "Error handling defined for all flows"
+  ]
+}
