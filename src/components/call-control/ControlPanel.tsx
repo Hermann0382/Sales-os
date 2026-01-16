@@ -5,6 +5,7 @@ import { Phone } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MilestoneDisplay, MilestoneDisplayProps } from './MilestoneDisplay';
 import { ChecklistPanel, ChecklistItem } from './ChecklistPanel';
 import { NotesEditor } from './NotesEditor';
@@ -15,6 +16,9 @@ import { NavigationControls } from './NavigationControls';
 import { ObjectionTypeSelector } from './ObjectionTypeSelector';
 import { ObjectionSubflowModal } from './ObjectionSubflowModal';
 import { CallOutcomeModal } from './CallOutcomeModal';
+import { SlideNavigator, SlideData } from './slide-navigator';
+import { SlidePreview, SlidePreviewData } from './slide-preview';
+import { PresentationControls, SyncMethod, ConnectionStatus } from './presentation-controls';
 import type { ObjectionType, ObjectionOutcome } from '@/services/objection-flow-service';
 import type {
   CallOutcomeType,
@@ -77,6 +81,22 @@ export interface ControlPanelProps {
   // State
   isLoading?: boolean;
   disabled?: boolean;
+
+  // Slide presentation (optional)
+  slides?: SlideData[];
+  currentSlideIndex?: number;
+  currentSlideData?: SlidePreviewData | null;
+  onSlideSelect?: (index: number) => void;
+  onSlideNavigate?: (direction: 'previous' | 'next') => void;
+  onSlideNotesChange?: (notes: string) => void;
+  onSlideOutcomeChange?: (outcome: 'positive' | 'neutral' | 'negative') => void;
+  isPresenting?: boolean;
+  onTogglePresentation?: () => void;
+  syncMethod?: SyncMethod;
+  connectionStatus?: ConnectionStatus;
+  onReconnect?: () => void;
+  presentationUrl?: string;
+  slidesLoading?: boolean;
 }
 
 export function ControlPanel({
@@ -107,10 +127,27 @@ export function ControlPanel({
   completionWarnings = [],
   isLoading = false,
   disabled = false,
+  // Slide presentation props
+  slides = [],
+  currentSlideIndex = 0,
+  currentSlideData = null,
+  onSlideSelect,
+  onSlideNavigate,
+  onSlideNotesChange,
+  onSlideOutcomeChange,
+  isPresenting = false,
+  onTogglePresentation,
+  syncMethod = 'none',
+  connectionStatus = 'disconnected',
+  onReconnect,
+  presentationUrl,
+  slidesLoading = false,
 }: ControlPanelProps) {
   const isCallActive = callStatus === 'in_progress';
+  const hasSlides = slides.length > 0;
 
-  // Modal state
+  // Tab and modal state
+  const [activeTab, setActiveTab] = useState<'script' | 'slides'>(hasSlides ? 'slides' : 'script');
   const [showObjectionTypeSelector, setShowObjectionTypeSelector] = useState(false);
   const [showObjectionSubflow, setShowObjectionSubflow] = useState(false);
   const [activeObjectionType, setActiveObjectionType] = useState<ObjectionType | null>(null);
@@ -197,50 +234,142 @@ export function ControlPanel({
       </div>
 
       {/* Main content area - scrollable */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
-        {/* Current Milestone */}
-        <MilestoneDisplay {...currentMilestone} isActive status="in_progress" />
+      <div className="flex-1 overflow-y-auto p-4">
+        {hasSlides ? (
+          <Tabs value={activeTab} onValueChange={(v: string) => setActiveTab(v as 'script' | 'slides')} className="h-full flex flex-col">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="slides">Slides</TabsTrigger>
+              <TabsTrigger value="script">Script</TabsTrigger>
+            </TabsList>
 
-        {/* Checklist */}
-        <ChecklistPanel
-          items={checklistItems}
-          onItemChange={onChecklistChange}
-          disabled={disabled || !isCallActive}
-          title="Required Items"
-        />
+            {/* Slides Tab */}
+            <TabsContent value="slides" className="flex-1 space-y-4 mt-0">
+              {/* Presentation Controls */}
+              {onTogglePresentation && (
+                <PresentationControls
+                  isPresenting={isPresenting}
+                  onTogglePresentation={onTogglePresentation}
+                  syncMethod={syncMethod}
+                  connectionStatus={connectionStatus}
+                  onReconnect={onReconnect}
+                  presentationUrl={presentationUrl}
+                />
+              )}
 
-        {/* Notes */}
-        <NotesEditor
-          value={notes}
-          onChange={onNotesChange}
-          onSave={onNotesSave}
-          disabled={disabled || !isCallActive}
-          placeholder="Add notes about this milestone conversation..."
-        />
+              {/* Slide Navigator */}
+              <SlideNavigator
+                slides={slides}
+                currentSlideIndex={currentSlideIndex}
+                onSlideSelect={onSlideSelect || (() => {})}
+                onPrevious={() => onSlideNavigate?.('previous')}
+                onNext={() => onSlideNavigate?.('next')}
+                disabled={disabled || !isCallActive}
+              />
 
-        {/* Objection Handler */}
-        <div className="space-y-2">
-          <h4 className="font-medium text-sm text-muted-foreground">
-            Objection Handling
-          </h4>
-          <ObjectionTrigger
-            objections={objections}
-            onObjectionSelect={onObjectionSelect}
-            currentObjectionId={currentObjectionId}
-            disabled={disabled || !isCallActive}
-          />
-          {/* Enhanced objection flow button */}
-          {onObjectionComplete && (
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setShowObjectionTypeSelector(true)}
+              {/* Slide Preview */}
+              <SlidePreview
+                slide={currentSlideData}
+                onNotesChange={onSlideNotesChange}
+                onOutcomeChange={onSlideOutcomeChange}
+                isLoading={slidesLoading}
+              />
+            </TabsContent>
+
+            {/* Script Tab */}
+            <TabsContent value="script" className="flex-1 space-y-6 mt-0">
+              {/* Current Milestone */}
+              <MilestoneDisplay {...currentMilestone} isActive status="in_progress" />
+
+              {/* Checklist */}
+              <ChecklistPanel
+                items={checklistItems}
+                onItemChange={onChecklistChange}
+                disabled={disabled || !isCallActive}
+                title="Required Items"
+              />
+
+              {/* Notes */}
+              <NotesEditor
+                value={notes}
+                onChange={onNotesChange}
+                onSave={onNotesSave}
+                disabled={disabled || !isCallActive}
+                placeholder="Add notes about this milestone conversation..."
+              />
+
+              {/* Objection Handler */}
+              <div className="space-y-2">
+                <h4 className="font-medium text-sm text-muted-foreground">
+                  Objection Handling
+                </h4>
+                <ObjectionTrigger
+                  objections={objections}
+                  onObjectionSelect={onObjectionSelect}
+                  currentObjectionId={currentObjectionId}
+                  disabled={disabled || !isCallActive}
+                />
+                {/* Enhanced objection flow button */}
+                {onObjectionComplete && (
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => setShowObjectionTypeSelector(true)}
+                    disabled={disabled || !isCallActive}
+                  >
+                    Start Objection Flow
+                  </Button>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
+        ) : (
+          /* Original layout when no slides */
+          <div className="space-y-6">
+            {/* Current Milestone */}
+            <MilestoneDisplay {...currentMilestone} isActive status="in_progress" />
+
+            {/* Checklist */}
+            <ChecklistPanel
+              items={checklistItems}
+              onItemChange={onChecklistChange}
               disabled={disabled || !isCallActive}
-            >
-              Start Objection Flow
-            </Button>
-          )}
-        </div>
+              title="Required Items"
+            />
+
+            {/* Notes */}
+            <NotesEditor
+              value={notes}
+              onChange={onNotesChange}
+              onSave={onNotesSave}
+              disabled={disabled || !isCallActive}
+              placeholder="Add notes about this milestone conversation..."
+            />
+
+            {/* Objection Handler */}
+            <div className="space-y-2">
+              <h4 className="font-medium text-sm text-muted-foreground">
+                Objection Handling
+              </h4>
+              <ObjectionTrigger
+                objections={objections}
+                onObjectionSelect={onObjectionSelect}
+                currentObjectionId={currentObjectionId}
+                disabled={disabled || !isCallActive}
+              />
+              {/* Enhanced objection flow button */}
+              {onObjectionComplete && (
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setShowObjectionTypeSelector(true)}
+                  disabled={disabled || !isCallActive}
+                >
+                  Start Objection Flow
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Footer with navigation */}

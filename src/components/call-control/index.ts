@@ -46,3 +46,17 @@ export type {
 export { ObjectionSubflowModal } from './ObjectionSubflowModal';
 export { ObjectionTypeSelector } from './ObjectionTypeSelector';
 export { CallOutcomeModal } from './CallOutcomeModal';
+
+// Slide presentation components
+export { SlideNavigator } from './slide-navigator';
+export type { SlideData, SlideNavigatorProps } from './slide-navigator';
+
+export { SlidePreview } from './slide-preview';
+export type { SlidePreviewData, SlidePreviewProps, RenderedSlideContent } from './slide-preview';
+
+export { PresentationControls } from './presentation-controls';
+export type {
+  SyncMethod,
+  ConnectionStatus,
+  PresentationControlsProps,
+} from './presentation-controls';

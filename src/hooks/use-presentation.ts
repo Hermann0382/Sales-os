@@ -1,20 +1,32 @@
 /**
  * usePresentation Hook - Manages presentation mode synchronization
- * Handles WebSocket connection for real-time slide sync
+ *
+ * Communication Strategy:
+ * 1. BroadcastChannel (primary): Used for same-device sync (<10ms latency)
+ * 2. WebSocket (fallback): Used when BroadcastChannel unavailable (~100ms latency)
+ *
+ * This dual-layer approach ensures optimal performance in the most common case
+ * (same device) while maintaining cross-device capability when needed.
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useSlideStore, useCallStore } from '@/stores';
-import { PresentationState, SlideTemplate, SlideSyncEvent } from '@/lib/types';
+import type { PresentationState, SlideTemplate, SlideSyncEvent } from '@/lib/types';
+import {
+  PresentationBroadcastChannel,
+  type BroadcastChannelMessage,
+} from '@/lib/realtime';
 
-interface UsePresentationOptions {
+export interface UsePresentationOptions {
   onSlideChange?: (slideIndex: number) => void;
   onPresentationStart?: () => void;
   onPresentationEnd?: () => void;
+  /** Prefer WebSocket over BroadcastChannel (for cross-device scenarios) */
+  preferWebSocket?: boolean;
 }
 
-interface UsePresentationReturn {
+export interface UsePresentationReturn {
   // State
   isActive: boolean;
   currentSlideIndex: number;
@@ -22,6 +34,7 @@ interface UsePresentationReturn {
   currentSlide: SlideTemplate | null;
   presentation: PresentationState;
   isConnected: boolean;
+  syncMethod: 'broadcast' | 'websocket' | 'none';
   error: string | null;
 
   // Actions
@@ -31,7 +44,7 @@ interface UsePresentationReturn {
   nextSlide: () => void;
   previousSlide: () => void;
 
-  // WebSocket
+  // Connection Management
   connect: () => void;
   disconnect: () => void;
   broadcastSlideChange: (index: number) => void;
@@ -44,7 +57,12 @@ interface UsePresentationReturn {
 export function usePresentation(
   options: UsePresentationOptions = {}
 ): UsePresentationReturn {
-  const { onSlideChange, onPresentationStart, onPresentationEnd } = options;
+  const {
+    onSlideChange,
+    onPresentationStart,
+    onPresentationEnd,
+    preferWebSocket = false,
+  } = options;
 
   const {
     templates,
@@ -59,57 +77,16 @@ export function usePresentation(
   const { activeCall } = useCallStore();
 
   const [isConnected, setIsConnected] = useState(false);
+  const [syncMethod, setSyncMethod] = useState<'broadcast' | 'websocket' | 'none'>('none');
   const [error, setError] = useState<string | null>(null);
+
+  // Refs for connections
+  const broadcastChannelRef = useRef<PresentationBroadcastChannel | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const presentationWindowRef = useRef<Window | null>(null);
 
   // Current slide
   const currentSlide = templates[presentation.currentSlideIndex] || null;
-
-  // Connect to WebSocket
-  const connect = useCallback(() => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) return;
-
-    try {
-      // WebSocket URL would come from environment
-      const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001';
-      wsRef.current = new WebSocket(wsUrl);
-
-      wsRef.current.onopen = () => {
-        setIsConnected(true);
-        setError(null);
-        // Join room for this call session
-        if (activeCall?.callSessionId) {
-          wsRef.current?.send(
-            JSON.stringify({
-              type: 'join',
-              callSessionId: activeCall.callSessionId,
-            })
-          );
-        }
-      };
-
-      wsRef.current.onclose = () => {
-        setIsConnected(false);
-      };
-
-      wsRef.current.onerror = () => {
-        setError('WebSocket connection failed');
-        setIsConnected(false);
-      };
-
-      wsRef.current.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data) as SlideSyncEvent;
-          handleSyncEvent(data);
-        } catch {
-          console.error('Failed to parse WebSocket message');
-        }
-      };
-    } catch (err) {
-      setError('Failed to connect to presentation sync');
-    }
-  }, [activeCall?.callSessionId]);
 
   // Handle sync events from other clients
   const handleSyncEvent = useCallback(
@@ -134,17 +111,151 @@ export function usePresentation(
     [storeGoToSlide, storeStartPresentation, storeEndPresentation, onSlideChange, onPresentationStart, onPresentationEnd]
   );
 
-  // Disconnect from WebSocket
+  // Connect via BroadcastChannel (primary method)
+  const connectBroadcastChannel = useCallback(() => {
+    if (!activeCall?.callSessionId) return false;
+
+    // Check if BroadcastChannel is supported
+    if (!PresentationBroadcastChannel.isSupported()) {
+      return false;
+    }
+
+    try {
+      broadcastChannelRef.current = new PresentationBroadcastChannel(activeCall.callSessionId);
+
+      // Register event handlers
+      broadcastChannelRef.current.on<SlideSyncEvent>('slide_change', (msg: BroadcastChannelMessage<SlideSyncEvent>) => {
+        handleSyncEvent(msg.payload);
+      });
+
+      broadcastChannelRef.current.on('presentation_start', () => {
+        handleSyncEvent({
+          type: 'presentation_start',
+          callSessionId: activeCall.callSessionId,
+          timestamp: Date.now(),
+        });
+      });
+
+      broadcastChannelRef.current.on('presentation_end', () => {
+        handleSyncEvent({
+          type: 'presentation_end',
+          callSessionId: activeCall.callSessionId,
+          timestamp: Date.now(),
+        });
+      });
+
+      const connected = broadcastChannelRef.current.connect();
+      if (connected) {
+        setIsConnected(true);
+        setSyncMethod('broadcast');
+        setError(null);
+        return true;
+      }
+    } catch (err) {
+      console.error('[usePresentation] BroadcastChannel connection failed:', err);
+    }
+
+    return false;
+  }, [activeCall?.callSessionId, handleSyncEvent]);
+
+  // Connect via WebSocket (fallback method)
+  const connectWebSocket = useCallback(() => {
+    if (!activeCall?.callSessionId) return false;
+    if (wsRef.current?.readyState === WebSocket.OPEN) return true;
+
+    try {
+      const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001';
+      wsRef.current = new WebSocket(wsUrl);
+
+      wsRef.current.onopen = () => {
+        setIsConnected(true);
+        setSyncMethod('websocket');
+        setError(null);
+        // Join room for this call session
+        wsRef.current?.send(
+          JSON.stringify({
+            type: 'join',
+            callSessionId: activeCall.callSessionId,
+          })
+        );
+      };
+
+      wsRef.current.onclose = () => {
+        if (syncMethod === 'websocket') {
+          setIsConnected(false);
+          setSyncMethod('none');
+        }
+      };
+
+      wsRef.current.onerror = () => {
+        setError('WebSocket connection failed');
+        if (syncMethod === 'websocket') {
+          setIsConnected(false);
+          setSyncMethod('none');
+        }
+      };
+
+      wsRef.current.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data) as SlideSyncEvent;
+          handleSyncEvent(data);
+        } catch {
+          console.error('[usePresentation] Failed to parse WebSocket message');
+        }
+      };
+
+      return true;
+    } catch (err) {
+      setError('Failed to connect to presentation sync');
+      return false;
+    }
+  }, [activeCall?.callSessionId, handleSyncEvent, syncMethod]);
+
+  // Main connect function - tries BroadcastChannel first, then WebSocket
+  const connect = useCallback(() => {
+    // If preferWebSocket is set, skip BroadcastChannel
+    if (!preferWebSocket) {
+      const bcConnected = connectBroadcastChannel();
+      if (bcConnected) {
+        return;
+      }
+    }
+
+    // Fallback to WebSocket
+    connectWebSocket();
+  }, [preferWebSocket, connectBroadcastChannel, connectWebSocket]);
+
+  // Disconnect from all channels
   const disconnect = useCallback(() => {
-    wsRef.current?.close();
-    wsRef.current = null;
+    // Disconnect BroadcastChannel
+    if (broadcastChannelRef.current) {
+      broadcastChannelRef.current.disconnect();
+      broadcastChannelRef.current = null;
+    }
+
+    // Disconnect WebSocket
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+    }
+
     setIsConnected(false);
+    setSyncMethod('none');
   }, []);
 
   // Broadcast slide change to other clients
   const broadcastSlideChange = useCallback(
     (index: number) => {
-      if (wsRef.current?.readyState === WebSocket.OPEN && activeCall) {
+      if (!activeCall) return;
+
+      // Try BroadcastChannel first
+      if (broadcastChannelRef.current?.isConnected) {
+        broadcastChannelRef.current.broadcastSlideChange(index);
+        return;
+      }
+
+      // Fallback to WebSocket
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
         const event: SlideSyncEvent = {
           type: 'slide_change',
           callSessionId: activeCall.callSessionId,
@@ -157,11 +268,18 @@ export function usePresentation(
     [activeCall]
   );
 
-  // Start presentation with broadcast
-  const startPresentation = useCallback(() => {
-    storeStartPresentation();
-    connect();
-    if (wsRef.current?.readyState === WebSocket.OPEN && activeCall) {
+  // Broadcast presentation start
+  const broadcastPresentationStart = useCallback(() => {
+    if (!activeCall) return;
+
+    // Try BroadcastChannel first
+    if (broadcastChannelRef.current?.isConnected) {
+      broadcastChannelRef.current.broadcastPresentationStart();
+      return;
+    }
+
+    // Fallback to WebSocket
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(
         JSON.stringify({
           type: 'presentation_start',
@@ -170,13 +288,20 @@ export function usePresentation(
         })
       );
     }
-    onPresentationStart?.();
-  }, [storeStartPresentation, connect, activeCall, onPresentationStart]);
+  }, [activeCall]);
 
-  // End presentation with broadcast
-  const endPresentation = useCallback(() => {
-    storeEndPresentation();
-    if (wsRef.current?.readyState === WebSocket.OPEN && activeCall) {
+  // Broadcast presentation end
+  const broadcastPresentationEnd = useCallback(() => {
+    if (!activeCall) return;
+
+    // Try BroadcastChannel first
+    if (broadcastChannelRef.current?.isConnected) {
+      broadcastChannelRef.current.broadcastPresentationEnd();
+      return;
+    }
+
+    // Fallback to WebSocket
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(
         JSON.stringify({
           type: 'presentation_end',
@@ -185,10 +310,29 @@ export function usePresentation(
         })
       );
     }
+  }, [activeCall]);
+
+  // Start presentation with broadcast
+  const startPresentation = useCallback(() => {
+    storeStartPresentation();
+    connect();
+
+    // Give connection a moment to establish, then broadcast
+    setTimeout(() => {
+      broadcastPresentationStart();
+    }, 50);
+
+    onPresentationStart?.();
+  }, [storeStartPresentation, connect, broadcastPresentationStart, onPresentationStart]);
+
+  // End presentation with broadcast
+  const endPresentation = useCallback(() => {
+    storeEndPresentation();
+    broadcastPresentationEnd();
     disconnect();
     presentationWindowRef.current?.close();
     onPresentationEnd?.();
-  }, [storeEndPresentation, activeCall, disconnect, onPresentationEnd]);
+  }, [storeEndPresentation, broadcastPresentationEnd, disconnect, onPresentationEnd]);
 
   // Navigation with broadcast
   const goToSlide = useCallback(
@@ -201,22 +345,24 @@ export function usePresentation(
   );
 
   const nextSlide = useCallback(() => {
+    const newIndex = Math.min(presentation.currentSlideIndex + 1, templates.length - 1);
     storeNextSlide();
-    broadcastSlideChange(presentation.currentSlideIndex + 1);
-    onSlideChange?.(presentation.currentSlideIndex + 1);
-  }, [storeNextSlide, broadcastSlideChange, presentation.currentSlideIndex, onSlideChange]);
+    broadcastSlideChange(newIndex);
+    onSlideChange?.(newIndex);
+  }, [storeNextSlide, broadcastSlideChange, presentation.currentSlideIndex, templates.length, onSlideChange]);
 
   const previousSlide = useCallback(() => {
+    const newIndex = Math.max(presentation.currentSlideIndex - 1, 0);
     storePreviousSlide();
-    broadcastSlideChange(presentation.currentSlideIndex - 1);
-    onSlideChange?.(presentation.currentSlideIndex - 1);
+    broadcastSlideChange(newIndex);
+    onSlideChange?.(newIndex);
   }, [storePreviousSlide, broadcastSlideChange, presentation.currentSlideIndex, onSlideChange]);
 
   // Get presentation URL for client view
   const getPresentationUrl = useCallback(() => {
     if (!activeCall) return '';
-    const baseUrl = window.location.origin;
-    return `${baseUrl}/call/${activeCall.callSessionId}/presentation`;
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    return `${baseUrl}/agent/call/${activeCall.callSessionId}/presentation`;
   }, [activeCall]);
 
   // Open presentation in new window
@@ -248,6 +394,7 @@ export function usePresentation(
     currentSlide,
     presentation,
     isConnected,
+    syncMethod,
     error,
     startPresentation,
     endPresentation,

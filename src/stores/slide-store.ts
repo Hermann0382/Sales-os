@@ -13,6 +13,10 @@ import {
   SlideTemplate,
 } from '@/lib/types';
 
+// Sync method and connection status types
+export type SyncMethod = 'broadcast' | 'websocket' | 'none';
+export type ConnectionStatus = 'connected' | 'connecting' | 'disconnected' | 'error';
+
 interface SlideStore {
   // State
   templates: SlideTemplate[];
@@ -20,6 +24,12 @@ interface SlideStore {
   presentation: PresentationState;
   isLoading: boolean;
   error: string | null;
+
+  // Presentation window state
+  presentationWindowRef: Window | null;
+  presentationUrl: string | null;
+  syncMethod: SyncMethod;
+  connectionStatus: ConnectionStatus;
 
   // Computed
   currentSlide: SlideTemplate | null;
@@ -34,6 +44,15 @@ interface SlideStore {
   goToSlide: (index: number) => void;
   nextSlide: () => void;
   previousSlide: () => void;
+
+  // Presentation window actions
+  openPresentationWindow: (url: string) => Window | null;
+  closePresentationWindow: () => void;
+  setPresentationWindow: (windowRef: Window | null) => void;
+
+  // Sync actions
+  setSyncMethod: (method: SyncMethod) => void;
+  setConnectionStatus: (status: ConnectionStatus) => void;
 
   // Instance actions
   createInstance: (
@@ -70,6 +89,10 @@ export const useSlideStore = create<SlideStore>()(
       presentation: initialPresentationState,
       isLoading: false,
       error: null,
+      presentationWindowRef: null,
+      presentationUrl: null,
+      syncMethod: 'none' as SyncMethod,
+      connectionStatus: 'disconnected' as ConnectionStatus,
 
       // Computed
       get currentSlide() {
@@ -162,6 +185,53 @@ export const useSlideStore = create<SlideStore>()(
         }
       },
 
+      // Presentation window actions
+      openPresentationWindow: (url: string) => {
+        const width = 1280;
+        const height = 720;
+        const left = (typeof window !== 'undefined' ? window.screen.width : 1920) / 2 - width / 2;
+        const top = (typeof window !== 'undefined' ? window.screen.height : 1080) / 2 - height / 2;
+
+        const newWindow = window.open(
+          url,
+          'presentation',
+          `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=no,status=no`
+        );
+
+        if (newWindow) {
+          newWindow.focus();
+          set({
+            presentationWindowRef: newWindow,
+            presentationUrl: url,
+          });
+        }
+
+        return newWindow;
+      },
+
+      closePresentationWindow: () => {
+        const { presentationWindowRef } = get();
+        if (presentationWindowRef && !presentationWindowRef.closed) {
+          presentationWindowRef.close();
+        }
+        set({
+          presentationWindowRef: null,
+        });
+      },
+
+      setPresentationWindow: (windowRef: Window | null) => {
+        set({ presentationWindowRef: windowRef });
+      },
+
+      // Sync actions
+      setSyncMethod: (method: SyncMethod) => {
+        set({ syncMethod: method });
+      },
+
+      setConnectionStatus: (status: ConnectionStatus) => {
+        set({ connectionStatus: status });
+      },
+
       // Instance actions
       createInstance: (templateId, callSessionId, prospectId, renderedContent) => {
         const newInstance: SlideInstance = {
@@ -224,15 +294,46 @@ export const useSlideStore = create<SlideStore>()(
       // State management
       setLoading: (isLoading) => set({ isLoading }),
       setError: (error) => set({ error }),
-      reset: () =>
+      reset: () => {
+        // Close presentation window if open
+        const { presentationWindowRef } = get();
+        if (presentationWindowRef && !presentationWindowRef.closed) {
+          presentationWindowRef.close();
+        }
+
         set({
           templates: [],
           instances: [],
           presentation: initialPresentationState,
           isLoading: false,
           error: null,
-        }),
+          presentationWindowRef: null,
+          presentationUrl: null,
+          syncMethod: 'none' as SyncMethod,
+          connectionStatus: 'disconnected' as ConnectionStatus,
+        });
+      },
     }),
     { name: 'SlideStore' }
   )
 );
+
+// Selectors for common derived state
+export const selectCurrentSlideIndex = (state: SlideStore) =>
+  state.presentation.currentSlideIndex;
+
+export const selectIsPresenting = (state: SlideStore) =>
+  state.presentation.isActive;
+
+export const selectSlideCount = (state: SlideStore) =>
+  state.templates.length;
+
+export const selectCanNavigate = (state: SlideStore) => ({
+  previous: state.presentation.currentSlideIndex > 0,
+  next: state.presentation.currentSlideIndex < state.templates.length - 1,
+});
+
+export const selectSyncStatus = (state: SlideStore) => ({
+  method: state.syncMethod,
+  status: state.connectionStatus,
+});

@@ -7,10 +7,10 @@ import { usePathname } from 'next/navigation';
 import { useUserRole } from '@/hooks';
 
 const agentNavItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: 'home' },
-  { href: '/call/new', label: 'New Call', icon: 'phone' },
-  { href: '/calls/history', label: 'Call History', icon: 'list' },
-  { href: '/profile', label: 'Profile', icon: 'user' },
+  { href: '/agent/dashboard', label: 'Dashboard', icon: 'home' },
+  { href: '/agent/call/new', label: 'New Call', icon: 'phone' },
+  { href: '/agent/calls/history', label: 'Call History', icon: 'list' },
+  { href: '/agent/profile', label: 'Profile', icon: 'user' },
 ];
 
 export default function AgentLayout({
@@ -27,7 +27,7 @@ export default function AgentLayout({
       <aside className="w-64 bg-white border-r border-border flex flex-col">
         {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-border">
-          <Link href="/dashboard" className="text-xl font-bold text-primary">
+          <Link href="/agent/dashboard" className="text-xl font-bold text-primary">
             CallOS
           </Link>
         </div>

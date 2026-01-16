@@ -15,7 +15,7 @@ export default function SignInPage() {
             footerActionLink: 'text-primary hover:text-primary/80',
           },
         }}
-        fallbackRedirectUrl="/dashboard"
+        fallbackRedirectUrl="/agent/dashboard"
         signUpUrl="/sign-up"
       />
     </div>

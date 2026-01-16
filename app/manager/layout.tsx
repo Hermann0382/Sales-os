@@ -25,7 +25,7 @@ export default function ManagerLayout({
   // Redirect if not manager or above
   useEffect(() => {
     if (!isManagerOrAbove) {
-      router.push('/dashboard');
+      router.push('/agent/dashboard');
     }
   }, [isManagerOrAbove, router]);
 
@@ -39,7 +39,7 @@ export default function ManagerLayout({
       <aside className="w-64 bg-white border-r border-border flex flex-col">
         {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-border">
-          <Link href="/dashboard" className="text-xl font-bold text-primary">
+          <Link href="/agent/dashboard" className="text-xl font-bold text-primary">
             CallOS
           </Link>
           <span className="ml-2 text-xs bg-secondary/10 text-secondary px-2 py-0.5 rounded">
@@ -50,7 +50,7 @@ export default function ManagerLayout({
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-1">
           <Link
-            href="/dashboard"
+            href="/agent/dashboard"
             className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
             <svg

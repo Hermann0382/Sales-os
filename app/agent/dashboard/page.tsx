@@ -33,7 +33,7 @@ export default function DashboardPage() {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <Link
-          href="/call/new"
+          href="/agent/call/new"
           className="glass-card p-6 hover:shadow-glass-lg transition-shadow group"
         >
           <div className="flex items-center gap-4">
@@ -65,7 +65,7 @@ export default function DashboardPage() {
         </Link>
 
         <Link
-          href="/calls/history"
+          href="/agent/calls/history"
           className="glass-card p-6 hover:shadow-glass-lg transition-shadow group"
         >
           <div className="flex items-center gap-4">
@@ -152,7 +152,7 @@ export default function DashboardPage() {
         <div className="text-center py-8 text-muted-foreground">
           <p>No recent calls</p>
           <Link
-            href="/call/new"
+            href="/agent/call/new"
             className="text-primary hover:underline mt-2 inline-block"
           >
             Start your first call

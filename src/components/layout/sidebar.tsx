@@ -37,7 +37,7 @@ const roleLabelColors = {
 export function Sidebar({
   groups,
   logo,
-  logoHref = '/dashboard',
+  logoHref = '/agent/dashboard',
   roleLabel,
   roleLabelVariant = 'default',
   className,

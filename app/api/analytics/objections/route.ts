@@ -7,7 +7,8 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/db';
-import { analyticsService, getTimeRangeFromPreset } from '@/services/analytics-service';
+import { checkRateLimit, createRateLimitHeaders, RATE_LIMITS } from '@/lib/api/rate-limit';
+import { analyticsService, getTimeRangeFromPreset, parseDateToUTC } from '@/services/analytics-service';
 
 /**
  * GET /api/analytics/objections
@@ -18,6 +19,15 @@ export async function GET(request: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Rate limiting (SEC-003 fix)
+    const rateLimitResult = checkRateLimit(userId, RATE_LIMITS.analytics);
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        { error: { message: 'Too many requests', code: 'RATE_LIMITED' } },
+        { status: 429, headers: createRateLimitHeaders(rateLimitResult) }
+      );
     }
 
     const { searchParams } = new URL(request.url);
@@ -43,14 +53,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Build time range
+    // Build time range (DATA-008: Use UTC consistently)
     let timeRange: { startDate: Date; endDate: Date };
     if (preset) {
       timeRange = getTimeRangeFromPreset(preset);
     } else if (startDate && endDate) {
       timeRange = {
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
+        startDate: parseDateToUTC(startDate, false),
+        endDate: parseDateToUTC(endDate, true),
       };
     } else {
       timeRange = getTimeRangeFromPreset('month');

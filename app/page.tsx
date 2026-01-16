@@ -6,7 +6,7 @@ export default async function HomePage() {
 
   if (userId) {
     // User is logged in, redirect to dashboard
-    redirect('/dashboard');
+    redirect('/agent/dashboard');
   }
 
   // Public landing page for non-authenticated users
